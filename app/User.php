@@ -8,6 +8,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
+    protected $table = 'Utenti';
+
     use Notifiable;
 
     /**
@@ -16,7 +18,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'nome', 'username', 'email', 'password', 'slug',
     ];
 
     /**
@@ -27,4 +29,29 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    public function isAdmin() {
+      if($this->permission >= 4)
+        return true;
+      else return false;
+    }
+
+    public function getRole() {
+      if($this->permission == 1)
+        return "Utente";
+      elseif($this->permission == 2)
+        return "Operatore";
+      elseif($this->permission == 3)
+        return "Moderatore";
+      elseif($this->permission == 4)
+        return "Amministratore";
+      else
+        return "";
+    }
+
+    public function getAvatar() {
+      if($this->avatar == "")
+        return "upload/default.png";
+      return "storage/avatar/".$this->avatar;
+    }
 }

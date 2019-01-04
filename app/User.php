@@ -31,9 +31,7 @@ class User extends Authenticatable
     ];
 
     public function isAdmin() {
-      if($this->permission >= 4)
-        return true;
-      else return false;
+      return ($this->permission >= 4);
     }
 
     public function getRole() {
@@ -53,5 +51,20 @@ class User extends Authenticatable
       if($this->avatar == "")
         return "upload/default.png";
       return "storage/avatar/".$this->avatar;
+    }
+
+    public function hasPublisher() {
+      return $this->editore;
+    }
+
+    public function haveGroup() {
+      return ($this->id_gruppo > 0);
+    }
+
+    public function getPublisherInfo() {
+        $query = \DB::table('editori')
+                ->where('id',$this->id_gruppo)
+                ->first();
+      return $query;
     }
 }

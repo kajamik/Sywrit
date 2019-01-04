@@ -22,15 +22,11 @@
     <h2>I vantaggi</h2>
     <div class="benefits-hero">
       <div class="hero hero-benefits-books"></div>
-      <p>1. Inizi sin da subito a pubblicare articoli senza aspettare</p>
+      <p>1. Inizi sin da subito a pubblicare articoli, senza dover spendere soldi.</p>
     </div>
     <div class="benefits-hero">
       <div class="hero hero-benefits-regis"></div>
-      <span>2. E' una soluzione completamente gratuita</span>
-    </div>
-    <div class="benefits-hero">
-      <div class="hero hero-benefits-ideas"></div>
-      <span>3. Dai un valore alle tue idee</span>
+      <span>2. Puoi decidere se aprire un'editoria, oppure se diventare un collaboratore.</span>
     </div>
   </div>
   <hr/>

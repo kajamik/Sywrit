@@ -7,7 +7,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>@yield('titolo') Sywrit</title>
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
@@ -22,10 +22,6 @@
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
 <body>
-<script type="text/javascript">
-$(".nav-toggler").on("click", function(){$("nav.nav").toggleClass("open");$("body").toggleClass("navbar-open");});
-$(".menu-close").on("click", function() {$("nav.nav").toggleClass("open");$("body").toggleClass("navbar-open");});
-</script>
 
   <header id="header">
     @include('front.components.menu')
@@ -35,8 +31,19 @@ $(".menu-close").on("click", function() {$("nav.nav").toggleClass("open");$("bod
       @yield('main')
   </main>
 
-  <footer>
+  <footer id="footer">
+    <ol> Sywrit
+      <li><a href="#">Contattaci</a></li>
+    </ol>
+    <p>&copy; Copyright 2019 Sywrit. All right reserved</p>
   </footer>
 
+  <script type="text/javascript">
+  (function(){
+    $(".nav-toggler").on("click", function(){$("nav.nav").toggleClass("open");$("body").toggleClass("navbar-open");});
+    $(".menu-close").on("click", function() {$("nav.nav").toggleClass("open");$("body").toggleClass("navbar-open");});
+  })(jQuery);
+  </script>
+  
 </body>
 </html>

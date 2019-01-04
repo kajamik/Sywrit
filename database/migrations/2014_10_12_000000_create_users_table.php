@@ -20,6 +20,10 @@ class CreateUsersTable extends Migration
             $table->string('email')->unique();
             $table->string('password');
             $table->string('slug');
+            $table->string('avatar');
+            $table->string('editore');
+            $table->enum('id_gruppo', ['0','1']);
+            $table->enum('permission', ['0','1']);
             $table->rememberToken();
             $table->timestamps();
         });

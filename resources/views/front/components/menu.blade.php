@@ -7,12 +7,10 @@
       Sywrit
     </a>
     <nav class="nav">
-      <ul>
-        <li><a href="{{ url('publishers') }}">{{ __('Lista Editori') }}</a></li>
-        @auth
-        <li><a href="{{ url('publishers/start') }}">{{ __('Diventa un editore') }}</a></li>
-        @endauth
-      </ul>
+      <li><a href="{{ url('publishers') }}">{{ __('Lista Editori') }}</a></li>
+      @if(Auth::user() && !Auth::user()->haveGroup())
+      <li><a href="{{ url('start') }}">{{ __('Diventa un editore') }}</a></li>
+      @endif
     </nav>
   </div>
 
@@ -29,12 +27,19 @@
               <img class="u-icon img-circle" src="{{ asset(Auth::user()->getAvatar()) }}"><span class="user-name">{{ Auth::user()->name }}</span>
             </a>
             <div class="dropdown-menu" role="menu">
-              <div class="user-info">
+              {{-- <div class="user-info">
                 <div class="user-name">{{ Auth::user()->name }}</div>
                 <div class="user-badge online"> Disponibile</div>
-              </div>
-              <a class="dropdown-item" href="{{ url('impostazioni') }}"><i class="fa fa-cog"></i> Impostazioni</a>
-              <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();document.getElementById('logout-form').submit();"><i class="fa fa-sign-out"></i> Scollegati</a>
+              </div> --}}
+              <a class="dropdown-item" href="{{ url('profilo') }}"><i class="fa fa-cog"></i> Il mio profilo</a>
+              @if(Auth::user()->hasPublisher())
+                @if(Auth::user()->haveGroup())
+                <a class="dropdown-item" href="{{ url('publisher/'.Auth::user()->getPublisherInfo()->slug) }}"><i class="fa fa-newspaper"></i> La mia editoria</a>
+                @else
+                <a class="dropdown-item" href="{{ url('publisher/'.Auth::user()->slug) }}"><i class="fa fa-newspaper"></i> La mia editoria</a>
+                @endif
+              @endif
+              <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();document.getElementById('logout-form').submit();"><i class="fas fa-sign-out-alt"></i> Scollegati</a>
             </div>
             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">{{ csrf_field() }}</form>
           @else

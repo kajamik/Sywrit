@@ -17,7 +17,9 @@ class CreatePublisherTable extends Migration
             $table->increments('id');
             $table->string('nome')->unique();
             $table->text('componenti');
-            $table->string('logo');
+            $table->string('slug');
+            $table->string('logo')->nullable();
+            $table->string('copertina')->nullable();
             $table->integer('direttore')->unique();
             $table->integer('avvisi');
             $table->integer('accesso');

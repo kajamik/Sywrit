@@ -2,6 +2,15 @@
 
 @import url('https://fonts.googleapis.com/css?family=Roboto');
 @import url('https://fonts.googleapis.com/css?family=Dhurjati');
+@import url('../font/fa-regular-900.eot');
+
+html, body {
+  height: 100%;
+}
+
+body {
+  background: #FFF;
+}
 
 a, a:hover {
   text-decoration: none !important;
@@ -35,6 +44,11 @@ p, h1, h2, h3, h4, h5, h6 {
   font-family: 'Roboto', sans-serif;
 }
 
+.required::after {
+  content: '\00a0*';
+  color: #FB001D;
+}
+
 /** HEADER **/
 #header {
   position: fixed;
@@ -42,6 +56,7 @@ p, h1, h2, h3, h4, h5, h6 {
   background-color: #fff;
   box-shadow: 1px 1px #bbb;
   height: 50px;
+  z-index: 1;
 }
 
 /** NAVBAR **/
@@ -49,7 +64,6 @@ p, h1, h2, h3, h4, h5, h6 {
 .left-navbar {
   float: left;
   display: flex;
-  align-items: center;
 }
 
 .right-navbar {
@@ -78,8 +92,9 @@ p, h1, h2, h3, h4, h5, h6 {
   cursor: pointer;
 }
 
-.nav ul li {
+.nav li {
   display: inline-block;
+  padding-left: 25px;
 }
 
 .dropdown-menu a:hover {
@@ -168,6 +183,22 @@ p, h1, h2, h3, h4, h5, h6 {
 
 /** HOME **/
 
+.card {
+  background: #FFF;
+  margin-bottom: 25px;
+  flex-direction: column;
+}
+
+.card span {
+  color: #bbb;
+  line-height: .3em;
+  font-size: 14px;
+}
+
+.card-block p {
+  color: #bbb;
+}
+
 .block-hero {
   width: 100%;
   height: 550px;
@@ -225,6 +256,116 @@ p, h1, h2, h3, h4, h5, h6 {
   font-size: 18px;
 }
 
+.block-box {
+  padding: 15px;
+  width: 350px;
+  height: auto;
+  margin: 25px;
+  display: inline-block;
+  vertical-align: top;
+  background: #363FB6;
+  border: 1px solid #bbb;
+  text-align: center;
+  color: #FFF;
+}
+
+.block-box h1, .block-box h2, .block-box h3 {
+  text-transform: uppercase;
+  font-size: 23px;
+}
+
+.block-box > .block-body {
+  margin-top: 12px;
+}
+
+.block-body div#benefits p::before {
+  content: '\f00c\00a0';
+  font-family: 'Font Awesome\ 5 Free';
+  font-weight: 900;
+}
+
+.block-body p.disabled {
+  color: #bbb;
+}
+
+.form-reader {
+  max-height: 170px;
+  margin-left: 12px;
+  overflow-y: scroll;
+}
+
+.form-reader h1, .form-reader h2, .form-reader p {
+  font-family: 'New Courier', sans-serif ;
+}
+
+.form-reader h2 {
+  padding: 5px;
+}
+
+.form-reader p {
+  padding-left: 12px;
+}
+
+/*** PUBLISHERS ***/
+
+.publisher-home {
+  background: #FFF;
+  height: auto !important;
+}
+
+.publisher-home > .publisher-header {
+  background-size: cover;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  height: 350px;
+}
+
+.publisher-home > .publisher-header .publisher-logo {
+  max-height: 120px;
+  margin-top: 250px;
+  margin-left: 15px;
+  border-radius: 6px;
+}
+
+.publisher-home > .publisher-body {
+  padding: 25px;
+}
+
+.publisher-info {
+  float: right;
+}
+
+/*** READ ARTICLE ***/
+
+article h1, article p, article span {
+  padding: 15px;
+}
+
+.block-footer {
+  padding: 12px;
+}
+
+.block-footer div {
+  margin-bottom: 25px;
+}
+
+.block-footer #tags span::before {
+  content: '#\00a0';
+}
+
+.block-footer #tags span {
+  color: #000;
+}
+
+/*** FOOTER ***/
+
+footer {
+  padding: 50px;
+  background-color: #000;
+  color: #FFF;
+  text-align: center;
+}
+
 /** MOBILE **/
 
 @media (max-width: 1024px) {
@@ -242,20 +383,23 @@ p, h1, h2, h3, h4, h5, h6 {
     display: none;
   }
   nav.nav.open {
+    max-height: 250px;
     display: block;
     position: absolute;
     top: 50px;
     background-color: #FFF;
     border: 1px solid #000;
-    height: auto;
-    z-index: 1;
+    overflow-y: auto;
   }
-  nav.nav.open ul li {
-    margin-left: 0;
+  .nav.open li {
+    padding: 8px;
     border-bottom: 1px solid #000;
-    width: 100%;
+    box-shadow: 1px 0 1px 0 #000;
   }
-  nav.nav.open ul li a {
+  nav.nav.open li:hover {
+    background-color: #bbb;
+  }
+  nav.nav.open li a {
     color: #000;
     font-family: 'New-Courier', italic;
     font-size: 18px;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -31,7 +31,7 @@ class User extends Authenticatable
     ];
 
     public function isAdmin() {
-      return ($this->permission >= 4);
+      return ($this->permission == 4);
     }
 
     public function getRole() {
@@ -45,6 +45,14 @@ class User extends Authenticatable
         return "Amministratore";
       else
         return "";
+    }
+
+    public function getBackground() {
+      if($this->copertina){
+        return 'storage/profile/background/'.$this->copertina;
+      }else{
+        return 'upload/no-copertina.png';
+      }
     }
 
     public function getAvatar() {

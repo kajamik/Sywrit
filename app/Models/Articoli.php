@@ -17,10 +17,10 @@ class Articoli extends Model
     }
 
     public function editoria() {
-      return $this->belongsTo('App\Models\Editori','editoria','id');
+      return $this->belongsTo('App\Models\Editori','id_gruppo','id');
     }
 
     public function autore() {
-      return $this->belongsTo('App\User','autore','id');
+      return $this->belongsTo('App\Models\User','autore','id');
     }
 }

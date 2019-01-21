@@ -7,19 +7,25 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('titolo') Sywrit</title>
+    <title>@yield('title') Sywrit</title>
 
     <!-- Scripts -->
-    <script src="{{ asset('js/app.js') }}" defer></script>
+    <script src="{{ asset('js/bootstrap/bootstrap.min.js') }}"></script>
     <script src="{{ asset('plugins/jquery/js/jquery-3.2.1.min.js') }}"></script>
-    <script src='https://www.google.com/recaptcha/api.js?render=6LfJtoUUAAAAAFXXRZCr8envuNSo9iZyb3r6tO6c'></script>
+    <script src="{{ asset('js/app.js') }}"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/11.2.0/classic/ckeditor.js"></script>
+    <script src="{{ asset('js/image.js') }}"></script>
+
     <!-- Fonts -->
-    <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet" type="text/css">
 
     <!-- Styles -->
     <link href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" rel="stylesheet">
+    <link href="{{ asset('plugins/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/image.css') }}" media="screen" rel="stylesheet" type="text/css">
+
+    @yield('styles')
 </head>
 <body>
 
@@ -44,6 +50,6 @@
     $(".menu-close").on("click", function() {$("nav.nav").toggleClass("open");$("body").toggleClass("navbar-open");});
   })(jQuery);
   </script>
-  
+
 </body>
 </html>

@@ -19,7 +19,7 @@ class CreateArticlesTable extends Migration
             $table->string('tags')->nullable();
             $table->text('testo');
             $table->string('copertina');
-            $table->integer('editoria'); // id editoria
+            $table->integer('id_gruppo')->nullable(); // id editoria
             $table->integer('autore'); // id autore
             $table->enum('pubblicato',['0','1']); // no e si
             $table->timestamps();

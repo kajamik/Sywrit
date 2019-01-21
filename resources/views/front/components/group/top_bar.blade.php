@@ -8,7 +8,7 @@
     @endif
   @else
     @if(!$follow)
-    <button id="follow" class="btn btn-primary"><i class="fas fa-bell"></i> <span>Segui</span></button>
+    <button id="follow" class="btn btn-primary"><i class="fas fa-bell"></i> <span>Inizia a seguire</span></button>
     @else
     <button id="follow" class="btn btn-primary"><i class="fas fa-bell-slash"></i> <span>Smetti di seguire</span></button>
     @endif

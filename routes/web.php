@@ -1,15 +1,6 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
+/** Web Routes **/
 
 Auth::routes();
 
@@ -21,7 +12,6 @@ Route::group(['prefix' => 'start', 'middleware' => 'auth'], function() {
 
 // Editoria
 Route::group(['prefix' => 'publishers'], function() {
-  Route::get('/', 'EditoriaController@index');
   Route::get('results', ['uses' => 'EditoriaController@getResults', 'as' => 'results']);
 });
 
@@ -61,11 +51,6 @@ Route::group(['prefix' => 'support'], function(){
   });
 });
 
-Route::group(['prefix' => 'profile'], function(){
-    Route::get('{slug}', 'FrontController@getProfile');
-    Route::get('{slug}/{slug2}', 'FrontController@getProfile');
-});
-
 Route::get('read/{slug}', 'FrontController@getArticle');
 Route::group(['prefix' => 'write', 'middleware' => 'auth'], function(){
   Route::get('/', 'FrontController@getWrite');
@@ -73,3 +58,8 @@ Route::group(['prefix' => 'write', 'middleware' => 'auth'], function(){
 });
 
 Route::get('/', 'FrontController@index');
+Route::get('settings', ['uses' => 'FrontController@getSettings', 'as' => 'settings']);
+Route::post('settings', 'FilterController@postSettings');
+
+// Profile
+Route::get('{slug}', 'FrontController@getProfile');

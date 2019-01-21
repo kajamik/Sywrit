@@ -58,7 +58,7 @@ class User extends Authenticatable
     public function getAvatar() {
       if($this->avatar == "")
         return "upload/default.png";
-      return "storage/avatar/".$this->avatar;
+      return "storage/accounts/".$this->avatar;
     }
 
     public function hasPublisher() {

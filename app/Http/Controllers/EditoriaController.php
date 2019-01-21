@@ -8,73 +8,86 @@ use Illuminate\Support\Facades\Input;
 // Models
 use App\Models\Editori;
 use App\Models\Articoli;
+use App\Models\User;
 
 class EditoriaController extends Controller
 {
     public function index()
     {
-      return view('front.pages.editoria.lista');
+      $query = Editori::inRandomOrder()->get();
+      return view('front.pages.group.lista',compact('query'));
     }
 
     public function getResults()
     {
-      $query = Input::get('search_query');
-      return view('front.pages.static.search');
+      $input = Input::get('search_query');
+      $query = \DB::table('Editori')->where('nome','like','%'.$input.'%')->get();
+      $query2 = \DB::table('Utenti')->where('username','like','%'.$input.'%')->get();
+
+      return view('front.pages.search', compact('input','query','query2'));
     }
 
     public function getStartPublisher()
     {
-      return view('front.pages.editoria.scelta');
+      return view('front.pages.group.create');
     }
 
-    public function getOfferSelected()
+    public function getOfferSelected(Request $request)
     {
-      $page = \Cookie::get('registration_step') || '1';
-      $link_id = \Cookie::get('registration_token') || Input::get('link_id');
-      switch($link_id){
-        case 1: $file_name = "gruppo"; break;
-        case 2: $file_name = "singolo"; break;
+      switch($request->link_id){
+        case 1: $file_name = "group"; break;
+        case 2: $file_name = "individual"; break;
         default: abort(404);
       }
+      return view('front.pages.items.'.$file_name);
+    }
 
-      if(!\Cookie::get('registration_step')){
-        // id prodotto
-        \Cookie::queue('registration_token',$link_id);
-        // pagina
-        \Cookie::queue('registration_step','1');
-        return redirect('start/offer/?link_id='.$link_id.'&page=1');
+    public function postBePublisher(Request $request)
+    {
+      if(!\Auth::user()->hasPublisher()){
+        if($request->type == 'g'){
+          $this->validate($request,[
+            'nome'  =>  'required|string|min:4|max:24|unique:editori',
+          ]);
+
+          $query = new Editori();
+          $query->nome = $request->input('nome');
+          $query->componenti = \Auth::user()->id;
+          $query->direttore = \Auth::user()->id;
+          $query->avvisi = '0';
+          $query->accesso = '1';
+          $query->save();
+          $query->slug = str_slug($query->nome,'-');
+          $query->save();
+
+          $user = User::find(\Auth::user()->id);
+          $user->editore = '1';
+          $user->id_gruppo = $query->id;
+          $user->save();
+          return redirect('group/'.$query->slug);
+        }elseif($request->type == 'i'){
+          $query = User::find(\Auth::user()->id);
+          $query->editore = '1';
+          $query->save();
+          return redirect('profile/'.\Auth::user()->slug);
+        }
+      }else{
+        return redirect('/');
       }
-
-      if(Input::get('page') != \Cookie::get('registration_step'))
-        return redirect('start/offer/?link_id='.$link_id.'&page='.\Cookie::get('registration_step'));
-
-      if(\Cookie::get('registration_step') == 1)
-        return view('front.pages.offerta.'.$file_name);
-      elseif(\Cookie::get('registration_step') == 2)
-        return view('front.pages.offerta.termini');
-      elseif(\Cookie::get('registration_step') == 3)
-        return view('front.pages.offerta.registrazione');
     }
 
-    public function changeRegistrationState()
-    {
-      $link_id = \Cookie::get('registration_token');
-      $page = \Cookie::get('registration_step');
-      $next_step = $page+1;
-      \Cookie::queue('registration_step',$next_step);
-      return redirect('start/offer/?link_id='.$link_id.'&page='.$next_step);
-    }
-
-    public function postCreaEditoria()
-    {
-
-    }
-
-    public function getEditoria($slug,$slug2 = 'features')
+    public function getEditoria($slug,$slug2 = 'featured')
     {
       $publisher = array();
+      if($slug2 = 'customize'){
+        $publisher['edit'] = true;
+      }
+      $followers = array();
       $query = Editori::with('articoli')->where('slug',$slug)->first();
-      return view('front.pages.editoria.index',compact('query','slug2','publisher'));
+      if($query->followers != null)
+        $followers = explode(',',$query->followers);
+      $follow = in_array(\Auth::user()->id,$followers);
+      return view('front.pages.group.index',compact('query','slug2','publisher','followers','follow'));
     }
 
 }

@@ -9,7 +9,7 @@ class Editori extends Model
     protected $table = 'Editori';
 
     public function articoli() {
-        return $this->hasMany('App\Models\Articoli','editoria','id');
+        return $this->hasMany('App\Models\Articoli','id_gruppo','id');
     }
 
     public function getBackground() {
@@ -26,5 +26,13 @@ class Editori extends Model
       }else{
         return 'upload/no-image.png';
       }
+    }
+
+    public function hasMember() {
+      $exp = explode(',',$this->componenti);
+      if(in_array(\Auth::user()->id,$exp))
+          return true;
+
+      return false;
     }
 }

@@ -24,7 +24,7 @@ class Editori extends Model
       if($this->logo){
         return 'storage/publishers/background/'.$this->logo;
       }else{
-        return 'upload/no-image.png';
+        return 'upload/default.png';
       }
     }
 

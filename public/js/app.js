@@ -1,5 +1,5 @@
-var App = {} || [];
-App.query = function(method,url,data,cache,f){
+var App = {};
+App.query = function(method,url,data,cache,f = null){
     $.ajax({
       method: method,
       url: url,
@@ -34,4 +34,19 @@ App.insl = function(id){
       });
     }
   });
+}
+App.loadData = function(a,f,m,t = null){
+  //for(var i in t.callback)
+    //App.call.(t.callback[i]);
+  App.query('get',f+1,null,false,function(data){
+    $(a).append(data.posts);
+  });
+}
+App.upIm = function(data){
+  for(var i in data.settings){
+    $("#"+data.settings[i]).change(function(){
+      //$("<div/>").html("<div class='preview_body'><div class='image-wrapper' id='preview-wrapper'><img id='image' src="+URL.createObjectURL(event.target.files[0])+"></div></div>").appendTo($("#avatar_preview"));
+      //$('#image').rcrop();
+    });
+  }
 }

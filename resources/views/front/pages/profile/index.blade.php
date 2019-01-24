@@ -15,12 +15,10 @@
     </section>
     <section class="publisher-body">
       <div class="container">
-        @if($query->editore)
-          @if($query->id_gruppo == 0)
-            <p>Editore individuale</p>
-          @else
-            <p>Editore presso <a href="{{ url('group/'.$group->slug) }}">{{$group->nome}}</a></p>
-          @endif
+        @if($query->id_gruppo == 0)
+          <p>Editore individuale</p>
+        @else
+          <p>Editore presso <a href="{{ url('group/'.$group->slug) }}">{{$group->nome}}</a></p>
         @endif
         @if(\Auth::user() && \Auth::user()->id != $query->id)
         <div class="publisher-info">
@@ -33,13 +31,11 @@
         </div>
         @endif
         <div class="publisher-bar" data-pub-text="#followers">
-          @if($query->hasPublisher())
             <i class="fa fa-newspaper" title="{{$count}} Articoli"></i> <span>{{$count}}</span>
-          @endif
             <i class="fab fa-angellist" title="{{$query->followers_count}} Followers"></i> <span id="followers">{{$query->followers_count}}</span>
         </div>
         <div class="py-4">
-          <h4>Descrizione</h4>
+          <h4>Biografia</h4>
           <p>{!! $query->biography !!}</p>
         </div>
         <hr/>
@@ -71,6 +67,7 @@
   </div>
 </section>
   <script>
+    //App.loadData('#articles','?page=');
     App.follow('#follow',{url:'{{url("follow")}}',data:{'id': {{ $query->id }}, 'mode': 'i'}}, false);
     App.insl('articles');
   </script>

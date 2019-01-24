@@ -61,10 +61,6 @@ class User extends Authenticatable
       return "storage/accounts/".$this->avatar;
     }
 
-    public function hasPublisher() {
-      return $this->editore;
-    }
-
     public function haveGroup() {
       return ($this->id_gruppo > 0);
     }

@@ -20,8 +20,8 @@
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet" type="text/css">
 
     <!-- Styles -->
-    <link href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" rel="stylesheet">
     <link href="{{ asset('plugins/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" rel="stylesheet">
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/image.css') }}" media="screen" rel="stylesheet" type="text/css">
 
@@ -34,15 +34,17 @@
   </header>
 
   <main class="wrap">
+    <div class="py-3">
       @yield('main')
+    </div>
   </main>
 
-  <footer id="footer">
+  {{--<footer id="footer">
     <ol> Sywrit
       <li><a href="#">Contattaci</a></li>
     </ol>
     <p>&copy; Copyright 2019 Sywrit. All right reserved</p>
-  </footer>
+  </footer>--}}
 
   <script type="text/javascript">
   (function(){

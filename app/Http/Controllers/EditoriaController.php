@@ -32,16 +32,6 @@ class EditoriaController extends Controller
       return view('front.pages.group.create');
     }
 
-    public function getOfferSelected(Request $request)
-    {
-      switch($request->link_id){
-        case 1: $file_name = "group"; break;
-        case 2: $file_name = "individual"; break;
-        default: abort(404);
-      }
-      return view('front.pages.items.'.$file_name);
-    }
-
     public function postBePublisher(Request $request)
     {
       if(!\Auth::user()->hasPublisher()){
@@ -76,18 +66,33 @@ class EditoriaController extends Controller
       }
     }
 
-    public function getEditoria($slug,$slug2 = 'featured')
+    public function getEditoria($slug,Request $request)
     {
-      $publisher = array();
-      if($slug2 = 'customize'){
-        $publisher['edit'] = true;
-      }
-      $followers = array();
-      $query = Editori::with('articoli')->where('slug',$slug)->first();
+      $query = Editori::where('slug',$slug)->first();
+
+        $publisher = array();
+        $followers = array();
+
+      //if($count){
+        if($request->ajax()){
+          $articoli = Articoli::where('id_gruppo',$query->id)->skip(($request->page-1)*12)->take(12)->get();
+          return ['posts' => view('front.components.ajax.loadArticles')->with(compact('articoli'))->render()];
+        }
+      //}
+
       if($query->followers != null)
         $followers = explode(',',$query->followers);
       $follow = in_array(\Auth::user()->id,$followers);
-      return view('front.pages.group.index',compact('query','slug2','publisher','followers','follow'));
+      return view('front.pages.group.index',compact('query','tab','publisher','followers','follow'));
     }
 
+    public function getEditoriaSettings($slug,$tab = null,Request $request)
+    {
+      $query = Editori::where('slug',$slug)->first();
+
+      if(!$tab)
+        return redirect('group/'.$slug.'/settings/edit');
+        
+      return view('front.pages.group.settings',compact('query','tab'));
+    }
 }

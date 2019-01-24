@@ -1,4 +1,4 @@
-@foreach($articoli->take(12) as $articolo)
+@foreach($articoli as $articolo)
 <div class="col-lg-3 col-sm-8 col-xs-12">
   <a href="{{ url('read/'. $articolo->slug) }}">
     <div class="card">

@@ -39,14 +39,20 @@
         <div class="form-group row">
           <label for="cover" class="col-md-4 col-form-label text-md-right">Immagine di copertina</label>
           <div class="col-md-6">
-            <input id="cover" type="file" class="form-control" name="cover">
+            <label for="file-upload" class="form-control custom-upload">
+              <i class="fa fa-cloud-upload-alt"></i> Carica file
+            </label>
+            <input id="file-upload" type="file" name="cover">
+            <div id="image_preview" class="preview"></div>
           </div>
         </div>
         <div class="form-group row">
           <label for="avatar" class="col-md-4 col-form-label text-md-right">Immagine di profilo</label>
           <div class="col-md-6">
-            <input id="avatar" type="file" class="form-control" name="avatar">
-
+            <label for="file-upload" class="form-control custom-upload">
+              <i class="fa fa-cloud-upload-alt"></i> Carica file
+            </label>
+            <input id="file-upload" type="file" name="avatar">
             <div id="avatar_preview" class="preview"></div>
           </div>
         </div>
@@ -82,12 +88,6 @@
 </div>
 
 <script>
-$("#avatar").change(function(){
-    $("<div/>").html("<div class='preview_body'><div class='image-wrapper' id='preview-wrapper'><img id='image' src="+URL.createObjectURL(event.target.files[0])+"></div></div>").appendTo($("#avatar_preview"));
-    $('#image').rcrop();
-});
-$("body").on('rcrop-changed', function(){
-  alert($("#x").val());
-});
+App.upIm({'settings':{'bg': 'cover','pr': 'avatar'}});
 </script>
 @endsection

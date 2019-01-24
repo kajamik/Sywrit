@@ -7,23 +7,28 @@
       <span class="fa fa-bars"></span>
     </div>
     <a href="{{url('/')}}" class="brand">
-      <img src="#" alt="Sywrit">
+      <img src="#" alt="Logo">
     </a>
     <nav class="nav">
       @auth
-        @if(!$utente->hasPublisher())
-          <li><a href="{{url('start')}}">{{__('Diventa un editore')}}</a></li>
+        @if(!$utente->haveGroup())
+          <li><a href="{{url('start')}}">{{__('Crea gruppo')}}</a></li>
         @endif
       @endif
+          {{--
           <li><a href="{{url('forum')}}">{{__('Forum')}}</a></li>
           <li><a href="{{url('support')}}"><i class="fa fa-life-ring"></i> {{__('Assistenza Tecnica')}}</a></li>
+          --}}
+          <li><a href="#">Il nostro progetto</a></li>
     </nav>
   </div>
 
   <div class="nav navbar-right">
         <form action="{{ route('results') }}" method="GET">
-          <input type="search" class="ty-search" name="search_query" placeholder="Cerca su Sywrit">
-          <button class="fa fa-search" style="background:transparent;border:none;"></button>
+          <div class="ty-search">
+            <input type="search" name="search_query" placeholder="Cerca">
+            <button class="fa fa-search" style="background:transparent;border:none;"></button>
+          </div>
         </form>
         <ul class="user-navbar">
           @auth
@@ -33,7 +38,7 @@
             </a>
           </li>
             <li class="dropdown">
-              <a data-toggle="dropdown"href="javascript:void(0)">
+              <a data-toggle="dropdown" href="javascript:void(0)">
                 <i class="fa fa-bell" aria-hidden="true" title="Notifiche"></i>
                 <span class="badge badge-notification">0</span>
               </a>

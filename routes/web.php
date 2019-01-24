@@ -4,12 +4,6 @@
 
 Auth::routes();
 
-Route::group(['prefix' => 'start', 'middleware' => 'auth'], function() {
-  Route::get('/', 'EditoriaController@getStartPublisher');
-  Route::get('offer', ['uses' => 'EditoriaController@getOfferSelected', 'as' => 'offer']);
-  Route::post('offer', ['uses' => 'EditoriaController@postBePublisher', 'as' => 'offer/complete']);
-});
-
 // Editoria
 Route::group(['prefix' => 'publishers'], function() {
   Route::get('results', ['uses' => 'EditoriaController@getResults', 'as' => 'results']);
@@ -17,14 +11,15 @@ Route::group(['prefix' => 'publishers'], function() {
 
 Route::group(['prefix' => 'group'], function() {
   Route::get('{slug}', 'EditoriaController@getEditoria');
-  Route::get('{slug}/{slug2}', 'EditoriaController@getEditoria');
+  Route::get('{slug}/settings', 'EditoriaController@getEditoriaSettings');
+  Route::get('{slug}/settings/{tab}', 'EditoriaController@getEditoriaSettings');
   Route::get('{slug}/join/{token}', 'EditoriaController@getInvite');
 });
 
 Route::get('follow','AjaxController@follow');
 
 //forum
-Route::group(['prefix' => 'forum'], function(){
+/*Route::group(['prefix' => 'forum'], function(){
     Route::get('/', 'ForumController@index');
     Route::get('{slug}', 'ForumController@getSection');
     Route::post('{slug}/new', 'ForumController@postAddTopic');
@@ -50,6 +45,7 @@ Route::group(['prefix' => 'support'], function(){
     Route::get('ticket/management/{id}/locked', 'SupportController@lockTicket');
   });
 });
+*/
 
 Route::get('read/{slug}', 'FrontController@getArticle');
 Route::group(['prefix' => 'write', 'middleware' => 'auth'], function(){

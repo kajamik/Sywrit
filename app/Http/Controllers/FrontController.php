@@ -14,16 +14,24 @@ class FrontController extends Controller
     {
     }
 
-    public function index()
+    public function index(Request $request)
     {
-      if(\Auth::user()){
+        if(\Auth::user()){
         // Ultimi articoli
-        $ultimi_articoli = Articoli::inRandomOrder()->paginate(12);
+        //$ultimi_articoli = Articoli::inRandomOrder()->paginate(12);
         // Consigliati (- Più votati - Più letti)
-        $consigliati = Articoli::orderBy('letto','desc')->orderBy('piaciuto','desc')->inRandomOrder()->take(12)->get();
+        //$consigliati = Articoli::orderBy('letto','desc')->orderBy('piaciuto','desc')->inRandomOrder()->take(12)->get();
         // Preferiti
-        $preferiti = Articoli::get();
-        return view('front.pages.welcome',compact('ultimi_articoli','consigliati','preferiti'));
+        //$preferiti = Articoli::get();
+        // Editori
+        $editori = Editori::take(3)->get();
+        if(!empty($editori)){
+          if($request->ajax()){
+            $editori = Editori::skip(($request->page-1)*3)->take(3)->get();
+              return ['posts' => view('front.components.ajax.loadAll')->with(compact('editori'))->render()];
+          }
+        }
+        return view('front.pages.welcome',compact('editori'));
       }
       return view('front.pages.home');
     }
@@ -46,7 +54,7 @@ class FrontController extends Controller
         }
       }
 
-      return view('front.pages.profile.index',compact('query','followers','follow','count','articoli','group'));
+      return view('front.pages.profile.index',compact('query','follow','count','articoli','group'));
     }
 
     public function getWrite()

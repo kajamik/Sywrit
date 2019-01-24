@@ -4,7 +4,7 @@
 
 @section('main')
 <div class="container">
-  <h5>Consigliati</h5>
+  {{--<h5>Consigliati</h5>
   @if(!empty($consigliati))
   <div class="col-lg-12">
     <div class="row">
@@ -20,7 +20,7 @@
               <div class="card">
                 <img class="card-img-top" src="{{asset($articolo->getBackground())}}" alt="Card image cap">
                 <div class="card-body">
-                  <h4 class="card-title">{{ $articolo->titolo }}</h4>
+                  <h5 class="card-title">{{ $articolo->titolo }}</h5>
                   @if( !empty($articolo->id_gruppo) )
                     <a href="{{url('group/'.$editore->slug)}}"><span>{{$editore->nome}}</span></a>
                   @else
@@ -33,7 +33,11 @@
           @endforeach
         </div>
       </div>
-    @endif
-  <hr/>
+    @endif--}}
+      <script>
+        App.loadData('.container','?page=');
+        // ,{'callback':['insl']}
+        //App.insl('editor');
+      </script>
 </div>
 @endsection

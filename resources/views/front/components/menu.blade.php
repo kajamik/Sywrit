@@ -63,11 +63,12 @@
               @if($utente->haveGroup())
               <a class="dropdown-item" href="{{ url('group/'.$utente->getPublisherInfo()->slug) }}"><i class="fa fa-newspaper"></i> La mia editoria</a>
               @endif
-              <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();document.getElementById('logout-form').submit();"><i class="fas fa-sign-out-alt"></i> Esci</a>
+              <a class="dropdown-item" href="#adiósu" onclick="document.getElementById('logout-form').submit();"><i class="fas fa-sign-out-alt"></i> Esci</a>
             </div>
             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">{{ csrf_field() }}</form>
           @else
             <li><a href="{{ route('login') }}">Accedi</a></li>
+            <li><a href="{{ route('register') }}">Iscriviti</a></li>
          </li>
         @endauth
        </ul>

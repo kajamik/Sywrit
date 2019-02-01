@@ -22,24 +22,23 @@ class AjaxController extends Controller
       $query = User::find($request->id);
 
       try{
-        if(!empty($query->followers))
-          $a = explode(',',$query->followers);
-        else
-          $a = array();
-        if(!in_array(\Auth::user()->id,$a)){
-          array_push($a, \Auth::user()->id);
+        $collection = collect(explode(',',$query->followers));
+        $count = $query->followers_count;
+        if($collection->some(\Auth::user()->id)){
+          $collection->splice($collection->search(\Auth::user()->id),1);
+          $query->followers_count -= 1;
+          $count--;
         }else{
-          array_splice($a, array_search(\Auth::user()->id,$a));
+          $collection->push(\Auth::user()->id);
+          $query->followers_count += 1;
+          $count++;
         }
-        if(!empty($query->followers)){
-          $query->followers = implode(',',$a);
-        }else{
-          $query->followers = implode('',$a);
-        }
+        $query->followers = $collection->implode(',');
         $query->save();
-        return Response::json(['result' => in_array(\Auth::user()->id,$a), 'counter' => count($a)]);
+        return Response::json(['result' => $collection->some(\Auth::user()->id), 'counter' => $count]);
       }catch(ErrorException $error){
         //
       }
   }
+
 }

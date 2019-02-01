@@ -34,6 +34,11 @@
   </header>
 
   <main class="wrap">
+    @if(\Session::get('type') == 'main_top')
+    <div class="fixed-alert alert alert-danger">
+      <h2>{{\Session::get('message')}}</h2>
+    </div>
+    @endif
     <div class="py-3">
       @yield('main')
     </div>

@@ -51,18 +51,10 @@ class EditoriaController extends Controller
           $query->save();
 
           $user = User::find(\Auth::user()->id);
-          $user->editore = '1';
           $user->id_gruppo = $query->id;
           $user->save();
           return redirect('group/'.$query->slug);
-        }elseif($request->type == 'i'){
-          $query = User::find(\Auth::user()->id);
-          $query->editore = '1';
-          $query->save();
-          return redirect('profile/'.\Auth::user()->slug);
         }
-      }else{
-        return redirect('/');
       }
     }
 
@@ -90,9 +82,12 @@ class EditoriaController extends Controller
     {
       $query = Editori::where('slug',$slug)->first();
 
+      if($query->direttore != \Auth::user()->id)
+        return redirect('group/'.$slug);
+
       if(!$tab)
         return redirect('group/'.$slug.'/settings/edit');
-        
+
       return view('front.pages.group.settings',compact('query','tab'));
     }
 }

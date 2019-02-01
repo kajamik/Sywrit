@@ -19,12 +19,11 @@
       </a>
       <div class="dropdown-menu">
         {{--<a class="dropdown-item" href="#" data-toggle="modal" data-target="#message"><i class="fa fa-envelope"></i> Invia messaggio</a>--}}
-        @if($query->direttore != Auth::user()->id)
-        <a class="dropdown-item" href="#"><i class="fa fa-times"></i> Abbandona il gruppo</a>
-        @else
+        @if($query->direttore == Auth::user()->id)
         <a class="dropdown-item" href="{{ url('group/'.$query->slug.'/settings') }}"><i class="fa fa-cog"></i> Impostazioni</a>
-        <a class="dropdown-item" href="#"><i class="fa fa-trash-alt"></i> Elimina gruppo</a>
         @endif
+        <a class="dropdown-item" href="#" onclick="document.getElementById('leaveGroup').submit();"><i class="fa fa-times"></i> Abbandona il gruppo</a>
+        <form id="leaveGroup" action="{{ route('group/action/leave') }}" method="POST" style="display: none;">{{ csrf_field() }}</form>
       </div>
     </li>
     @endif
@@ -32,7 +31,7 @@
 @endauth
   <div class="publisher-bar" data-pub-text="#followers">
     <i class="fa fa-newspaper" title="Articoli"></i> <span>{{$query->articoli->count()}}</span>
-    <i class="fab fa-angellist" title="Follower"></i> <span id="followers">{{count($followers)}}</span>
+    <i class="fab fa-angellist" title="Follower"></i> <span id="followers">{{$query->followers_count}}</span>
   </div>
   <script>
     //App.query('get',{{ url('') }},null,false);

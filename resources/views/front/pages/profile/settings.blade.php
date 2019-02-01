@@ -49,10 +49,10 @@
         <div class="form-group row">
           <label for="avatar" class="col-md-4 col-form-label text-md-right">Immagine di profilo</label>
           <div class="col-md-6">
-            <label for="file-upload" class="form-control custom-upload">
+            <label for="file-upload2" class="form-control custom-upload">
               <i class="fa fa-cloud-upload-alt"></i> Carica file
             </label>
-            <input id="file-upload" type="file" name="avatar">
+            <input id="file-upload2" type="file" name="avatar">
             <div id="avatar_preview" class="preview"></div>
           </div>
         </div>
@@ -87,7 +87,7 @@
   </div>
 </div>
 
-<script>
+{{--<script>
 App.upIm({'settings':{'bg': 'cover','pr': 'avatar'}});
-</script>
+</script>--}}
 @endsection

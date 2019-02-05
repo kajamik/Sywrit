@@ -8,9 +8,13 @@ class Articoli extends Model
 {
     protected $table = 'Articoli';
 
+    private $storage = 'storage/articles';
+
     public function getBackground() {
-      if($this->copertina){
-        return 'storage/publishers/articoli/'.$this->copertina;
+      $file = $this->storage.'/'.$this->copertina;
+
+      if($this->copertina && file_exists($file)){
+        return $file;
       }else{
         return 'upload/no-image.png';
       }

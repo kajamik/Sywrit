@@ -13,9 +13,9 @@
     </section>
     <section class="publisher-body">
       <li>
-        <a href="{{ url('group/'.$query->slug) }}">Home</a>
-        <a class="@if($tab == 'edit') active @endif" href="{{ url('group/'.$query->slug.'/settings/edit') }}">Modifica gruppo</a>
-        <a class="@if($tab == 'role') active @endif" href="{{ url('group/'.$query->slug.'/settings/role') }}">Gestione ruoli</a>
+        <a href="{{ url($query->slug) }}">Home</a>
+        <a class="@if($tab == 'edit') active @endif" href="{{ url($query->slug.'/settings/edit') }}">Modifica gruppo</a>
+        <a class="@if($tab == 'role') active @endif" href="{{ url($query->slug.'/settings/role') }}">Gestione ruoli</a>
       </li>
       <div class="container my-5">
         @include('front.pages.group.tabs.'.$tab)

@@ -57,37 +57,4 @@ class EditoriaController extends Controller
         }
       }
     }
-
-    public function getEditoria($slug,Request $request)
-    {
-      $query = Editori::where('slug',$slug)->first();
-
-        $publisher = array();
-        $followers = array();
-
-      //if($count){
-        if($request->ajax()){
-          $articoli = Articoli::where('id_gruppo',$query->id)->skip(($request->page-1)*12)->take(12)->get();
-          return ['posts' => view('front.components.ajax.loadArticles')->with(compact('articoli'))->render()];
-        }
-      //}
-
-      if($query->followers != null)
-        $followers = explode(',',$query->followers);
-      $follow = in_array(\Auth::user()->id,$followers);
-      return view('front.pages.group.index',compact('query','tab','publisher','followers','follow'));
-    }
-
-    public function getEditoriaSettings($slug,$tab = null,Request $request)
-    {
-      $query = Editori::where('slug',$slug)->first();
-
-      if($query->direttore != \Auth::user()->id)
-        return redirect('group/'.$slug);
-
-      if(!$tab)
-        return redirect('group/'.$slug.'/settings/edit');
-
-      return view('front.pages.group.settings',compact('query','tab'));
-    }
 }

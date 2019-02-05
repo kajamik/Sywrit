@@ -25,19 +25,11 @@
         <div class="col-lg-12">
           <div class="row" id="articles">
             @foreach($query->articoli->take(12) as $n => $articolo)
-            @php
-              if(!$n)
-                $original_image = \App\Models\BackupArticlesImages::where('article_id',$articolo->id)->first();
-            @endphp
-            <div class="@if($n > 0) col-lg-4 @endif col-sm-8 col-xs-12">
+            <div class="@if($n > 0) col-lg-4 @else col-lg-8 @endif col-sm-8 col-xs-12">
               <a href="{{ url('read/'. $articolo->slug) }}">
                 <div class="card">
                   @if($articolo->copertina)
-                    @if(!$n)
-                      <img class="card-img-top" src="{{asset('storage/articles/'.$original_image->img_title)}}" alt="Copertina">
-                    @else
                       <img class="card-img-top" src="{{asset('storage/articles/'.$articolo->copertina)}}" alt="Copertina">
-                    @endif
                   @endif
                   <div class="card-body">
                     <h4 class="card-title">{{ $articolo->titolo }}</h4>
@@ -54,7 +46,7 @@
         </div>
       </section>
   <script>
-    App.follow('button#follow',
+    App.follow('#follow',
       {
         url:'{{url("follow")}}',
         data:{'id':{{ $query->id }},'mode':'g'}

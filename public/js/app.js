@@ -1,14 +1,14 @@
 var App = {};
 App.query = function(method,url,data,cache,f = null){
     $.ajax({
-      method: method,
-      url: url,
-      data: data,
-      cache: cache,
-      success: f
-    });
+        method: method,
+        url: url,
+        data: data,
+        cache: cache,
+        success: f
+      });
 }
-App.follow = function(element,data,cache,f = null){
+App.follow = function(element,data,cache){
   $(element).click(function(){
     var attribute = $(".publisher-bar").attr("data-pub-text");
     App.query('get',data.url,data.data,cache,
@@ -22,7 +22,7 @@ App.follow = function(element,data,cache,f = null){
         }
         $(attribute).html( data.counter );
       });
-  });
+    });
 }
 App.insl = function(id){
   var page = 1;
@@ -35,18 +35,46 @@ App.insl = function(id){
     }
   });
 }
-App.loadData = function(a,f,m,t = null){
-  //for(var i in t.callback)
-    //App.call.(t.callback[i]);
+App.loadData = function(a,f){
   App.query('get',f+1,null,false,function(data){
     $(a).append(data.posts);
   });
 }
-App.upIm = function(data){
-  for(var i in data.settings){
-    $("#"+data.settings[i]).change(function(){
-      //$("<div/>").html("<div class='preview_body'><div class='image-wrapper' id='preview-wrapper'><img id='image' src="+URL.createObjectURL(event.target.files[0])+"></div></div>").appendTo($("#avatar_preview"));
-      //$('#image').rcrop();
-    });
+App.upload = function(n, resize = true){
+  var node = setNode(n, {
+    html:
+    {
+      id : 'node_'+n.id
+    }
+  },"div");
+
+  $("<div/>").html("<div class='preview_body'><div class='image-wrapper' id='preview-wrapper'><img id='image_"+node.html.id+"' src="+URL.createObjectURL(event.target.files[0])+"></div></div>").appendTo($("#"+node.html.id));
+
+  if(resize){
+    $('#image_'+node.html.id).rcrop();
   }
+}
+
+function setNode(e, params, element){
+  var parent = document.getElementById(e.id);
+  var child = document.createElement(element);
+  var a = new Array();
+  for(var i in params){
+    if(typeof params[i] == "object"){
+      a[i] = new Array(Object.keys(params[i]).length);
+      for(var p in params[i]){
+        a[i][p] = params[i][p];
+        child.setAttribute([p], a[i][p]);
+      }
+    }else{
+      a[i] = params[i];
+      if(i == "text"){
+        var text = document.createTextNode(a[i]);
+        child.appendChild(text);
+      }
+    }
+  }
+  parent.appendChild(child);
+
+  return a;
 }

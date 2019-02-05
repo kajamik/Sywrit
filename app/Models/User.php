@@ -12,6 +12,8 @@ class User extends Authenticatable
 
     use Notifiable;
 
+    private $storage = 'storage/accounts';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -48,21 +50,25 @@ class User extends Authenticatable
     }
 
     public function getBackground() {
-      if($this->copertina){
-        return 'storage/profile/background/'.$this->copertina;
-      }else{
-        return 'upload/no-copertina.png';
-      }
+      $file = $this->storage.'/'.$this->copertina;
+      if($this->copertina && file_exists($file))
+        return $file;
+      return 'upload/no-copertina.png';
     }
 
     public function getAvatar() {
-      if($this->avatar == "")
-        return "upload/default.png";
-      return "storage/accounts/".$this->avatar;
+      $file = $this->storage.'/'.$this->avatar;
+      if($this->avatar && file_exists($file))
+        return $file;
+      return 'upload/default.png';
     }
 
     public function haveGroup() {
       return ($this->id_gruppo > 0);
+    }
+
+    public function isDirector() {
+      return ($this->getPublisherInfo()->direttore == $this->id);
     }
 
     public function getPublisherInfo() {
@@ -71,4 +77,10 @@ class User extends Authenticatable
                 ->first();
       return $query;
     }
+
+    /*public function UnlinkOldImage($file) {
+      if(File::exists($this->storage.'/'.$file)){
+        File::delete($this->storage.'/'.$file);
+      }
+    }*/
 }

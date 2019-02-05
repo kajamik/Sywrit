@@ -61,7 +61,7 @@
               <a class="dropdown-item" href="{{ url($utente->slug) }}"><i class="fa fa-user"></i> Il mio profilo</a>
               <a class="dropdown-item" href="{{ url('settings') }}"><i class="fa fa-cog"></i> Impostazioni</a>
               @if($utente->haveGroup())
-              <a class="dropdown-item" href="{{ url('group/'.$utente->getPublisherInfo()->slug) }}"><i class="fa fa-newspaper"></i> La mia editoria</a>
+              <a class="dropdown-item" href="{{ url($utente->getPublisherInfo()->slug) }}"><i class="fa fa-newspaper"></i> La mia editoria</a>
               @endif
               <a class="dropdown-item" href="#adiósu" onclick="document.getElementById('logout-form').submit();"><i class="fas fa-sign-out-alt"></i> Esci</a>
             </div>

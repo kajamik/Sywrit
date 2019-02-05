@@ -20,24 +20,19 @@ class FrontController extends Controller
 {
     public function __construct()
     {
+      Carbon::setUTF8(true);
+      setLocale(LC_TIME, config('app.locale'));
     }
 
     public function index(Request $request)
     {
-        // Ultimi articoli
-        //$ultimi_articoli = Articoli::inRandomOrder()->paginate(12);
-        // Consigliati (- Più votati - Più letti)
-        //$consigliati = Articoli::orderBy('letto','desc')->orderBy('piaciuto','desc')->inRandomOrder()->take(12)->get();
-        // Preferiti
-        //$preferiti = Articoli::get();
-        // Editori
         $INDEX_LIMIT = 3;
         $editori = Editori::take($INDEX_LIMIT)->get();
         $utenti = User::take($INDEX_LIMIT-$editori->count())->get();
         if(!empty($editori)){
           if($request->ajax()){
             $editori = Editori::where('last_article', '!=', 'null')->skip(($request->page-1)*$INDEX_LIMIT)->take($INDEX_LIMIT)->get();
-            $utenti = User::whereNull('id_gruppo')->where('last_article', '!=', 'null')->skip(($request->page-1)*3)->take(3)->get();
+            $utenti = User::where('last_article', '!=', 'null')->skip(($request->page-1)*3)->take(3)->get();
               return ['posts' => view('front.components.ajax.loadAll')->with(compact('editori','utenti'))->render()];
           }
         }
@@ -45,14 +40,17 @@ class FrontController extends Controller
       return view('front.pages.welcome',compact('editori'));
     }
 
+    // PROFILE
     public function getProfile($slug,Request $request)
     {
       $follow = '';
       $query = User::where('slug',$slug)->first();
+      if(empty($query))
+        return $this->getPublisherIndex($slug, $request);
       if(\Auth::user() && !empty($query)){
           $follow = in_array(\Auth::user()->id,explode(',',$query->followers));
       }
-      $query2 = \App\Models\Articoli::where('autore',$query->id);
+      $query2 = \App\Models\Articoli::where('status','2')->where('autore',$query->id);
       $count = $query2->count();
       $articoli = $query2->take(12)->orderBy('created_at','desc')->get();
       $group = $query->getPublisherInfo();
@@ -66,6 +64,61 @@ class FrontController extends Controller
 
       return view('front.pages.profile.index',compact('query','follow','count','articoli','group'));
     }
+
+    public function getPrivateArchive($slug)
+    { // http://127,0.0.1:8000/{slug}/archive
+      if($slug != \Auth::user()->slug) abort(404);
+      $query = Articoli::whereNull('id_gruppo')->where('status','0')->get();
+      return view('front.pages.profile.archive',compact('query'));
+    }
+
+    /*****************/
+
+    // GROUP
+    public function getPublisherIndex($slug,Request $request)
+    {
+      $query = Editori::where('slug',$slug)->first();
+
+        $publisher = array();
+        $followers = array();
+
+      //if($count){
+        if($request->ajax()){
+          $articoli = Articoli::where('id_gruppo',$query->id)->skip(($request->page-1)*12)->take(12)->get();
+          return ['posts' => view('front.components.ajax.loadArticles')->with(compact('articoli'))->render()];
+        }
+      //}
+
+      if($query->followers != null)
+        $followers = explode(',',$query->followers);
+      $follow = in_array(\Auth::user()->id,$followers);
+      return view('front.pages.group.index',compact('query','tab','publisher','followers','follow'));
+    }
+
+    public function getPublisherAbout($slug)
+    {
+      $query = Editori::where('slug',$slug)->first();
+      $followers = array();
+      if($query->followers != null)
+        $followers = explode(',',$query->followers);
+      $follow = in_array(\Auth::user()->id,$followers);
+      return view('front.pages.group.about',compact('query','follow','followers'));
+    }
+
+    public function getPublisherSettings($slug,$tab = null,Request $request)
+    {
+      $query = Editori::where('slug',$slug)->first();
+
+      if($query->direttore != \Auth::user()->id)
+        return redirect($slug);
+
+      if(!$tab)
+        return redirect($slug.'/settings/edit');
+
+      return view('front.pages.group.settings',compact('query','tab'));
+    }
+
+    /*****************/
 
     public function getWrite()
     {
@@ -81,7 +134,7 @@ class FrontController extends Controller
       if($a = $request->image){
         $resize = '__492x340'.Str::random(64).'.jpg';
         $normal_image = '__'.Str::random(64).'.jpg';
-        $image = Image::make($a)->resize(492, 340)->encode('jpg');
+        $image = Image::make($a)->crop($request->width[0],$request->height[0],$request->x[0],$request->y[0])->resize(492, 340)->encode('jpg');
         Storage::disk('articles')->put($resize, $image);
         $image = Image::make($a)->encode('jpg');
         Storage::disk('articles')->put($normal_image, $image);
@@ -90,9 +143,12 @@ class FrontController extends Controller
       if(\Auth::user()->id_gruppo > 0 && $request->_au == 2)
         $query->id_gruppo = \Auth::user()->id_gruppo;
       $query->autore = \Auth::user()->id;
-      $query->letto = '0';
-      $query->piaciuto = '0';
-      $query->pubblicato = '1';
+      if($request->save)
+        $query->status = '0';
+      elseif($query->type == '1')
+        $query->status = '2'; // pubblicato
+      elseif($query->type == '2')
+        $query->status = '1'; // in sospeso
       $query->save();
       $query->slug = str_slug($query->id.'-'.$query->titolo,'-');
       $query->save();
@@ -102,6 +158,11 @@ class FrontController extends Controller
         $backup->article_id = $query->id;
         $backup->save();
       }
+      if($query->status){
+        $user = User::find(\Auth::user()->id);
+        $user->last_article = $query->created_at;
+        $user->save();
+      }
       return redirect('read/'.$query->slug);
     }
 
@@ -109,6 +170,7 @@ class FrontController extends Controller
     {
       $followers = array();
       $query = Articoli::where('slug',$slug)->first();
+      $tags = explode(',',$query->tags);
       $query2 = Editori::where('id',$query->id_gruppo)->first();
       if(\Auth::user() && !empty($query2)){
         if($query2->followers != null)
@@ -117,7 +179,7 @@ class FrontController extends Controller
       }
       $date = Carbon::parse($query->created_at)->formatLocalized('%A %d %B %Y');
       $time = Carbon::parse($query->created_at)->format('H:i');
-      return view('front.pages.read',compact('query','follow','date','time'));
+      return view('front.pages.read',compact('query','query2','follow','date','time','tags'));
     }
 
     public function getSettings()

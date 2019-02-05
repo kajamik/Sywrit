@@ -2,10 +2,6 @@
 
 <h2>Gestione utenti</h2>
 
-@php
-  $members = \DB::table('Utenti')->where('id_gruppo',$query->id)->get();
-@endphp
-
 <style>
 .dropdown-menu {
   width: calc(100% - 30px);
@@ -15,7 +11,7 @@
 }
 </style>
 
-@foreach($query->getMembers() as $value)
+@foreach(explode(',',$query->componenti) as $value)
   @php
     $user = \App\Models\User::where('id',$value)->first();
   @endphp
@@ -36,10 +32,10 @@
   </form>
 </div>
 @endforeach
-<div class="_mem">
+{{--<div class="_mem">
   <div class="col-md-12">
     <a href="#">
       <button class="form-control">Assumi collaboratore <i class="fa fa-plus"></i></button>
     </a>
-  </div>
+  </div>--}}
 </div>

@@ -3,6 +3,11 @@
 @section('title', $query->nome.' '.$query->cognome.' -')
 
 @section('main')
+<style>
+._ou {
+  cursor: pointer;
+}
+</style>
 <div class="container">
   <div class="publisher-home">
     <section class="publisher-header" style="background-image: url({{asset($query->getBackground())}})">
@@ -18,22 +23,35 @@
         @if($query->id_gruppo == 0)
           <p>Editore individuale</p>
         @else
-          <p>Editore presso <a href="{{ url('group/'.$group->slug) }}">{{$group->nome}}</a></p>
+          <p>Lavora presso <a href="{{ url($group->slug) }}">{{$group->nome}}</a></p>
         @endif
         @if(\Auth::user() && \Auth::user()->id != $query->id)
         <div class="publisher-info">
-          <button class="btn btn-primary"><i class="fas fa-envelope"></i> <span>Invia messaggio</span></button>
-          @if(!$follow)
-            <button id="follow" class="btn btn-primary"><i class="fas fa-bell"></i> <span>Segui</span></button>
-          @else
-            <button id="follow" class="btn btn-primary"><i class="fas fa-bell-slash"></i> <span>Smetti di seguire</span></button>
+          @if(\Auth::user()->isDirector() && !$query->haveGroup())
+          <div class="_ou" id="addC">
+            <a href="#" onclick="link(this.parentNode, '{{route('group/action/invite')}}')">
+              <i class="fas fa-envelope"></i> <span>Assumi come collaboratore</span>
+            </a>
+          </div>
           @endif
+          <div id="follow" class="_ou">
+            @if(!$follow)
+              <i class="fas fa-bell"></i> <span>Segui</span>
+            @else
+              <i class="fas fa-bell-slash"></i> <span>Smetti di seguire</span>
+            @endif
+          </div>
         </div>
         @endif
         <div class="publisher-bar" data-pub-text="#followers">
             <i class="fa fa-newspaper" title="{{$count}} Articoli"></i> <span>{{$count}}</span>
             <i class="fab fa-angellist" title="{{$query->followers_count}} Followers"></i> <span id="followers">{{$query->followers_count}}</span>
         </div>
+        @if(\Auth::user() && \Auth::user()->id == $query->id)
+        <ul>
+          <li><a href="{{url($query->slug.'/archive')}}">Articoli Salvati</a></li>
+        </ul>
+        @endif
         @if(!empty($query->biography))
         <div class="py-4">
           <h4>Biografia</h4>
@@ -51,15 +69,11 @@
                   if(!$n)
                     $original_image = \App\Models\BackupArticlesImages::where('article_id',$articolo->id)->first();
                 @endphp
-                <div class="@if($n > 0) col-lg-4 @endif col-sm-8 col-xs-12">
+                <div class="@if($n > 0) col-lg-4 @else col-lg-8 @endif col-sm-8 col-xs-12">
                   <a href="{{ url('read/'. $articolo->slug) }}">
                     <div class="card" title="{{$n}}">
                       @if($articolo->copertina)
-                        @if(!$n)
-                          <img class="card-img-top" src="{{asset('storage/articles/'.$original_image->img_title)}}" alt="Copertina">
-                        @else
-                          <img class="card-img-top" src="{{asset('storage/articles/'.$articolo->copertina)}}" alt="Copertina">
-                        @endif
+                        <img class="card-img-top" src="{{asset('storage/articles/'.$articolo->copertina)}}" alt="Copertina">
                       @endif
                       <div class="card-body">
                         <h4 class="card-title">{{ $articolo->titolo }}</h4>
@@ -79,7 +93,27 @@
   </div>
 </section>
   <script>
-    //App.loadData('#articles','?page=');
+  function link(e, route){
+    var el = setNode(e, {
+      html: {
+        "id": "__form__",
+        "action": route,
+        "method": "POST"
+      }
+    }, "form");
+
+    setNode(el.html, {
+      html: {
+        "id": "_rq",
+        "name": "_rq_token",
+        "value": "{{$query->id}}"
+      }
+    }, "input");
+
+    $("<div/>").html('{{ csrf_field() }}').appendTo($("#"+el.html.id));
+
+    $("#"+el.html.id).submit();
+  }
     App.follow('#follow',
     {
       url:'{{url("follow")}}',

@@ -7,7 +7,7 @@ html, body {
 }
 
 body {
-  background: #e9ebee;
+  background: #fff;
 }
 
 a, a:hover {
@@ -195,6 +195,31 @@ ul {
 
 .wrap .container {
   color: #000;
+}
+
+.fixed-alert {
+  position: fixed;
+  z-index: 9999;
+  animation-name: anim-hide;
+  animation-duration: 6s;
+}
+
+.alert-toggle {
+  animation-name: anim-hide;
+  animation-duration: 4s;
+}
+.container-alert__small {
+  position: relative;
+
+}
+
+.alert {
+  width: 100%;
+}
+
+@keyframes anim-hide {
+  from { opacity: 1; }
+  to { opacity: 0; visibility: hidden;}
 }
 
 .top-background {
@@ -387,6 +412,7 @@ ul {
   height: 160px;
   margin-top: 215px;
   margin-left: 15px;
+  background-color: #fff;
   border: 6px solid #fff;
   border-radius: 23px;
 }
@@ -434,6 +460,19 @@ article h1, article p, article span {
   padding: 15px;
 }
 
+.block-article {
+  padding: 20px;
+}
+
+.block-meta {
+  margin: 0;
+  padding: 0;
+}
+
+.meta-tags li {
+  display: inline-block;
+}
+
 .block-footer {
   padding: 12px;
 }
@@ -451,8 +490,7 @@ article h1, article p, article span {
 }
 
 .preview_body img {
-  width: 160px;
-  height: 160px;
+  max-height: 160px;
   background-size: contain;
 }
 

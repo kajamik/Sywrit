@@ -8,31 +8,38 @@ class Editori extends Model
 {
     protected $table = 'Editori';
 
+    private $storage = 'storage/groups';
+
     public function articoli() {
         return $this->hasMany('App\Models\Articoli','id_gruppo','id');
     }
 
     public function getBackground() {
-      if($this->copertina){
-        return 'storage/publishers/background/'.$this->copertina;
+      $file = $this->storage.'/'.$this->background;
+
+      if($this->background && file_exists($file)){
+        return $file;
       }else{
         return 'upload/no-copertina.png';
       }
     }
 
     public function getLogo() {
-      if($this->logo){
-        return 'storage/publishers/background/'.$this->logo;
+      $file = $this->storage.'/'.$this->logo;
+
+      if($this->logo && file_exists($file)){
+        return $file;
       }else{
         return 'upload/default.png';
       }
     }
 
     public function hasMember() {
-      $exp = explode(',',$this->componenti);
-      if(in_array(\Auth::user()->id,$exp))
-          return true;
+      $collection = collect(explode(',',$this->componenti));
+      return $collection->some(\Auth::user()->id);
+    }
 
-      return false;
+    public function getMembers() {
+      return collect($this->componenti);
     }
 }

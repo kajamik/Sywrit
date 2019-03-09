@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class BackupArticlesImages extends Model
 {
-    protected $table = 'Backup_articles_images';
+    protected $table = 'backup_articles_images';
 
 
 }

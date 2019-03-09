@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Articoli extends Model
 {
-    protected $table = 'Articoli';
+    protected $table = 'articoli';
 
     private $storage = 'storage/articles';
 
@@ -16,15 +16,16 @@ class Articoli extends Model
       if($this->copertina && file_exists($file)){
         return $file;
       }else{
-        return 'upload/no-image.png';
+        return 'upload/no-image.jpg';
       }
     }
 
-    public function editoria() {
+    public function getRedazione() {
       return $this->belongsTo('App\Models\Editori','id_gruppo','id');
     }
 
-    public function autore() {
+    public function getAutore() {
       return $this->belongsTo('App\Models\User','autore','id');
     }
+
 }

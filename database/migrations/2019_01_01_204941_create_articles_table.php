@@ -17,11 +17,16 @@ class CreateArticlesTable extends Migration
             $table->increments('id');
             $table->string('titolo');
             $table->string('tags')->nullable();
+            $table->string('slug');
             $table->text('testo');
             $table->string('copertina');
             $table->integer('id_gruppo')->nullable(); // id editoria
             $table->integer('autore'); // id autore
-            $table->enum('pubblicato',['0','1']); // no e si
+            $table->integer('count_view');
+            $table->text('likes')->nullable();
+            $table->integer('likes_count');
+            $table->enum('status',['0','1']); // no e si
+            $table->timestamp('published_at');
             $table->timestamps();
         });
     }

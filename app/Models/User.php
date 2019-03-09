@@ -8,7 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
-    protected $table = 'Utenti';
+    protected $table = 'utenti';
 
     use Notifiable;
 
@@ -20,7 +20,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'nome', 'username', 'email', 'password', 'slug',
+        'id', 'nome', 'cognome', 'email', 'password', 'slug',
     ];
 
     /**
@@ -32,8 +32,8 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
-    public function isAdmin() {
-      return ($this->permission == 4);
+    public function isOperator() {
+      return ($this->permission > 1);
     }
 
     public function getRole() {
@@ -72,10 +72,10 @@ class User extends Authenticatable
     }
 
     public function getPublisherInfo() {
-        $query = \DB::table('editori')
-                ->where('id',$this->id_gruppo)
-                ->first();
-      return $query;
+      if($this->haveGroup()){
+        $query = \DB::table('editori')->where('id',$this->id_gruppo)->first();
+        return $query;
+      }
     }
 
     /*public function UnlinkOldImage($file) {
@@ -83,4 +83,5 @@ class User extends Authenticatable
         File::delete($this->storage.'/'.$file);
       }
     }*/
+
 }

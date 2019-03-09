@@ -18,6 +18,7 @@ class CreateInviteMessage extends Migration
             $table->integer('sender_id');
             $table->integer('target_id');
             $table->text('text');
+            $table->enum('marked', ['0','1']);
             $table->timestamps();
         });
     }

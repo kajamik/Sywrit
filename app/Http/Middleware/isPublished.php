@@ -17,15 +17,10 @@ class isPublished
      */
     public function handle($request, Closure $next)
     {
-      $query = Articoli::where('id',$request->slug)->first();
-      if (!$query->status && Auth::user()){
-        if((!$query->id_gruppo && Auth::user()->id == $query->autore) ||
-          ($query->id_gruppo && Auth::user()->id_gruppo == $query->id_gruppo))
+      $query = Articoli::where('slug',$request->slug)->first();
+        if($query->status || ( Auth::user() && (Auth::user()->id == Auth::user()->autore || Auth::user()->id_gruppo == $query->id_gruppo))){
           return $next($request);
-      }
-      elseif($query->status)
-          return $next($request);
-
-      return abort(404);
+        }
+        return abort(404);
     }
 }

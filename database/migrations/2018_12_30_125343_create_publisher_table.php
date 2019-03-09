@@ -19,8 +19,9 @@ class CreatePublisherTable extends Migration
             $table->text('componenti');
             $table->string('slug');
             $table->string('logo')->nullable();
-            $table->string('copertina')->nullable();
+            $table->string('background')->nullable();
             $table->text('followers')->nullable();
+            $table->integer('followers_count');
             $table->integer('direttore')->unique();
             $table->integer('avvisi');
             $table->integer('accesso');

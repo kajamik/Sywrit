@@ -12,6 +12,7 @@ use App\Models\BackupAccountsImages;
 use App\Models\BackupGroupsImages;
 use App\Models\InviteMessage;
 
+use Carbon\Carbon;
 use Storage;
 use Image;
 use File;
@@ -67,6 +68,12 @@ class FilterController extends Controller
       }
       $query->avatar = $fileName;
     }
+    // Socials
+      //$query->biography = $bio;
+      $query->facebook = $request->facebook;
+      $query->instagram = $request->instagram;
+      $query->linkedin = $request->linkedin;
+
     $query->save();
     return redirect('settings');
   }
@@ -110,15 +117,16 @@ class FilterController extends Controller
 
   public function inviteGroup(Request $request)
   {
-    $query = User::find($request->_rq_token);
+    $query = User::find($request->id);
     if(Auth::user()->isDirector() && !$query->haveGroup()){
       $message = new InviteMessage();
       $message->sender_id = Auth::user()->id;
       $message->target_id = $query->id;
-      $message->text = 'Sei stato invitato a collaborare con la redazione :name';
+      $message->text = $request->text;
       $message->save();
+      $query->notifications_count++;
+      $query->save();
     }
-    return redirect($query->slug)->with(['type' => 'container_right__small', 'message' => 'Hai inviato la richiesta di collaborazione']);
   }
 
   public function leaveGroup(Request $request)
@@ -144,16 +152,62 @@ class FilterController extends Controller
       return redirect($slug);
     }
 
-    public function deleteGroup()
+    public function deleteGroup(Request $request)
     {
       $query = Editori::find(Auth::user()->id_gruppo);
       if($query->direttore == Auth::user()->id){
-          if(!$query->accesso)
-            $query->accesso = '1';
-          else
+          if(!$query->accesso){
+            if(!$request->button){
+              $query->delete();
+            }else{
+              $query->accesso = '1';
+            }
+          }else{
             $query->accesso = '0';
+          }
           $query->save();
       }
+      return redirect($query->slug.'/settings/edit');
+    }
+
+    public function ArticleReport(Request $request)
+    {
+      $query = new \App\Models\ActivitiesReports();
+      $query->user_id = Auth::user()->id;
+      $query->article_id = $request->id;
+      $query->report = $request->selector;
+      $query->report_text = $request->text;
+      $query->report_token = Str::random(64);
+      $query->save();
+    }
+
+    /** Publishers **/
+
+    public function postNewPublisher(Request $request)
+    {
+      if(Auth::user()->haveGroup())
+        abort(404);
+
+      $this->validate($request, [
+        'publisher_name' => 'required|string|min:4|max:16',
+      ], [
+        'publisher_name.required' => 'Nome editoria richiesto',
+        'publisher_name.string' => 'Il nome editoria dev\'essere una stringa'
+      ]);
+      $query = new Editori();
+      $query->nome = $request->publisher_name;
+      $query->componenti = Auth::user()->id;
+      $query->direttore = Auth::user()->id;
+      $query->followers_count = '0';
+      //$query->biography = $request->publisher_bio;
+      $query->avvisi = '0';
+      $query->accesso = '1';
+      $query->save();
+      $query->slug = Str::slug($query->nome,'-');
+      $query->save();
+      $user = User::find(Auth::user()->id);
+      $user->id_gruppo = $query->id;
+      $user->save();
       return redirect($query->slug);
     }
 
@@ -199,10 +253,6 @@ class FilterController extends Controller
         //Storage::disk('groups')->put($normal_image, $image);
         $query->logo = $resize;
       }
-      if($request->_tp_sel == 1)
-        $query->type = '0';
-      elseif($request->_tp_sel == 2)
-        $query->type = '1';
       $query->save();
 
       /*if($a){
@@ -215,46 +265,71 @@ class FilterController extends Controller
       return redirect()->back();
     }
 
+    public function promoteUser(Request $request)
+    {
+      $user = User::where('id',$request->id)->first();
+      $query = Editori::where('id',Auth::user()->id)->first();
+
+      $query->direttore = $user->id;
+      $query->save();
+    }
+
+    public function firedUser(Request $request)
+    {
+      $user = User::where('id',$request->id)->first();
+      $query = Editori::where('id',Auth::user()->id_gruppo)->first();
+
+      $collection = collect(explode(',',$query->componenti));
+      $collection->splice($collection->search($user->id),1);
+      $query->componenti = $collection->implode(',');
+      $query->save();
+      $user->id_gruppo = null;
+      $user->save();
+    }
+
+    /**************************************/
+
     // Articoli
     public function ArticlePublish(Request $request)
     {
       $query = Articoli::find($request->_rq_token);
-      if(\Auth::user()->id_gruppo > 0 && $query->id_gruppo == \Auth::user()->id_gruppo){
-        $editor = Editori::find(\Auth::user()->id_gruppo);
-        if($editor->direttore != \Auth::user()->id && $editor->type) // Revisione necessaria
-          $query->status = '1'; // Rev
-        else
-          $query->status = '2'; // Non Rev
-
+      if(Auth::user()->id_gruppo > 0 && $query->id_gruppo == Auth::user()->id_gruppo){
+        $query->status = '1';
+        $query->published_at = Carbon::now();
         $query->save();
       }
       return redirect('read/'.$query->slug);
     }
 
-    public function ArticleSuspended(Request $request)
+    public function postArticleEdit($id, Request $request)
     {
-      $query = Articoli::find($request->_rq_token);
-      if((\Auth::user()->id_gruppo > 0 && $query->id_gruppo == \Auth::user()->id_gruppo) || ($query->autore == \Auth::user()->id)){
-
+      $this->validate($request, [
+        'document__text' => 'required|min:50',
+      ],[
+        'document__text.required' => 'Non è consentito pubblicare un articolo senza contenuto',
+        'document__text.min' => 'Contenuto troppo breve',
+      ]);
+      $query = Articoli::find($id);
+      if((\Auth::user()->id_gruppo > 0 && $query->id_gruppo == \Auth::user()->id_gruppo) || (\Auth::user()->id == $query->autore)){
+        $query->testo = $request->document__text;
+        if($a = $request->image){
+          $resize = '__492x340'.Str::random(64).'.jpg';
+          $normal_image = '__'.Str::random(64).'.jpg';
+          $image = Image::make($a)->crop($request->width[0],$request->height[0],$request->x[0],$request->y[0])->resize(492, 340)->encode('jpg');
+          Storage::disk('articles')->put($resize, $image);
+          $image = Image::make($a)->encode('jpg');
+          Storage::disk('articles')->put($normal_image, $image);
+          $query->copertina = $resize;
+        }
+        $query->save();
       }
       return redirect('read/'.$query->slug);
-    }
-
-    public function ArticleEdit(Request $request)
-    {
-      $query = Articoli::find($request->_rq_token);
-      if((\Auth::user()->id_gruppo > 0 && $query->id_gruppo == \Auth::user()->id_gruppo) || (\Auth::user()->id == $query->autore)){
-        $editore = Editori::find(\Auth::user()->id);
-        return view('front.pages.edit_post',compact('query','editori'));
-      }else{
-        return redirect('read/'.$query->slug);
-      }
     }
 
     public function ArticleDelete(Request $request)
     {
       $query = Articoli::find($request->_rq_token);
-      if((\Auth::user()->id_gruppo > 0 && $query->id_gruppo == \Auth::user()->id_gruppo) || (\Auth::user()->id == $query->autore)){
+      if((Auth::user()->id_gruppo > 0 && $query->id_gruppo == \Auth::user()->id_gruppo) || (\Auth::user()->id == $query->autore)){
         $query->delete();
       }
       return redirect('/');

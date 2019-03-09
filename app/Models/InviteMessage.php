@@ -6,7 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class InviteMessage extends Model
 {
-  protected $table = 'Invite_message';
+  protected $table = 'invite_message';
 
-  
+  public function getEditorName()
+  {
+    return $this->belongsTo('App\Models\Editori','sender_id','id');
+  }
+
 }

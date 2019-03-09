@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Editori extends Model
 {
-    protected $table = 'Editori';
+    protected $table = 'editori';
 
     private $storage = 'storage/groups';
 

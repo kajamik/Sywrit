@@ -1,0 +1,30 @@
+.navbar {
+  background-color: #A22932;
+}
+#header .nav * {
+  color: #fff;
+}
+
+.table_users {
+  margin-top: 40px;
+  width: auto;
+  border: 1px solid #000;
+  font-size: 25px;
+  overflow-x:scroll;
+}
+
+.table_users table {
+  width: 100%;
+}
+
+.table_users th, .table_users td {
+  padding: 12px;
+}
+
+.table_users th {
+  border-bottom: 1px solid #000;
+}
+
+#header .nav.open {
+  background-color: #A22932;
+}

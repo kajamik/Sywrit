@@ -47,16 +47,24 @@
   <form method="post" action="{{ route('group/action/delete') }}">
     @csrf
     @if($query->accesso)
-    <p class="text-center">Una volta disabilitata la pagina, questa verrà eliminata dopo 4 giorni di inattività</p>
+    <p class="text-center">Una volta disabilitata la pagina, questa non sarà più visibile al pubblico</p>
     <div class="form-group row">
       <div class="col-md-6 offset-md-5">
-        <button class="btn btn-danger">Disabilita pagina</button>
+        <button class="btn btn-danger" name="button" value="1">Disabilita pagina</button>
       </div>
     </div>
     @else
     <div class="form-group row">
       <div class="col-md-6 offset-md-5">
-        <button class="btn btn-info">Riattiva pagina</button>
+        <button class="btn btn-info" name="button" value="1">Riattiva pagina</button>
+      </div>
+    </div>
+    <div class="alert alert-info">
+      <p>Qualora decidessi di eliminare la pagina, tutti gli arcoli ad essa collegati verranno eliminati.</p>
+    </div>
+    <div class="form-group row">
+      <div class="col-md-6 offset-md-4">
+        <button class="btn btn-danger" name="button" value="0">Elimina definitivamente la pagina</button>
       </div>
     </div>
     @endif

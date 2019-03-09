@@ -54,6 +54,40 @@
             <input id="file-upload2" type="file" onchange="App.upload(this.parentNode)" name="avatar">
           </div>
         </div>
+
+        {{--<div class="form-group row">
+          <label for="bio" class="col-md-4 col-form-label text-md-right">Descrizione</label>
+
+          <div class="col-md-6">
+            <textarea id="bio" class="form-control" name="bio">{{ Auth::user()->bio }}</textarea>
+          </div>
+        </div>--}}
+        <hr/>
+
+        <div class="form-group row">
+          <label for="facebook" class="col-md-4 col-form-label text-md-right">Facebook</label>
+
+          <div class="col-md-6">
+            <input id="facebook" type="text" class="form-control" name="facebook" value="{{ Auth::user()->facebook }}"placeholder="profilo facebook">
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="instagram" class="col-md-4 col-form-label text-md-right">Instagram</label>
+
+          <div class="col-md-6">
+            <input id="instagram" type="text" class="form-control" name="instagram" value="{{ Auth::user()->instagram }}" placeholder="profilo instagram">
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="linkedin" class="col-md-4 col-form-label text-md-right">Linkedin</label>
+
+          <div class="col-md-6">
+            <input id="linkedin" type="text" class="form-control" name="linkedin" value="{{ Auth::user()->linkedin }}" placeholder="profilo linkedin">
+          </div>
+        </div>
+
         <div class="form-group row">
           <div class="col-md-6 offset-md-4">
             <button type="submit" class="btn btn-info btn-block">

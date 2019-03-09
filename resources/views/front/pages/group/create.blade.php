@@ -1,60 +1,47 @@
 @extends('front.layout.app')
 
+@section('title', 'Nuova editoria -')
+
 @section('main')
 <div class="container">
-  <h1>{{ config('app.name')}}: Scegli una delle due opzioni</h1>
-  <div class="block-box">
-    <div class="block-title">
-      <h1>Gruppo</h1>
-      <p>Ti piace condividere le tue idee con i tuoi amici?</p>
-    </div>
-    <div class="block-body">
-      <div id="benefits">
-        <h3>Puoi</h3>
-        <p>Creare la tua community</p>
-        <p>Gestire la tua editoria</p>
-        <p>Assumere collaboratori</p>
-        <hr/>
-        <h3>Caratteristiche</h3>
-        <p>6 utenti</p>
-        <p>Supporto (E-mail,Ticket)</p>
-      </div>
-      <div id="price">
-        <p>Prezzo:</p>
-        <h3>Gratuito</h3>
-      </div>
-    </div>
-    <div class="block-footer">
-      <a href="{{ url('start/offer/?link_id=1') }}" class="btn btn-primary">
-        Seleziona
-      </a>
-    </div>
-  </div>
-  <div class="block-box">
-    <div class="block-title">
-      <h1>Individuale</h1>
-      <p>Sei uno scrittore o un blogger? Oppure vuoi semplicemente pubblicare le tue idee?</p>
-    </div>
-    <div class="block-body">
-      <div id="benefits">
-        <h3>Puoi</h3>
-        <p>Creare la tua community</p>
-        <p class="disabled">Gestire la tua editoria</p>
-        <p class="disabled">Assumere collaboratori</p>
-        <hr/>
-        <h3>Caratteristiche</h3>
-        <p>1 utente</p>
-        <p>Supporto (E-mail,Ticket)</p>
-      </div>
-      <div id="price">
-        <p>Prezzo:</p>
-        <h3>Gratuito</h3>
-      </div>
-    </div>
-    <div class="block-footer">
-      <a href="{{ url('start/offer/?link_id=2') }}" class="btn btn-primary">
-        Seleziona
-      </a>
+  <div class="publisher-home">
+    <div class="publisher-body">
+      <form action="" method="POST">
+        @csrf
+
+        <div class="form-group row">
+          <label for="name" class="col-md-4 col-form-label text-md-right required" required>Nome Editoria</label>
+
+          <div class="col-md-6">
+            <input type="text" class="form-control" name="publisher_name">
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="name" class="col-md-4 col-form-label text-md-right">Descrizione</label>
+
+          <div class="col-md-6">
+            <input type="text" class="form-control" name="publisher_bio">
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="_tp" class="col-md-4 col-form-label text-md-right">Tipo restrizione</label>
+          <div class="col-md-6">
+            <select id="_tp" class="form-control" name="_tp_sel">
+              <option value="1">Pubblicazione senza revisione</option>
+              <option value="2">Pubblicazione con revisione</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <div class="col-md-6 offset-md-6">
+            <button type="submit" class="btn btn-info">Registra editoria</button>
+          </div>
+        </div>
+
+      </form>
     </div>
   </div>
 </div>

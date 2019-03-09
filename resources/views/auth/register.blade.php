@@ -1,9 +1,9 @@
 @extends('front.layout.app')
 
 @section('main')
-<style type="text/css">
+<!--<style type="text/css">
 body {background-image: url({{asset('upload/hero2.png')}});}
-</style>
+</style>-->
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
@@ -32,25 +32,11 @@ body {background-image: url({{asset('upload/hero2.png')}});}
                             <label for="surname" class="col-md-4 col-form-label text-md-right">{{ __('Cognome') }}</label>
 
                             <div class="col-md-6">
-                                <input id="surname" type="text" class="form-control{{ $errors->has('surname') ? ' is-invalid' : '' }}" name="name" value="{{ old('surname') }}" required>
+                                <input id="surname" type="text" class="form-control{{ $errors->has('surname') ? ' is-invalid' : '' }}" name="surname" value="{{ old('surname') }}" required>
 
                                 @if ($errors->has('surname'))
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $errors->first('surname') }}</strong>
-                                    </span>
-                                @endif
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label for="username" class="col-md-4 col-form-label text-md-right">{{ __('Nome utente') }}</label>
-
-                            <div class="col-md-6">
-                                <input id="username" type="text" class="form-control{{ $errors->has('username') ? ' is-invalid' : '' }}" name="username" value="{{ old('username') }}" required autofocus>
-
-                                @if ($errors->has('username'))
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $errors->first('username') }}</strong>
                                     </span>
                                 @endif
                             </div>
@@ -92,10 +78,16 @@ body {background-image: url({{asset('upload/hero2.png')}});}
                             </div>
                         </div>
 
+                        <div class="form-group">
+                          <div class="col-md-6 offset-md-4">
+                            <label>Cliccando su "Iscriviti" accetti le nostre Condizioni e la nostra normativa sulla privacy.</label>
+                          </div>
+                        </div>
+
                         <div class="form-group row mb-0">
                             <div class="col-md-6 offset-md-4">
                                 <button type="submit" class="btn btn-primary">
-                                    {{ __('Registrati') }}
+                                    {{ __('Iscriviti') }}
                                 </button>
                             </div>
                         </div>

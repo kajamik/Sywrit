@@ -6,6 +6,13 @@
   $autore = \App\Models\User::find($query->autore);
   if($query->id_gruppo > 0)
     $editore = \App\Models\Editori::find($query->id_gruppo);
+
+  $collection = collect(explode(',',$autore->followers));
+  if(Auth::user() && $collection->some(\Auth::user()->id)){
+    $follow = true;
+  }else{
+    $follow = false;
+  }
 @endphp
 
 @section('main')
@@ -25,12 +32,21 @@ span.time {
 .block-body {
   padding: 12px;
 }
-.block-body p {
-
-}
 .block-footer > .feeds {
   margin-top: 15px;
   font-size: 33px;
+}
+.btn-custom {
+  background-color: #fff;
+  border: 1px solid #000;
+  border-radius: 3px;
+}
+.btn-custom:active {
+  outline: none;
+}
+._button_active_ {
+  background-color: #A22932;
+  color: #fff;
 }
 </style>
 <div class="container">
@@ -55,24 +71,44 @@ span.time {
     </section>
     @endif
     <section class="publisher-body">
-      @if(!$query->status)
+      @if($options)
+
         @if($query->id_gruppo > 0)
+
           @include('front.components.article.group_tools')
-          @if(!$query->status)
-            Articolo non pubblicato
-          @elseif($query->status == 1)
-            Articolo in attesa di revisione
-          @endif
+
         @else
           @include('front.components.article.my_tools')
         @endif
+
+        @if(!$query->status)
+          Articolo non pubblicato
+        @endif
+
       @endif
       <article class="block-article">
         <div class="block-title">
           <h1>{{ $query->titolo }}</h1>
         </div>
         <div>
-          Scritto da <a href="{{url($autore->slug)}}">{{ $autore->nome }} {{ $autore->cognome }}</a>
+          Scritto da <a href="{{ url($autore->slug) }}">{{ $autore->nome }} {{ $autore->cognome }}</a>
+          @if(Auth::user() && $query->autore != \Auth::user()->id)
+          <button id="follow" class="btn-custom">
+            <i id="follow_icon" class="@if($follow) fas @else far @endif fa-bell"></i> <span>{{ $autore->followers_count }} seguaci</span>
+          </button>
+          <script>
+          document.getElementById("follow").onclick = function(){
+            App.query('GET','{{ route("follow") }}', {id: '{{ $query->id }}',_token: '{{ csrf_token() }}'}, false, function(data){
+              if(data.result){
+                $("#follow_icon").attr("class","fa fa-bell");
+              }else{
+                $("#follow_icon").attr("class","far fa-bell");
+              }
+              $("#follow span").text(data.counter+" Seguaci");
+            });
+          }
+          </script>
+          @endif
           <div class="date-info">
             <span class="date"><i class="far fa-calendar-alt"></i> {{ $date }}</span>
             <span class="time"><i class="far fa-clock"></i> {{ $time }}</span><br/>
@@ -80,7 +116,7 @@ span.time {
         </div>
         <hr/>
         <div class="block-body">
-          <img src="{{asset($query->getBackground())}}" style="max-height:230px;" alt="copertina">
+          {{--<img src="{{ asset($query->getBackground()) }}" style="max-height:230px;" alt="copertina"> --}}
           <p>
             {!! $query->testo !!}
           </p>
@@ -90,7 +126,7 @@ span.time {
           <ul class="meta-tags">
             <i class="fa fa-tags"></i>
             @foreach($tags as $tag)
-              <li>#{{$tag}}</li>
+              <li><a href="{{ url('search/tag/'.$tag) }}">#{{$tag}}</a></li>
             @endforeach
           </ul>
         </div>
@@ -98,34 +134,88 @@ span.time {
       <hr/>
       <div class="block-footer">
         <div class="socials">
-          <p>{{$query->likes}} <i class="fa fa-thumbs-up"></i> Mi piace</p>
-          <p>{{$query->views_count}} <i class="far fa-eye"></i> Visualizzazioni</p>
-          <p><i class="fa fa-share-alt"></i> Condividi</p>
-          <p><i class="far fa-flag"></i> Segnala</p>
+          <button id="like" class="btn-custom @if($like) _button_active_ @endif">
+            {{ $query->likes_count }} Mi piace
+          </button>
+          <p><a id="share" href="#share">Condividi</a></p>
+          @auth<p><a id="report" href="#report">Segnala</a></p>@endauth
         </div>
-        @if(!empty($query2) && \Auth::user())
-        <h5>Seguici per tenerti aggiornato sulle ultime notizie</h5>
-        <button id="follow" class="btn btn-info">
-          @if(!$follow)
-          <i class="fas fa-bell"></i> <span>Segui</span>
-          @else
-          <i class="fas fa-bell-slash"></i> <span>Smetti di seguire</span>
-          @endif
-        </button>
-        @endif
         <div class="feeds">
-          articoli simili
+          <!-- Da fare -->
         </div>
-      </div>
     </article>
   </section>
   @auth
-  @if(!empty($query2))
   <script>
-    App.follow('#follow',{url:'{{url("follow")}}',data:{'id': {{ $editore->id }}, 'mode': 'g'}},false);
+    document.getElementById("like").onclick = function(){
+      App.query('GET','{{ url("like") }}', {id: '{{ $query->id }}'}, false, function(data){
+        if($("#like").hasClass("_button_active_")){
+          $("#like").removeClass("_button_active_");
+        }else{
+          $("#like").addClass("_button_active_");
+        }
+          $("#like").text(data.counter+" Mi piace");
+      });
+    }
+    document.getElementById("report").onclick = function(){
+      App.getUserInterface({
+      "ui": {
+        "header":{"action": "{{route('article/action/report')}}", "method": "POST"},
+        "data":{"id": "{{$query->id}}", "_token": "{{ csrf_token() }}", "selector": "#selOption:checked", "text": "#reasonText"},
+        "title": 'Segnala articolo',
+        "content": [
+          {"type": ["input","radio"], "id":"selOption", "name": "option", "value": "0", "class": "col-md-1", "label": "Contenuto di natura sessuale", "required": true},
+          {"type": ["input","radio"], "id":"selOption", "name": "option", "value": "1", "class": "col-md-1", "label": "Contenuti violenti o che incitano all\'odio", "required": true},
+          {"type": ["input","radio"], "id":"selOption", "name": "option", "value": "2", "class": "col-md-1", "label": "Promuove il terrorismo o attività criminali", "required": true},
+          {"type": ["input","radio"], "id":"selOption", "name": "option", "value": "3", "class": "col-md-1", "label": "Violazione del diritto d\'autore", "required": true},
+          {"type": ["textarea"], "id":"reasonText", "name": "reason", "value": "", "class": "form-control", "placeholder": "Motiva la segnalazione (opzionale)"},
+          {"type": ["button","submit"], "name": "radio", "class": "btn btn-danger", "text": "invia segnalazione"}
+        ],
+        "done": function(){
+          App.getUserInterface({
+            "ui": {
+              "title": "Segnalazione",
+              "content": [
+                {"type": ["h5"], "text": "Grazie per la segnalazione."}
+              ]
+            }
+          });
+        }
+
+      } // -- End Interface --
+    });
+  }
   </script>
-  @endif
+  @else
+  <script>
+  document.getElementById("like").onclick = function(){guest();};
+  function guest(){
+    App.getUserInterface({
+      "ui": {
+        "title": "Ops...",
+        "content": [
+          {"type": ["h5"], "text": "<a href='/login'>Accedi</a> o <a href='/register'>registrati</a> per eseguire questa azione"}
+        ]
+      }
+    });
+  }
+  </script>
   @endauth
+  <script>
+    document.getElementById("share").onclick = function(){
+      App.getUserInterface({
+      "ui": {
+        "title": "Condividi su",
+        "content": [
+          {"type": ["a"], "href": "https://www.facebook.com/share.php?u={{Request::url()}}", "text":"<i class='fab fa-facebook-square share-url'></i>"},
+          {"type": ["a"], "href": "https://twitter.com/intent/tweet?url={{Request::url()}}", "text": "<i class='fab fa-twitter-square share-url'></i>"},
+          {"type": ["a"], "href": "https://www.linkedin.com/sharing/share-offsite/?url={{Request::url()}}", "text": "<i class='fab fa-linkedin share-url'></i>"}
+        ],
+      }
+    });
+  }
+
+  </script>
   </div>
 </div>
 @endsection

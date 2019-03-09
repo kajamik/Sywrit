@@ -1,10 +1,13 @@
+@if($query->autore == \Auth::user()->id)
 <li>
   <a data-toggle="dropdown" href="#">
     <i class="fas fa-ellipsis-v"></i> Opzioni
   </a>
   <div class="dropdown-menu" id="nodes">
+    @if(!$query->status)
     <a id="pb" class="dropdown-item" href="#" onclick="link(this,'{{ route('article/action/publish') }}')">Pubblica articolo</a>
-    <a id="edt" class="dropdown-item" href="#" onclick="link(this,'{{ route('article/action/edit') }}')">Modifica articolo</a>
+    @endif
+    <a id="edt" class="dropdown-item" href="{{ url('post/'.$query->id.'/edit') }}">Modifica articolo</a>
     <a id="dlt" class="dropdown-item" href="#" onclick="link(this,'{{ route('article/action/delete') }}')">Elimina articolo</a>
   </div>
 </li>
@@ -32,3 +35,4 @@ function link(e, route){
   $("#"+el.html.id).submit();
 }
 </script>
+@endif

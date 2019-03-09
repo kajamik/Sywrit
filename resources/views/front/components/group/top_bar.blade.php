@@ -17,8 +17,8 @@
 </style>
 @auth
   @if(!$query->accesso)
-  <div class="alert">
-    <h3>Questa pagina è stata disabilita e tra x giorni verrà eliminata. Per riattivarla vai sulle impostazioni della pagina.</h3>
+  <div class="alert alert-info">
+    <h3>Questa pagina è stata disabilita. Per riattivarla vai sulle impostazioni della pagina.</h3>
   </div>
   @endif
   <div class="publisher-info">
@@ -46,8 +46,10 @@
   </div>
 @endauth
   <div class="publisher-bar" data-pub-text="#followers">
-    <i class="fa fa-newspaper" title="Articoli"></i> <span>{{$query->articoli->count()}}</span>
-    <i class="fab fa-angellist" title="Follower"></i> <span id="followers">{{$query->followers_count}}</span>
+    <div>
+      <span id="followers">{{$query->followers_count}}</span>
+      Seguaci
+    </div>
   </div>
   <ul id='nav'>
     <li><a href="{{url($query->slug)}}">Home</a></li>

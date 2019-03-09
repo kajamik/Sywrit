@@ -11,99 +11,6 @@
 @section('main')
 <style type="text/css">
 #header {z-index:999}
-.document {
-    max-height: 700px;
-    display: flex;
-    flex-flow: column nowrap;
-    border: .6px solid #bbb;
-}
-.document__toolbar {
-    box-shadow: 0 0 5px hsla( 0,0%,0%,.2 );
-    border-bottom: 1px solid var(--ck-color-toolbar-border);
-}
-.document__toolbar .ck-toolbar {
-    border: 0;
-    border-radius: 0;
-}
-.document__editable-container {
-    background: #e6e6e6;
-    overflow-y: scroll;
-    overflow-x: hidden;
-}
-.document__editable-container .ck-editor__main {
-    padding: .9cm .2cm .9cm .2cm;
-}
-.document__editable-container .ck-editor__editable {
-    width: 23cm;
-    max-width: 100%;
-    min-height: 21cm;
-    padding: 1cm 1cm 1cm;
-    border: 1px hsl( 0,0%,82.7% ) solid;
-    border-radius: var(--ck-border-radius);
-    background: white;
-    box-shadow: 0 0 5px hsla( 0,0%,0%,.1 );
-    margin: 0 auto;
-}
-//
-.document .ck-content,
-.document .ck-heading-dropdown .ck-list .ck-button__label {
-    font: 16px/1.6 "Helvetica Neue", Helvetica, Arial, sans-serif;
-}
-.document .ck-heading-dropdown .ck-list .ck-button__label {
-    line-height: calc( 1.7 * var(--ck-line-height-base) * var(--ck-font-size-base) );
-    min-width: 6em;
-}
-.document .ck-heading-dropdown .ck-list .ck-button:not(.ck-heading_paragraph) .ck-button__label {
-    transform: scale(0.8);
-    transform-origin: left;
-}
-.document .ck-content h2,
-.document .ck-heading-dropdown .ck-heading_heading1 .ck-button__label {
-    font-size: 2.18em;
-    font-weight: normal;
-}
-
-.document .ck-content h2 {
-    line-height: 1.37em;
-    padding-top: .342em;
-    margin-bottom: .142em;
-}
-//
-.document .ck-content h3,
-.document .ck-heading-dropdown .ck-heading_heading2 .ck-button__label {
-    font-size: 1.75em;
-    font-weight: normal;
-    color: hsl( 203, 100%, 50% );
-}
-.document .ck-heading-dropdown .ck-heading_heading2.ck-on .ck-button__label {
-    color: var(--ck-color-list-button-on-text);
-}
-.document .ck-content h3 {
-    line-height: 1.86em;
-    padding-top: .171em;
-    margin-bottom: .357em;
-}
-.document .ck-content h4,
-.document .ck-heading-dropdown .ck-heading_heading3 .ck-button__label {
-    font-size: 1.31em;
-    font-weight: bold;
-}
-.document .ck-content h4 {
-    line-height: 1.24em;
-    padding-top: .286em;
-    margin-bottom: .952em;
-}
-.document .ck-content p {
-    font-size: 1em;
-    line-height: 1.63em;
-    padding-top: .5em;
-    margin-bottom: 1.13em;
-}
-.document .ck-content blockquote {
-    font-family: Georgia, serif;
-    margin-left: calc( 2 * var(--ck-spacing-large) );
-    margin-right: calc( 2 * var(--ck-spacing-large) );
-}
 </style>
 <div class="container">
   <div class="publisher-home">
@@ -134,12 +41,7 @@
       <div class="mt-5">
         <div class="form-group row">
             <div class="col-md-12">
-                <input id="title" type="text" class="form-control{{ $errors->has('title') ? ' is-invalid' : '' }}" name="title" value="{!! $query->titolo !!}" required autofocus>
-                @if ($errors->has('title'))
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $errors->first('title') }}</strong>
-                    </span>
-                @endif
+                <input id="title" type="text" class="form-control{{ $errors->has('title') ? ' is-invalid' : '' }}" name="title" value="{!! $query->titolo !!}" disabled>
             </div>
         </div>
 

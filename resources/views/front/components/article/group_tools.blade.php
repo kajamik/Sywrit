@@ -3,12 +3,10 @@
     <i class="fas fa-ellipsis-v"></i> Opzioni
   </a>
   <div class="dropdown-menu" id="nodes">
-      @if($editore->type && $editore->direttore != \Auth::user()->id)
-      <a id="rv" class="dropdown-item" href="#" onclick="link(this,'{{ route('article/action/revision') }}')">Manda in revisione</a>
-      @else
-      <a id="pb" class="dropdown-item" href="#" onclick="link(this,'{{ route('article/action/publish') }}')">Pubblica articolo</a>
+    @if(!$query->status)
+    <a id="pb" class="dropdown-item" href="#" onclick="link(this,'{{ route('article/action/publish') }}')">Pubblica articolo</a>
     @endif
-    <a id="edt" class="dropdown-item" href="#" onclick="link(this,'{{ route('article/action/edit') }}')">Modifica articolo</a>
+    <a id="edt" class="dropdown-item" href="{{ url('post/'.$query->id.'/edit') }}">Modifica articolo</a>
     <a id="dlt" class="dropdown-item" href="#" onclick="link(this,'{{ route('article/action/delete') }}')">Elimina articolo</a>
   </div>
 </li>

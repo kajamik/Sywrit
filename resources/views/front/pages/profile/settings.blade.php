@@ -29,12 +29,6 @@
             <input type="text" class="form-control" name="surname" value="{{\Auth::user()->cognome}}">
           </div>
         </div>
-        <div class="form-group row">
-          <label for="birthdate" class="col-md-4 col-form-label text-md-right required">Data di nascita</label>
-          <div class="col-md-6">
-            <input id="birthdate" type="date" class="form-control" name="birthdate" value="{{\Auth::user()->birthdate}}">
-          </div>
-        </div>
         <hr/>
         <div class="form-group row">
           <label for="cover" class="col-md-4 col-form-label text-md-right">Immagine di copertina</label>

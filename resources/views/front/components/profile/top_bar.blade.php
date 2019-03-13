@@ -16,7 +16,6 @@
   display: inline-block;
 }
 </style>
-<div class="container">
   <div class="publisher-home">
     <section class="publisher-header" style="background-image: url({{asset($query->getBackground())}})">
       <div class="container">

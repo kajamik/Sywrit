@@ -17,9 +17,9 @@ class CreateArticlesTable extends Migration
             $table->increments('id');
             $table->string('titolo');
             $table->string('tags')->nullable();
-            $table->string('slug');
+            $table->string('slug')->nullable();
             $table->text('testo');
-            $table->string('copertina');
+            $table->string('copertina')->nullable();
             $table->integer('id_gruppo')->nullable(); // id editoria
             $table->integer('autore'); // id autore
             $table->integer('count_view');

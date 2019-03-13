@@ -32,9 +32,8 @@ span.time {
 .block-body {
   padding: 12px;
 }
-.block-footer > .feeds {
-  margin-top: 15px;
-  font-size: 33px;
+.feeds {
+  padding: 15px;
 }
 .btn-custom {
   background-color: #fff;
@@ -116,10 +115,7 @@ span.time {
         </div>
         <hr/>
         <div class="block-body">
-          {{--<img src="{{ asset($query->getBackground()) }}" style="max-height:230px;" alt="copertina"> --}}
-          <p>
-            {!! $query->testo !!}
-          </p>
+          {!! $query->testo !!}
         </div>
         @if(!empty($query->tags))
         <div class="block-meta">
@@ -131,7 +127,7 @@ span.time {
           </ul>
         </div>
         @endif
-      <hr/>
+      <hr style="border-style:dotted"/>
       <div class="block-footer">
         <div class="socials">
           <button id="like" class="btn-custom @if($like) _button_active_ @endif">
@@ -140,10 +136,42 @@ span.time {
           <p><a id="share" href="#share">Condividi</a></p>
           @auth<p><a id="report" href="#report">Segnala</a></p>@endauth
         </div>
-        <div class="feeds">
-          <!-- Da fare -->
-        </div>
+      </div>
     </article>
+    <hr/>
+    {{-- Se gli articolo esistono allora li visualizza --}}
+    @include('front.components.article.feeds')
+    <hr/>
+    {{--
+    <!-- per provare -->
+    <style>
+      .new-thread {
+        width: 100%;
+      }
+      .new-thread div {
+        display: inline-block;
+      }
+      .thread-user-img img {
+        max-height: 100px;
+        border-radius: 15px;
+      }
+      .thread-textarea textarea {
+        width: auto;
+      }
+    </style>
+    <!-- -->
+    <h3>Commenti (0)</h3>
+    <div class="d-flex">
+      <div class="new-thread">
+        <div class="thread-user-img">
+          <img src="{{ asset(Auth::user()->getAvatar()) }}" alt="Utente" />
+        </div>
+        <div class="thread-textarea">
+          <textarea placeholder="Scrivi un commento..."></textarea>
+        </div>
+      </div>
+    </div>
+    --}}
   </section>
   @auth
   <script>
@@ -194,7 +222,7 @@ span.time {
       "ui": {
         "title": "Ops...",
         "content": [
-          {"type": ["h5"], "text": "<a href='/login'>Accedi</a> o <a href='/register'>registrati</a> per eseguire questa azione"}
+          {"type": ["h5"], "text": "<a href='{{ url('login') }}'>Accedi</a> o <a href='{{ url('register') }}'>registrati</a> per eseguire questa azione"}
         ]
       }
     });
@@ -206,10 +234,13 @@ span.time {
       App.getUserInterface({
       "ui": {
         "title": "Condividi su",
+        "styles": {
+          "padding":"5px",
+        },
         "content": [
-          {"type": ["a"], "href": "https://www.facebook.com/share.php?u={{Request::url()}}", "text":"<i class='fab fa-facebook-square share-url'></i>"},
-          {"type": ["a"], "href": "https://twitter.com/intent/tweet?url={{Request::url()}}", "text": "<i class='fab fa-twitter-square share-url'></i>"},
-          {"type": ["a"], "href": "https://www.linkedin.com/sharing/share-offsite/?url={{Request::url()}}", "text": "<i class='fab fa-linkedin share-url'></i>"}
+          {"type": ["a"], "target": "_blank", "href": "https://www.facebook.com/share.php?u={{Request::url()}}", "text":"<span style='font-size:50px' class='fab fa-facebook-square share-url'></span>"},
+          {"type": ["a"], "target": "_blank", "href": "https://twitter.com/intent/tweet?url={{Request::url()}}", "text": "<span style='font-size:50px' class='fab fa-twitter-square share-url'></span>"},
+          {"type": ["a"], "target": "_blank", "href": "https://www.linkedin.com/sharing/share-offsite/?url={{Request::url()}}", "text": "<span style='font-size:50px' class='fab fa-linkedin share-url'></span>"}
         ],
       }
     });

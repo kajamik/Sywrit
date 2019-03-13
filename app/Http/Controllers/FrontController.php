@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\Articoli;
 use App\Models\Editori;
 use App\Models\BackupArticlesImages;
+use App\Models\Notifications;
 
 use Carbon\Carbon;
 
@@ -83,7 +84,7 @@ class FrontController extends Controller
 
     public function getPrivateArchive($slug)
     { // http://127,0.0.1:8000/{slug}/archive
-      if($slug == \Auth::user()->slug){
+      if($slug == Auth::user()->slug){
         $query = Articoli::whereNull('id_gruppo')->where('status','0')->get();
         return view('front.pages.profile.archive',compact('query'));
       }else{
@@ -174,16 +175,16 @@ class FrontController extends Controller
     {
       $this->validate($request,[
         'document__title' => 'required|min:5|max:30',
-        //'document__text' => 'required|min:50'
+        'document__text' => 'required'
       ],[
         'document__title.required' => 'Il titolo dell\'articolo è obbligatorio',
-        //'document__text.required' => 'Non è consentito pubblicare un articolo senza contenuto',
-        //'document__text.min' => 'Contenuto troppo breve'
+        'document__text.required' => 'Non è consentito pubblicare un articolo senza contenuto',
+        'document__text.min' => 'Contenuto troppo breve'
       ]);
       $query = new Articoli();
-      $query->titolo = $request->input('document__title');
+      $query->titolo = $request->document__title;
       $query->tags = '';
-      $query->testo = $request->input('document__text');
+      $query->testo = $request->document__text;
       if($a = $request->image){
         $resize = '__492x340'.Str::random(64).'.jpg';
         $normal_image = '__'.Str::random(64).'.jpg';
@@ -193,8 +194,9 @@ class FrontController extends Controller
         Storage::disk('articles')->put($normal_image, $image);
         $query->copertina = $resize;
       }
-      if(\Auth::user()->id_gruppo > 0 && $request->_au == 2)
-        $query->id_gruppo = \Auth::user()->id_gruppo;
+      if(\Auth::user()->id_gruppo > 0 && $request->_au == 2){
+        $query->id_gruppo = Auth::user()->id_gruppo;
+      }
       $query->autore = \Auth::user()->id;
       if($request->save){
         $query->status = '0';
@@ -209,6 +211,28 @@ class FrontController extends Controller
         $query->slug = str_slug($query->id.'-'.$query->titolo,'-');
         $query->save();
       //
+      // Notifications
+      if(!empty(Auth::user()->getPublisherInfo()->followers)) {
+        foreach(explode(',',Auth::user()->getPublisherInfo()->followers) as $value) {
+          if($value != Auth::user()->id) {
+            $notifiche = new \App\Models\Notifications();
+            if($query->id_gruppo != null){
+              $notifiche->sender_id = Auth::user()->getPublisherInfo()->id;
+              $notifiche->type = '3';
+            }else{
+              $notifiche->sender_id = Auth::user()->id;
+              $notifiche->type = '2';
+            }
+            $notifiche->target_id = $value;
+            $notifiche->content_id = $query->id;
+            $notifiche->marked = '0';
+            $notifiche->save();
+            $user = User::find($value);
+            $user->notifications_count++;
+            $user->save();
+          }
+        }
+      }
       /*if($a){
         $backup = new BackupArticlesImages();
         $backup->img_title = $normal_image;
@@ -246,7 +270,7 @@ class FrontController extends Controller
     public function getArticleEdit($id)
     {
       $query = Articoli::find($id);
-      if((\Auth::user()->id_gruppo > 0 && $query->id_gruppo == \Auth::user()->id_gruppo) || (\Auth::user()->id == $query->autore)){
+      if((Auth::user()->id_gruppo > 0 && $query->id_gruppo == Auth::user()->id_gruppo) || (Auth::user()->id == $query->autore)){
         return view('front.pages.edit_post',compact('query'));
       }else{
         return redirect('read/'.$query->slug);
@@ -257,7 +281,7 @@ class FrontController extends Controller
 
     public function getNotifications()
     {
-      $query = \App\Models\InviteMessage::where('target_id',Auth::user()->id)->get();
+      $query = Notifications::where('target_id',Auth::user()->id)->get();
       return view('front.pages.profile.notifications', compact('query'));
     }
 

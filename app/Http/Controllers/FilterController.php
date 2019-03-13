@@ -10,7 +10,7 @@ use App\Models\Articoli;
 use App\Models\Editori;
 use App\Models\BackupAccountsImages;
 use App\Models\BackupGroupsImages;
-use App\Models\InviteMessage;
+use App\Models\Notifications;
 
 use Carbon\Carbon;
 use Storage;
@@ -24,13 +24,11 @@ class FilterController extends Controller
   {
     $this->validate($request,[
       'name' => 'required|string|min:3|max:12',
-      'surname' => 'required|string|min:3|max:12',
-      'birthdate' => 'required|date'
+      'surname' => 'required|string|min:3|max:12'
     ]);
     $query = User::find(\Auth::user()->id);
     $query->nome = $request->name;
     $query->cognome = $request->surname;
-    $query->birthdate = $request->birthdate;
     if($a = $request->cover){
       $this->validate($request,[
         'cover' => 'image|mimes:jpeg,jpg,png,gif',
@@ -119,10 +117,12 @@ class FilterController extends Controller
   {
     $query = User::find($request->id);
     if(Auth::user()->isDirector() && !$query->haveGroup()){
-      $message = new InviteMessage();
+      $message = new Notifications();
       $message->sender_id = Auth::user()->id;
       $message->target_id = $query->id;
       $message->text = $request->text;
+      $message->type = '1'; // group request
+      $message->marked = '0';
       $message->save();
       $query->notifications_count++;
       $query->save();
@@ -304,10 +304,9 @@ class FilterController extends Controller
     public function postArticleEdit($id, Request $request)
     {
       $this->validate($request, [
-        'document__text' => 'required|min:50',
+        'document__text' => 'required',
       ],[
-        'document__text.required' => 'Non è consentito pubblicare un articolo senza contenuto',
-        'document__text.min' => 'Contenuto troppo breve',
+        'document__text.required' => 'Non è consentito pubblicare un articolo senza contenuto'
       ]);
       $query = Articoli::find($id);
       if((\Auth::user()->id_gruppo > 0 && $query->id_gruppo == \Auth::user()->id_gruppo) || (\Auth::user()->id == $query->autore)){

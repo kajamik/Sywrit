@@ -8,7 +8,7 @@ body {background-image: url({{asset('upload/hero2.png')}});}
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">{{ __('Crea un nuovo account') }}</div>
+                <div class="card-header">{{ __('La tua opinione è la nostra forza.') }}</div>
 
                 <div class="card-body">
                     <form method="POST" action="{{ route('register') }}">

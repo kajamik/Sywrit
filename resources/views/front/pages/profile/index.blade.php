@@ -17,11 +17,7 @@
             <div class="col-lg-12">
               <div class="row" id="articles">
                 @foreach($articoli->take(12) as $n => $articolo)
-                @php
-                  if(!$n)
-                    $original_image = \App\Models\BackupArticlesImages::where('article_id',$articolo->id)->first();
-                @endphp
-                <div class="@if($n > 0) col-lg-4 @else col-lg-8 @endif col-sm-8 col-xs-12">
+                <div class="@if($n > 0) col-lg-4 @else col-lg-12 @endif col-sm-8 col-xs-12">
                   <a href="{{ url('read/'. $articolo->slug) }}">
                     <div class="card">
                       <img class="card-img-top" src="{{asset($articolo->getBackground())}}" alt="Copertina">
@@ -34,6 +30,9 @@
                 @endforeach
               </div>
             </div>
+            <script>
+              App.insl("articles");
+            </script>
             @else
               <p>Questo utente non ha ancora iniziato a pubblicare</p>
             @endif

@@ -91,6 +91,8 @@ App.getUserInterface = function(t){
 
   $(".__ui__g").remove();
 
+  $("body").css('overflow','hidden');
+
   if(event !== 'undefined'){
     event.preventDefault();
   }
@@ -101,6 +103,8 @@ App.getUserInterface = function(t){
     var title = search_item(t[i], 'title');
     var content = search_item(t[i], 'content');
     var done = search_item(t[i], "done");
+    // styles
+    var style = search_item(t[i], "styles");
   }
 
   $("<div class='__ui__g'><div class='__ui__g_container'><div class='__ui__g_header'><div class='__ui__g_title'>"+title+"</div><div class='__ui__g_close'>&times;</div></div><div class='__ui__g_body'></div></div></div>").appendTo( $("body") );
@@ -117,11 +121,12 @@ App.getUserInterface = function(t){
     var name = (b.name) ? "name="+(b.name) : '';
     var value = (b.value) ? "value="+(b.value) : '';
     var type = (b.type.length > 1) ? "type="+(b.type[1]) : '';
+    var target = (b.target) ? "target="+(b.target) : '';
     var href = (b.href) ? "href="+(b.href) : '';
     var placeholder = (b.placeholder) ? "placeholder='"+b.placeholder+"'" : '';
     var required = (b.required) ? 'required' : '';
     var text = (b.text) ? b.text : '';
-    str = '<'+b.type[0]+' '+id+' '+href+' '+className+' '+type+' '+value+' '+name+' '+placeholder+' '+required+'>'+text+'</'+b.type[0]+'>';
+    str = '<'+b.type[0]+' '+id+' '+href+' '+className+' '+type+' '+value+' '+name+' '+placeholder+' '+required+' '+target+'>'+text+'</'+b.type[0]+'>';
 
   return str;
  }
@@ -129,12 +134,22 @@ App.getUserInterface = function(t){
   let n = 0;
   for(var i in content){
       content[i].label = (content[i].label) ? "<label>"+content[i].label+"</label>" : '';
-      $("<div class='form-group'>"+f(content[i])+content[i].label).appendTo( ($("div").hasClass("__ui__g_form_control")) ? $(".__ui__g_form_control") : $(".__ui__g_body") );
+      if(header) {
+        $("<div class='form-group'>"+f(content[i])+content[i].label).appendTo( ($("div").hasClass("__ui__g_form_control")) ? $(".__ui__g_form_control") : $(".__ui__g_body") );
+      } else {
+        $(f(content[i])+content[i].label).appendTo( ($("div").hasClass("__ui__g_form_control")) ? $(".__ui__g_form_control") : $(".__ui__g_body") );
+      }
+  }
+
+  // set style
+  if(style) {
+    this.setUIStyle(style, ".__ui__g .__ui__g_body a");
   }
 
   $(".__ui__g_header .__ui__g_close").click(
     function(){
       $(".__ui__g").remove();
+      $("body").css('overflow','auto');
     });
 
   $("form").on('submit', function(e){
@@ -144,6 +159,12 @@ App.getUserInterface = function(t){
     data.text = $(data.text).val();
     App.query(header.method, header.action, data, false, done);
   });
+}
+
+App.setUIStyle = function(c, section) {
+  for(var i in c) {
+    $(section).css(i, c[i]);
+  }
 }
 
 App.update = function(){

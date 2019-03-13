@@ -16,6 +16,21 @@
 }
 </style>
 @auth
+<section class="publisher-header" style="background-image: url({{asset($query->getBackground())}})">
+  <div class="container">
+    <img class="publisher-logo" src="{{asset($query->getLogo())}}" alt="Logo">
+    <div class="info">
+      <span>{{$query->nome}}</span>
+    </div>
+  </div>
+</section>
+  <section class="publisher-body">
+    <div class="container">
+      @if(\Session::get('type') == 'container_right__small')
+      <div class="alert-toggle alert alert-danger">
+        <h2>{{\Session::get('message')}}</h2>
+      </div>
+      @endif
   @if(!$query->accesso)
   <div class="alert alert-info">
     <h3>Questa pagina è stata disabilita. Per riattivarla vai sulle impostazioni della pagina.</h3>

@@ -14,13 +14,18 @@ class CreateNotificationsTable extends Migration
     public function up()
     {
         Schema::create('notifications', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('user_id');
-            $table->integer('_id');
-            // 1 - Collaborazione
-            // 2 - Nuovo articolo
-            $table->enum('type',['1','2']);
-            $table->timestamps();
+          $table->increments('id');
+          $table->integer('sender_id');
+          $table->integer('target_id');
+          $table->text('text');
+          // 1 - Collaborazione
+          /* Nuovo articolo
+              2 - Utente
+              3 - Pagina
+          */
+          $table->enum('type',['1','2','3']);
+          $table->enum('marked', ['0','1']); // notifica letta
+          $table->timestamps();
         });
     }
 

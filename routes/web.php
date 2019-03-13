@@ -63,6 +63,7 @@ Route::group(['middleware','auth'], function(){
   // Other
   Route::get('follow', ['uses' =>'AjaxController@follow', 'as' => 'follow']);
   Route::get('like', ['uses' => 'AjaxController@like', 'as' => 'like']);
+  Route::get('notifications_delete', 'AjaxController@deleteAllNotifications');
 });
 
 ///////////

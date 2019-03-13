@@ -12,7 +12,7 @@ use Auth;
 use App\Models\Editori;
 use App\Models\Articoli;
 use App\Models\User;
-use App\Models\InviteMessage;
+use App\Models\Notifications;
 
 class AjaxController extends Controller
 {
@@ -100,11 +100,26 @@ class AjaxController extends Controller
       }
   }
 
-  public function getNotifications()
+  public function getNotifications(Request $request)
   {
-    $query = InviteMessage::where('target_id',Auth::user()->id)->get();
+    if($request->ajax()){
+      $LIMIT = 3;
+      $query = Notifications::where('target_id',Auth::user()->id)->orderBy('created_at','desc')->get();
+      if(Auth::user()->notifications_count > 0){
+        $user = User::find(Auth::user()->id);
+        $user->notifications_count = '0';
+        $user->save();
+      }
+      return view('front.pages.livenotifications')->with(['query' => $query]);
+    }
+  }
 
-    return view('front.pages.livenotifications')->with(['query' => $query]);
+  public function deleteAllNotifications(Request $request)
+  {
+    if($request->ajax()) {
+      $notifiche = Notifications::where('target_id',Auth::user()->id);
+      $notifiche->delete();
+    }
   }
 
 }

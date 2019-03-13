@@ -7,8 +7,6 @@
 <style>
 h2 {
   padding: 8px;
-  background-color: #A22932;
-  color: #fff;
   border-radius: 4px;
   text-transform: uppercase;
   font-size: 23px;

@@ -1,7 +1,7 @@
 <div class="navbar">
   <div class="navbar-left">
     <a href="{{url('/toolbox')}}" class="brand">
-      <img src="{{ asset('upload/icons/32x32/sywrit.png') }}" alt="Logo">
+      <img src="{{ asset('upload/logo_white.png') }}" alt="Logo">
     </a>
     <nav class="nav">
       <li><a href="{{url('toolbox/users')}}">Utenti</a></li>

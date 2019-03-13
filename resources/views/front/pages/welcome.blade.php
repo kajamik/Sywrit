@@ -2,7 +2,7 @@
 
 @section('main')
 <style>
-h2 {
+h2, h5 {
   padding: 8px;
   color: #000;
   border-radius: 4px;
@@ -10,6 +10,20 @@ h2 {
   font-size: 23px;
 }
 </style>
+
+<div class="block-hero">
+  <div class="container">
+    <div class="caption">
+      <h1>Benvenuto su Sywrit</h1>
+      <h3>La piattaforma di scrittura</h3>
+      <a href="{{ url('register') }}">
+        <button style="padding:15px" class="btn btn-dark">
+          Crea il tuo primo articolo
+        </button>
+      </a>
+    </div>
+  </div>
+</div>
 
 <div id="_home" class="container">
   <div class="publisher-home">
@@ -39,10 +53,29 @@ h2 {
         </div>
       @endforeach
       </div>
-      <hr />
       @endif
 
+      {{--
+        <hr />
+        <div class="col-lg-5 col-sm-6 col-xs-12">
+        <div class="card text-center">
+          <div class="card-header">
+            <span class="far fa-star"></span>
+            Sponsorizzazione
+          </div>
+          <a href="#">
+            <div class="card-body" style="padding:0">
+              <img style="width:100%;" src="{{ asset('upload/google-ads.png') }}" alt="" />
+            </div>
+            <div class="card-footer text-muted">
+              <button class="btn btn-link">Ottieni maggiori informazioni</button>
+            </div>
+          </a>
+        </div>
+      </div>--}}
+
       @if(count($articoli))
+      <hr/>
       <h2>Articoli</h2>
       <div class="row" id="news">
       @foreach($articoli as $value)

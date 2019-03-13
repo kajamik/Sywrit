@@ -18,8 +18,7 @@
   min-height: 200px;
 }
 </style>
-<div class="container">
-  <div class="publisher-home">
+<div class="publisher-home">
     <section class="publisher-header" style="background-image: url({{asset(Auth::user()->getBackground())}})">
       <div class="container">
         <img class="publisher-logo" src="{{asset(Auth::user()->getAvatar())}}" alt="Logo">
@@ -64,8 +63,7 @@
     </div>
   </div>
 </section>
-  <script>
-    App.insl('articles');
-  </script>
-</div>
+<script>
+  App.insl('articles');
+</script>
 @endsection

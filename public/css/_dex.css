@@ -1,6 +1,7 @@
 .navbar {
-  background-color: #A22932;
+  background-color: rgba(199, 191, 230,1);
 }
+
 #header .nav * {
   color: #fff;
 }
@@ -23,8 +24,4 @@
 
 .table_users th {
   border-bottom: 1px solid #000;
-}
-
-#header .nav.open {
-  background-color: #A22932;
 }

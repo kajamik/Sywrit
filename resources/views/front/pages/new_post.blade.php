@@ -62,7 +62,7 @@
 
     <div class="form-group row">
         <div class="col-md-12">
-          <div id="summernote" class="document"></div>
+          <textarea class="document" name="document__text"></textarea>
         </div>
     </div>
 
@@ -90,8 +90,13 @@ $("#file-upload").change(function(){
 <link rel="stylesheet" href="{{ asset('plugins/dist/summernote.css') }}" />
 <script src="{{ asset('plugins/dist/summernote.min.js') }}"></script>
 <script>
-$(document).ready(function() {
-  $('#summernote').summernote();
+$(".document").summernote({
+  height: 250,
+  toolbar: [
+    ['fontsize', ['fontsize']],['style', ['bold', 'italic', 'underline']],['color', ['color']],['para', ['ul', 'ol', 'paragraph']]
+    ,['link'],['picture'],['help']
+  ],
+  placeholder: 'Inizia a scrivere',
 });
 </script>
 @endsection

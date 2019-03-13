@@ -11,22 +11,7 @@
   padding: 5px;
 }
 </style>
-<div class="container">
-  <div class="publisher-home">
-    <section class="publisher-header" style="background-image: url({{asset($query->getBackground())}})">
-      <div class="container">
-        <img class="publisher-logo" src="{{asset($query->getLogo())}}" alt="Logo">
-        <div class="info">
-          <span>{{$query->nome}}</span>
-        </div>
-      </div>
-    </section>
-      <section class="publisher-body">
-        @if(\Session::get('type') == 'container_right__small')
-        <div class="alert-toggle alert alert-danger">
-          <h2>{{\Session::get('message')}}</h2>
-        </div>
-        @endif
+<div class="publisher-home">
         @include('front.components.group.top_bar')
         <div class="container my-5">
           <h2>Informazioni Redazione</h2>
@@ -68,5 +53,4 @@
       );
   </script>
   </div>
-</div>
 @endsection

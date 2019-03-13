@@ -9,15 +9,6 @@
     </div>
   </div>
   <div class="form-group row">
-    <label for="_tp" class="col-md-4 col-form-label text-md-right">Tipo restrizione</label>
-    <div class="col-md-6">
-      <select id="_tp" class="form-control" name="_tp_sel">
-        <option value="1" @if(!$query->type) selected @endif>Pubblicazione senza revisione</option>
-        <option value="2" @if($query->type) selected @endif>Pubblicazione con revisione</option>
-      </select>
-    </div>
-  </div>
-  <div class="form-group row">
     <label for="background" class="col-md-4 col-form-label text-md-right">Immagine di copertina</label>
     <div class="col-md-6" id="background">
       <label for="cover-upload" class="form-control custom-upload">

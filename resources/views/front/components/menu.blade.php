@@ -1,7 +1,7 @@
 <div class="navbar">
   <div class="navbar-left">
     <a href="{{url('/')}}" class="brand">
-      <img src="{{ asset('upload/icons/32x32/sywrit.PNG') }}" alt="Logo">
+      <img src="{{ asset('upload/logo_white.png') }}" alt="Logo">
     </a>
   </div>
 
@@ -25,7 +25,9 @@
           <li class="dropdown">
             <a href="#" data-toggle="dropdown" role="button" aria-expanded="false" href="#" onclick="fetch_live_notifications();">
               <i class="fa fa-bell" aria-hidden="true" title="Notifiche"></i>
+              @if(\Auth::user()->notifications_count)
               <span class="badge badge-notification">{{ \Auth::user()->notifications_count }}</span>
+              @endif
             </a>
             <div class="dropdown-menu" role="menu">
               <div class="notification-header">

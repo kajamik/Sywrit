@@ -18,7 +18,9 @@
 @auth
 <section class="publisher-header" style="background-image: url({{asset($query->getBackground())}})">
   <div class="container">
-    <img class="publisher-logo" src="{{asset($query->getLogo())}}" alt="Logo">
+    <div class="publisher-logo">
+      <img src="{{asset($query->getLogo())}}" alt="Logo">
+    </div>
     <div class="info">
       <span>{{$query->nome}}</span>
     </div>

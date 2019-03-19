@@ -13,21 +13,28 @@ use App\Models\Editori;
 use App\Models\Articoli;
 use App\Models\User;
 use App\Models\Notifications;
+use App\Models\ArticleComments;
 
 class AjaxController extends Controller
 {
+
+  public function __construct(Request $request)
+  {
+    if(!$request->ajax()){
+      abort(404);
+    }
+  }
+
   public function follow(Request $request)
   {
     if($request->ajax()){
-
-      $query = Articoli::where('id',$request->id)->first();
-      if(empty($query->id_gruppo)){
-        $query = User::where('id',$query->autore)->first();
+      if($request->input('q') == 'false'){
+        $query = User::where('id',$request->id)->first();
         if($query->id == \Auth::user()->id){
-          return ;
+          return;
         }
       }else{
-        $query = Editori::where('id',$query->id_gruppo)->first();
+        $query = Editori::where('id',$request->id)->first();
       }
 
       try{
@@ -46,7 +53,7 @@ class AjaxController extends Controller
         $query->save();
         return Response::json(['result' => $collection->some(\Auth::user()->id), 'counter' => $count]);
       }catch(ErrorException $error){
-        //
+        \Debugbar::info("follow: ".$error);
       }
     }
   }
@@ -80,7 +87,9 @@ class AjaxController extends Controller
   public function SearchLiveData(Request $request)
   {
     if($request->ajax()){
-      $search = $request->q;
+
+        $search = $request->q;
+
       if(!is_null($search)){
         $query = User::where('nome', 'like', $search .'%')
               ->orWhere('cognome', 'like', $search .'%')
@@ -91,11 +100,19 @@ class AjaxController extends Controller
                 ->limit(5)
                 ->get();
 
-        $query3 = Editori::where('nome', 'like', $search. '%')
+        $query3 = Articoli::where('tags', 'like', $search. '%')
+                  ->limit(5)
+                  ->get();
+
+        $query4 = Editori::where('nome', 'like', $search. '%')
                 ->limit(5)
                 ->get();
 
-          return view('front.pages.livesearch')->with(['users' => $query, 'articles' => $query2, 'pages' => $query3, 'search' => $search]);
+          $query = $query->merge($query2)
+                          ->merge($query3)
+                          ->merge($query4);
+
+          return view('front.pages.livesearch')->with(['query' => $query, 'key' => $search]);
         }
       }
   }
@@ -119,6 +136,49 @@ class AjaxController extends Controller
     if($request->ajax()) {
       $notifiche = Notifications::where('target_id',Auth::user()->id);
       $notifiche->delete();
+    }
+  }
+
+  /*** Commenti ***/
+
+  public function getStateComments(Request $request)
+  {
+    if($request->ajax()) {
+      $state = true;
+      $query = ArticleComments::where('article_id',$request->id)->count();
+      if($request->count != $query){
+        $state = false;
+      }
+      return Response::json(['state' => $state]);
+    }
+  }
+
+  public function loadComments(Request $request)
+  {
+    if($request->ajax()) {
+      $PAGE = $request->q;
+      $LIMIT = 6;
+      if($PAGE == 1){
+        $comments = ArticleComments::take($LIMIT)->where('article_id',$request->id)->orderBy('created_at','desc')->get();
+      }else{
+        $comments = ArticleComments::skip($LIMIT * ($PAGE - 1))->take($LIMIT)->where('article_id',$request->id)->orderBy('created_at','desc')->get();
+      }
+      return view('front.components.ajax.loadComments')->with(['query' => $comments]);
+    }
+  }
+
+  public function postComments(Request $request)
+  {
+    if($request->ajax()) {
+      $post = $request->post;
+      if(!empty($post)){
+        $query = new ArticleComments();
+        $query->user_id = Auth::user()->id;
+        $query->text = $post;
+        $query->article_id = $request->id;
+        $query->save();
+        return view('front.components.ajax.uploadComment')->with(['query' => $query]);
+      }
     }
   }
 

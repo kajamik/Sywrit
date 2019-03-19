@@ -1,14 +1,11 @@
 @extends('front.layout.app')
 
 @section('main')
-<!--<style type="text/css">
-body {background-image: url({{asset('upload/hero2.png')}});}
-</style>-->
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">{{ __('La tua opinione è la nostra forza.') }}</div>
+                <div class="card-header">{{ __('Registrati') }}</div>
 
                 <div class="card-body">
                     <form method="POST" action="{{ route('register') }}">

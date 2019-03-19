@@ -61,7 +61,10 @@ Route::group(['middleware','auth'], function(){
   Route::post('post/delete', ['uses' => 'FilterController@ArticleDelete', 'as' => 'article/action/delete']);
   Route::post('post/report', ['uses' => 'FilterController@ArticleReport', 'as' => 'article/action/report']);
   // Other
-  Route::get('follow', ['uses' =>'AjaxController@follow', 'as' => 'follow']);
+  Route::get('getStateComments', 'AjaxController@getStateComments');
+  Route::get('send-comment', 'AjaxController@postComments');
+  Route::get('load-comments', 'AjaxController@loadComments');
+  Route::get('follow', 'AjaxController@follow');
   Route::get('like', ['uses' => 'AjaxController@like', 'as' => 'like']);
   Route::get('notifications_delete', 'AjaxController@deleteAllNotifications');
 });
@@ -69,7 +72,7 @@ Route::group(['middleware','auth'], function(){
 ///////////
 Route::group(['prefix' => 'write', 'middleware' => 'auth'], function(){
   Route::get('/', 'FrontController@getWrite');
-  Route::post('/', 'FrontController@postWrite');
+  Route::post('/', 'FilterController@postWrite');
 });
 
 Route::get('/', 'FrontController@index');

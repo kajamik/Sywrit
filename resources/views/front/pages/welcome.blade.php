@@ -11,6 +11,7 @@ h2, h5 {
 }
 </style>
 
+@guest
 <div class="block-hero">
   <div class="container">
     <div class="caption">
@@ -24,6 +25,7 @@ h2, h5 {
     </div>
   </div>
 </div>
+@endguest
 
 <div id="_home" class="container">
   <div class="publisher-home">
@@ -35,9 +37,8 @@ h2, h5 {
       @foreach($ultimi_articoli as $value)
         <div class="col-lg-4 col-sm-6 col-xs-12">
           <a href="{{ url('read/'.$value->slug)}}">
-            <div class="card">
+            <div class="card border-0">
               <img class="card-img-top" src="{{asset($value->getBackground())}}" alt="Copertina Articolo">
-              <div class="card-body">
                 <h5 class="card-title">{{ $value->titolo }}</h5>
                 <div class="author">
                   Pubblicato da
@@ -47,18 +48,16 @@ h2, h5 {
                     <a href="{{ url($value->getAutore->slug) }}"><span><span>{{ $value->getAutore->nome }} {{ $value->getAutore->cognome }}</span></a>
                   @endif
                 </div>
-              </div>
             </div>
           </a>
         </div>
       @endforeach
       </div>
+      <hr/>
       @endif
 
-      {{--
-        <hr />
-        <div class="col-lg-5 col-sm-6 col-xs-12">
-        <div class="card text-center">
+        {{--<div class="col-lg-3 col-sm-6 col-xs-12">
+        <div class="card border-0 text-center">
           <div class="card-header">
             <span class="far fa-star"></span>
             Sponsorizzazione
@@ -72,18 +71,17 @@ h2, h5 {
             </div>
           </a>
         </div>
-      </div>--}}
+      </div>
+      <hr/>--}}
 
       @if(count($articoli))
-      <hr/>
       <h2>Articoli</h2>
       <div class="row" id="news">
       @foreach($articoli as $value)
-        <div class="col-lg-3 col-sm-8 col-xs-12">
+        <div class="col-lg-3 col-sm-4 col-xs-12">
           <a href="{{ url('read/'.$value->slug)}}">
-            <div class="card">
+            <div class="card border-0">
               <img class="card-img-top" src="{{asset($value->getBackground())}}" alt="Copertina Articolo">
-              <div class="card-body card-block">
                 <h5 class="card-title">{{ $value->titolo }}</h5>
                 <div class="author">
                   Pubblicato da
@@ -93,7 +91,6 @@ h2, h5 {
                     <a href="{{ url($value->getAutore->slug) }}"><span><span>{{ $value->getAutore->nome }} {{ $value->getAutore->cognome }}</span></a>
                   @endif
                 </div>
-              </div>
             </div>
           </a>
         </div>

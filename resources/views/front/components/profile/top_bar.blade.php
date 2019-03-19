@@ -19,7 +19,9 @@
   <div class="publisher-home">
     <section class="publisher-header" style="background-image: url({{asset($query->getBackground())}})">
       <div class="container">
-        <img class="publisher-logo" src="{{asset($query->getAvatar())}}" alt="Logo">
+        <div class="publisher-logo">
+          <img src="{{asset($query->getAvatar())}}" alt="Logo">
+        </div>
         <div class="info">
           <span>{{$query->nome}} {{$query->cognome}}</span>
         </div>
@@ -32,6 +34,8 @@
         @else
           <p>Editore presso <a href="{{ url($query->getPublisherInfo()->slug) }}">{{$query->getPublisherInfo()->nome}}</a></p>
         @endif
+        <p>Articoli pubblicati: {{ \DB::table('articoli')->where('autore', $query->id)->count() }}</p>
+        <p>Media punteggi articoli: 3.5/5</p>
         @if(\Auth::user() && \Auth::user()->id != $query->id)
         <div class="publisher-info">
           @if(Auth::user()->haveGroup() && Auth::user()->isDirector() && !$query->haveGroup())
@@ -78,7 +82,7 @@
           <script>
               App.follow('#follow',
               {
-                url:'{{url("follow")}}',
+                url:'{{ url("follow?q=false") }}',
                 data:{'id': {{ $query->id }}, 'mode': 'i'}
                 }, false);
               App.insl('articles');

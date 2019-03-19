@@ -1,6 +1,6 @@
 @extends('front.layout.app')
 
-@section('title', $query->titolo.' -')
+@section('title', $query->titolo. ' -')
 
 @php
   $autore = \App\Models\User::find($query->autore);
@@ -14,6 +14,18 @@
     $follow = false;
   }
 @endphp
+
+@section('seo')
+
+    <meta property="og:title" content="{!! $query->titolo !!} - {{ config('app.name') }}" />
+    <meta property="og:description" content="{!! str_limit(strip_tags($query->testo), 40, '...') !!}" />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="{{ Request::url() }}" />
+    <meta property="og:image" content="{{ asset($query->getBackground()) }}" />
+    <meta property="article:published_time" content="{{ $query->created_at }}" />
+    <meta property="article:author" content="{{ $autore->nome }} {{ $autore->cognome }}" />
+    <meta property="article:tag" content="{{ $query->tags }}" />
+@endsection
 
 @section('main')
 <style>
@@ -48,12 +60,13 @@ span.time {
   color: #fff;
 }
 </style>
-<div class="container">
   <div class="publisher-home">
     @if(!empty($editore))
     <section class="publisher-header" style="background-image: url({{asset($editore->getBackground())}})">
       <div class="container">
-        <img class="publisher-logo" src="{{asset($editore->getLogo())}}" alt="Logo">
+        <div class="publisher-logo">
+          <img src="{{asset($editore->getLogo())}}" alt="Logo">
+        </div>
         <div class="info">
           <span>{{$editore->nome}}</span>
         </div>
@@ -62,7 +75,9 @@ span.time {
     @else
     <section class="publisher-header" style="background-image: url({{asset($autore->getBackground())}})">
       <div class="container">
-        <img class="publisher-logo" src="{{asset($autore->getAvatar())}}" alt="Logo">
+        <div class="publisher-logo">
+          <img src="{{asset($autore->getAvatar())}}" alt="Logo">
+        </div>
         <div class="info">
           <span>{{$autore->nome}} {{$autore->cognome}}</span>
         </div>
@@ -70,6 +85,7 @@ span.time {
     </section>
     @endif
     <section class="publisher-body">
+      <div class="container">
       @if($options)
 
         @if($query->id_gruppo > 0)
@@ -89,15 +105,14 @@ span.time {
         <div class="block-title">
           <h1>{{ $query->titolo }}</h1>
         </div>
-        <div>
-          Scritto da <a href="{{ url($autore->slug) }}">{{ $autore->nome }} {{ $autore->cognome }}</a>
+        <p>Scritto da <a href="{{ url($autore->slug) }}">{{ $autore->nome }} {{ $autore->cognome }}</a></p>
           @if(Auth::user() && $query->autore != \Auth::user()->id)
           <button id="follow" class="btn-custom">
             <i id="follow_icon" class="@if($follow) fas @else far @endif fa-bell"></i> <span>{{ $autore->followers_count }} seguaci</span>
           </button>
           <script>
           document.getElementById("follow").onclick = function(){
-            App.query('GET','{{ route("follow") }}', {id: '{{ $query->id }}',_token: '{{ csrf_token() }}'}, false, function(data){
+            App.query('GET','{{ url("follow?q=false") }}', {id: '{{ $query->autore }}'}, false, function(data){
               if(data.result){
                 $("#follow_icon").attr("class","fa fa-bell");
               }else{
@@ -112,7 +127,6 @@ span.time {
             <span class="date"><i class="far fa-calendar-alt"></i> {{ $date }}</span>
             <span class="time"><i class="far fa-clock"></i> {{ $time }}</span><br/>
           </div>
-        </div>
         <hr/>
         <div class="block-body">
           {!! $query->testo !!}
@@ -122,7 +136,7 @@ span.time {
           <ul class="meta-tags">
             <i class="fa fa-tags"></i>
             @foreach($tags as $tag)
-              <li><a href="{{ url('search/tag/'.$tag) }}">#{{$tag}}</a></li>
+              <li><a href="{{ url('search/tag/'.$tag) }}">#{{ $tag }}</a></li>
             @endforeach
           </ul>
         </div>
@@ -141,37 +155,10 @@ span.time {
     <hr/>
     {{-- Se gli articolo esistono allora li visualizza --}}
     @include('front.components.article.feeds')
-    <hr/>
-    {{--
-    <!-- per provare -->
-    <style>
-      .new-thread {
-        width: 100%;
-      }
-      .new-thread div {
-        display: inline-block;
-      }
-      .thread-user-img img {
-        max-height: 100px;
-        border-radius: 15px;
-      }
-      .thread-textarea textarea {
-        width: auto;
-      }
-    </style>
-    <!-- -->
-    <h3>Commenti (0)</h3>
-    <div class="d-flex">
-      <div class="new-thread">
-        <div class="thread-user-img">
-          <img src="{{ asset(Auth::user()->getAvatar()) }}" alt="Utente" />
-        </div>
-        <div class="thread-textarea">
-          <textarea placeholder="Scrivi un commento..."></textarea>
-        </div>
-      </div>
-    </div>
-    --}}
+
+    {{-- Commenti --}}
+    @include('front.components.article.comments')
+
   </section>
   @auth
   <script>
@@ -248,5 +235,4 @@ span.time {
 
   </script>
   </div>
-</div>
 @endsection

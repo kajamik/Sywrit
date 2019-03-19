@@ -32,7 +32,9 @@
   <div class="publisher-home">
     <section class="publisher-header" style="background-image: url({{asset(\Auth::user()->getBackground())}})">
       <div class="container">
-        <img class="publisher-logo" src="{{asset(\Auth::user()->getAvatar())}}" alt="Logo">
+        <div class="publisher-logo">
+          <img src="{{asset(\Auth::user()->getAvatar())}}" alt="Logo">
+        </div>
         <div class="info">
           <span>{{\Auth::user()->nome}} {{\Auth::user()->cognome}}</span>
         </div>
@@ -66,8 +68,7 @@
                 Nuova richiesta di collaborazione dalla redazione <strong>{{ $value->getPublisherName->nome }}</strong>
               </div>
             </div>
-            @endif
-            @if($value->type == '2' || $value->type == '3') {{-- Utente --}}
+            @else
             <div class="message">
               <div class="message-content">
                 <h2><a href="{{ url('read/'.$articolo->slug) }}">{{ $articolo->titolo }}</a></h2>

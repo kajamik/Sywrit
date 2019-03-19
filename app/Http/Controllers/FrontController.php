@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
+// Models
 use App\Models\User;
 use App\Models\Articoli;
 use App\Models\Editori;
 use App\Models\BackupArticlesImages;
 use App\Models\Notifications;
+//----------
 
 use Carbon\Carbon;
 
@@ -17,6 +19,11 @@ use Storage;
 use Image;
 use File;
 use Auth;
+
+// SEO
+use SEOMeta;
+use OpenGraph;
+use Twitter;
 
 class FrontController extends Controller
 {
@@ -171,85 +178,10 @@ class FrontController extends Controller
       return view('front.pages.new_post');
     }
 
-    public function postWrite(Request $request)
-    {
-      $this->validate($request,[
-        'document__title' => 'required|min:5|max:30',
-        'document__text' => 'required'
-      ],[
-        'document__title.required' => 'Il titolo dell\'articolo è obbligatorio',
-        'document__text.required' => 'Non è consentito pubblicare un articolo senza contenuto',
-        'document__text.min' => 'Contenuto troppo breve'
-      ]);
-      $query = new Articoli();
-      $query->titolo = $request->document__title;
-      $query->tags = '';
-      $query->testo = $request->document__text;
-      if($a = $request->image){
-        $resize = '__492x340'.Str::random(64).'.jpg';
-        $normal_image = '__'.Str::random(64).'.jpg';
-        $image = Image::make($a)->crop($request->width[0],$request->height[0],$request->x[0],$request->y[0])->resize(492, 340)->encode('jpg');
-        Storage::disk('articles')->put($resize, $image);
-        $image = Image::make($a)->encode('jpg');
-        Storage::disk('articles')->put($normal_image, $image);
-        $query->copertina = $resize;
-      }
-      if(\Auth::user()->id_gruppo > 0 && $request->_au == 2){
-        $query->id_gruppo = Auth::user()->id_gruppo;
-      }
-      $query->autore = \Auth::user()->id;
-      if($request->save){
-        $query->status = '0';
-      }else{
-        $query->status = '1'; // pubblicato
-      }
-      $query->count_view = '0';
-      $query->likes_count = '0';
-      $query->save();
-
-      // Slug
-        $query->slug = str_slug($query->id.'-'.$query->titolo,'-');
-        $query->save();
-      //
-      // Notifications
-      if(!empty(Auth::user()->getPublisherInfo()->followers)) {
-        foreach(explode(',',Auth::user()->getPublisherInfo()->followers) as $value) {
-          if($value != Auth::user()->id) {
-            $notifiche = new \App\Models\Notifications();
-            if($query->id_gruppo != null){
-              $notifiche->sender_id = Auth::user()->getPublisherInfo()->id;
-              $notifiche->type = '3';
-            }else{
-              $notifiche->sender_id = Auth::user()->id;
-              $notifiche->type = '2';
-            }
-            $notifiche->target_id = $value;
-            $notifiche->content_id = $query->id;
-            $notifiche->marked = '0';
-            $notifiche->save();
-            $user = User::find($value);
-            $user->notifications_count++;
-            $user->save();
-          }
-        }
-      }
-      /*if($a){
-        $backup = new BackupArticlesImages();
-        $backup->img_title = $normal_image;
-        $backup->article_id = $query->id;
-        $backup->save();
-      }*/
-      /*if($query->status){
-        $user = User::find(\Auth::user()->id);
-        $user->last_article = $query->created_at;
-        $user->save();
-      }*/
-      return redirect('read/'.$query->slug);
-    }
-
     public function getArticle($slug)
     {
       $query = Articoli::where('slug',$slug)->orderBy('id', 'asc')->first();
+
       if( Auth::user() ){
         $options = true;
       }else{
@@ -281,7 +213,7 @@ class FrontController extends Controller
 
     public function getNotifications()
     {
-      $query = Notifications::where('target_id',Auth::user()->id)->get();
+      $query = Notifications::where('target_id',Auth::user()->id)->orderBy('created_at','desc')->get();
       return view('front.pages.profile.notifications', compact('query'));
     }
 

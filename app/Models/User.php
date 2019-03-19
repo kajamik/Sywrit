@@ -78,6 +78,22 @@ class User extends Authenticatable
       }
     }
 
+    public function getRankName() {
+      $name = '';
+
+      if($this->rank < 20){
+        $name = 'principiante';
+      }elseif($this->rank < 50){
+        $name = 'intermedio';
+      }elseif($this->rank < 101){
+        $name = 'avanzato';
+      }else{
+        $name = 'maestro';
+      }
+
+      return $name;
+    }
+
     /*public function UnlinkOldImage($file) {
       if(File::exists($this->storage.'/'.$file)){
         File::delete($this->storage.'/'.$file);

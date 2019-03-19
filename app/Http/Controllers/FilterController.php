@@ -83,7 +83,7 @@ class FilterController extends Controller
       'verification' => 'required'
     ],[
       'slug.required' => 'Nome utente richiesto',
-      'slug.unique' => ':username esiste già',
+      'slug.unique' => ':username già esistente',
       'slug.regex' => 'Caratteri non consentiti',
       'verification.required' => 'Password necessaria'
     ]);
@@ -290,6 +290,97 @@ class FilterController extends Controller
     /**************************************/
 
     // Articoli
+    public function postWrite(Request $request)
+    {
+      $this->validate($request,[
+        'document__title' => 'required|min:5|max:30',
+        'document__text' => 'required'
+      ],[
+        'document__title.required' => 'Il titolo dell\'articolo è obbligatorio',
+        'document__text.required' => 'Non è consentito pubblicare un articolo senza contenuto',
+        'document__text.min' => 'Contenuto troppo breve'
+      ]);
+      $query = new Articoli();
+      $query->titolo = $request->document__title;
+      $query->tags = str_slug($request->tags,',');
+      $query->testo = $request->document__text;
+      if($a = $request->image){
+        $resize = '__492x340'.Str::random(64).'.jpg';
+        $normal_image = '__'.Str::random(64).'.jpg';
+        $image = Image::make($a)->crop($request->width[0],$request->height[0],$request->x[0],$request->y[0])->resize(492, 340)->encode('jpg');
+        Storage::disk('articles')->put($resize, $image);
+        $image = Image::make($a)->encode('jpg');
+        Storage::disk('articles')->put($normal_image, $image);
+        $query->copertina = $resize;
+      }
+      if(\Auth::user()->id_gruppo > 0 && $request->_au == 2){
+        $query->id_gruppo = Auth::user()->id_gruppo;
+      }
+      $query->autore = \Auth::user()->id;
+      if($request->save){
+        $query->status = '0';
+      }else{
+        $query->status = '1'; // pubblicato
+        // Sistema punti
+        $query->score = 0;
+        $points = 0;
+        foreach(explode('<br>', $request->document__text) as $value) {
+          $pattern = '/<h2[^>]*>(.*?)<\/h2><p[^>]*>(.*?)<\/p>/is';
+          $headers = preg_match( $pattern, $request->document__text );
+          if($headers) {
+            if($points < 2) {
+
+            } else {
+              if($points > 0) {
+                $points -= 0.15;
+              }
+            }
+          }
+          // END
+        }
+      /*  $user = User::find(Auth::user()->id);
+        if($words == (1000 * $user->rank)+1) {
+          $user->rank += 1;
+          $user->points = $points;
+        } else {
+          $user->points += $words;
+        }
+        $user->save();*/
+    }
+      $query->count_view = '0';
+      $query->likes_count = '0';
+      $query->save();
+
+      // Slug
+        $query->slug = str_slug($query->id.'-'.$query->titolo,'-');
+        $query->save();
+      //
+      // Notifications
+      if(!empty(Auth::user()->getPublisherInfo()->followers)) {
+        foreach(explode(',',Auth::user()->getPublisherInfo()->followers) as $value) {
+          if($value != Auth::user()->id) {
+            $notifiche = new \App\Models\Notifications();
+            if($query->id_gruppo != null){
+              $notifiche->sender_id = Auth::user()->getPublisherInfo()->id;
+              $notifiche->type = '3';
+            }else{
+              $notifiche->sender_id = Auth::user()->id;
+              $notifiche->type = '2';
+            }
+            $notifiche->target_id = $value;
+            $notifiche->content_id = $query->id;
+            $notifiche->marked = '0';
+            $notifiche->save();
+            $user = User::find($value);
+            $user->notifications_count++;
+            $user->save();
+          }
+        }
+      }
+
+      return redirect('read/'.$query->slug);
+    }
+    
     public function ArticlePublish(Request $request)
     {
       $query = Articoli::find($request->_rq_token);

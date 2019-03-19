@@ -1,7 +1,7 @@
 @if($query->autore == \Auth::user()->id)
 <li>
   <a data-toggle="dropdown" href="#">
-    <i class="fas fa-ellipsis-v"></i> Opzioni
+    <i class="fas fa-cog"></i> Opzioni
   </a>
   <div class="dropdown-menu" id="nodes">
     @if(!$query->status)

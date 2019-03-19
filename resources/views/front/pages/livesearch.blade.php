@@ -1,23 +1,16 @@
   <ul>
-    @if(!$users->count() && !$articles->count() && !$pages->count())
-        <li>Nessuna corrispondenza trovata</li>
-    @endif
-    @if($users->count())
-    <h5>Utenti</h5>
-      @foreach($users as $value)
+    @if($query->count())
+      @foreach($query as $value)
+        @if(!empty($value->titolo))
+        <a href="{{ url('read/'.$value->slug) }}"><li>{{ str_limit($value->titolo, 45, '...') }}</li></a>
+        @else
         <a href="{{ url($value->slug) }}"><li>{{ $value->nome }} {{ $value->cognome }}</li></a>
+        @endif
       @endforeach
+    @else
+      <a href="{{ url('search/'.$key) }}"><li>{{ str_limit($key, 45, '...') }}</li></a>
     @endif
-    @if($articles->count())
-    <h5>Articoli</h5>
-      @foreach($articles as $value)
-        <a href="{{ url('read/'.$value->slug) }}"><li>{{ $value->titolo }}</li></a>
-      @endforeach
-    @endif
-    @if($pages->count())
-    <h5>Pagine</h5>
-      @foreach($pages as $value)
-        <a href="{{ url($value->slug) }}"><li>{{ $value->nome }}</li></a>
-      @endforeach
-    @endif
+    <div class="py-2 pl-4">
+      <a class="text-primary" href="{{ url('search/'.$key) }}">Mostra tutti i risultati</a>
+    </div>
   </ul>

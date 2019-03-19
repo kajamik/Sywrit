@@ -20,13 +20,13 @@
         <div class="form-group row">
           <label for="name" class="col-md-4 col-form-label text-md-right required">Nome</label>
           <div class="col-md-6">
-            <input type="text" class="form-control" name="name" value="{{\Auth::user()->nome}}">
+            <input type="text" class="form-control" name="name" value="{{\Auth::user()->nome}}" required>
           </div>
         </div>
         <div class="form-group row">
           <label for="surname" class="col-md-4 col-form-label text-md-right required">Cognome</label>
           <div class="col-md-6">
-            <input type="text" class="form-control" name="surname" value="{{\Auth::user()->cognome}}">
+            <input type="text" class="form-control" name="surname" value="{{\Auth::user()->cognome}}" required>
           </div>
         </div>
         <hr/>
@@ -111,7 +111,7 @@
           <div class="form-group row">
             <label for="verification" class="col-md-4 col-form-label text-md-right required">Conferma Password</label>
             <div class="col-md-6">
-                <input type="password" class="form-control{{ $errors->has('verification') ? ' is-invalid' : '' }}" name="verification" placeholder="Verifica">
+                <input type="password" class="form-control{{ $errors->has('verification') ? ' is-invalid' : '' }}" name="verification" placeholder="Verifica" required>
             </div>
             @if ($errors->has('verification'))
                 <span class="invalid-feedback" role="alert">
@@ -134,19 +134,19 @@
           <div class="form-group row">
             <label for="old_password" class="col-md-4 col-form-label text-md-right">Vecchia Password</label>
             <div class="col-md-6">
-              <input id="old_password" type="password" class="form-control" name="old_password">
+              <input id="old_password" type="password" class="form-control" name="old_password" required>
             </div>
           </div>
           <div class="form-group row">
             <label for="password" class="col-md-4 col-form-label text-md-right">Nuova Password</label>
             <div class="col-md-6">
-              <input id="password" type="password" class="form-control" name="password">
+              <input id="password" type="password" class="form-control" name="password" required>
             </div>
           </div>
           <div class="form-group row">
             <label for="password_confirmation" class="col-md-4 col-form-label text-md-right">Conferma Password</label>
             <div class="col-md-6">
-              <input id="password_confirmation" type="password" class="form-control" name="password_confirmation">
+              <input id="password_confirmation" type="password" class="form-control" name="password_confirmation" required>
             </div>
           </div>
           <div class="form-group row">

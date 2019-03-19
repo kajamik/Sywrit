@@ -22,6 +22,13 @@ address > a, address > a:hover {
         <div class="publisher-content">
           <h1>Informazioni utente</h1>
           <div class="py-3">
+            @if(!empty($query->biography))
+            <h2>Biografia</h2>
+            <div class="col-lg-12">
+              <p>{!! $query->biography !!}</p>
+            </div>
+            <hr/>
+            @endif
             @if(!empty($query->facebook) || !empty($query->instagram) || !empty($query->linkedin))
             <h2>Socials Link</h2>
             <div class"col-lg-12">

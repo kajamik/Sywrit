@@ -9,6 +9,12 @@
   font-family: 'Font Awesome\ 5 Free';
   font-weight: 900;
 }
+.document {
+  padding: 15px;
+  width: 100%;
+  min-height: 170px;
+  border-radius: 4px;
+}
 </style>
 <div class="container">
   <div class="publisher-home">
@@ -67,6 +73,13 @@
     </div>
 
     <div class="form-group row">
+      <label for="tags" class="col-md-4 col-form-label"><span class="fa fa-tag"></span> Etichette</label>
+        <div class="col-md-12">
+          <input type="text" class="form-control" name="tags" placeholder="Moda Bellezza ..." />
+        </div>
+    </div>
+
+    <div class="form-group row">
         <div class="col-md-6 offset-md-4">
             <button type="submit" class="btn btn-primary">
                 {{ __('Pubblica') }}
@@ -93,7 +106,7 @@ $("#file-upload").change(function(){
 $(".document").summernote({
   height: 250,
   toolbar: [
-    ['fontsize', ['fontsize']],['style', ['bold', 'italic', 'underline']],['color', ['color']],['para', ['ul', 'ol', 'paragraph']]
+    ['style'],['style', ['bold', 'italic', 'underline']],['color', ['color']],['para', ['ul', 'ol', 'paragraph']]
     ,['link'],['picture'],['help']
   ],
   placeholder: 'Inizia a scrivere',

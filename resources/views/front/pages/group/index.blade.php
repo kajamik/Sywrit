@@ -9,13 +9,11 @@
             @if(count($query->articoli)) {{-- Se sono presenti articoli --}}
             <div class="col-lg-12">
               <div class="row" id="articles">
-                @foreach($query->articoli->take(12) as $n => $articolo)
-                <div class="@if($n > 0) col-lg-4 @else col-lg-8 @endif col-sm-8 col-xs-12">
+                @foreach($query->articoli->take(12) as $articolo)
+                <div class="col-lg-4 col-sm-8 col-xs-12">
                   <a href="{{ url('read/'. $articolo->slug) }}">
-                    <div class="card">
-                      @if($articolo->copertina)
-                        <img class="card-img-top" src="{{asset('storage/articles/'.$articolo->copertina)}}" alt="Copertina">
-                      @endif
+                    <div class="card border-0">
+                      <img class="card-img-top" src="{{asset($articolo->getBackground())}}" alt="Copertina">
                       <div class="card-body">
                         <h4 class="card-title">{{ $articolo->titolo }}</h4>
                       </div>
@@ -34,8 +32,8 @@
     <script>
     App.follow('#follow',
       {
-        url:'{{url("follow")}}',
-        data:{'id':{{ $query->id }},'mode':'g'}
+        url:'{{ url("follow") }}',
+        data:{'id':{{ $query->id }}}
       },
         false
       );

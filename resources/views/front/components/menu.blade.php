@@ -36,7 +36,7 @@
                 </div>
                 <div class="notification-opts">
                   <a href="{{ url('notifications') }}">
-                    <span class="fa fa-bars"></span>
+                    <span class="fa fa-cogs"></span>
                   </a>
                 </div>
               </div>
@@ -65,8 +65,8 @@
             </div>
             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">{{ csrf_field() }}</form>
           @else
-            <li><a href="{{ route('login') }}">Accedi</a></li>
-            <li><a href="{{ route('register') }}">Iscriviti</a></li>
+            <li><a class="text-primary" href="{{ route('login') }}">Accedi</a></li>
+            <li><a class="text-primary" href="{{ route('register') }}">Iscriviti</a></li>
         @endif
         </li>
        </ul>

@@ -16,12 +16,28 @@ class SearchController extends Controller
 
   public function getResults($slug)
   {
-    $query = Articoli::where('titolo','like','%'.$slug.'%')->get();
-    $query2 = User::where('nome','like','%'.$slug.'%')
-              ->orWhere('cognome','like','%'.$slug.'%')
+    $query = User::where('nome', 'like', $slug .'%')
+          ->orWhere('cognome', 'like', $slug .'%')
+          ->limit(5)
+          ->get();
+
+    $query2 = Articoli::where('titolo', 'like', $slug .'%')
+            ->limit(5)
+            ->get();
+
+    $query3 = Articoli::where('tags', 'like', $slug. '%')
+              ->limit(5)
               ->get();
 
-    return view('front.pages.search', compact('slug','query','query2'));
+    $query4 = Editori::where('nome', 'like', $slug. '%')
+            ->limit(5)
+            ->get();
+
+      $query = $query->merge($query2)
+                      ->merge($query3)
+                      ->merge($query4);
+
+    return view('front.pages.search', compact('slug','query'));
   }
 
   public function getResultsByTagName($slug)

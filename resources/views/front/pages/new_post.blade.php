@@ -38,9 +38,11 @@
       <label for="_au_sel_" class="col-md-4 col-form-label">Pubblica come</label>
       <div class="col-md-12">
         <select id="_au_sel" name="_au" class="form-control">
-          <option value="1">{{\Auth::user()->nome}} {{\Auth::user()->cognome}}</option>
+          <option value="0">{{\Auth::user()->nome}} {{\Auth::user()->cognome}}</option>
           @if(\Auth::user()->haveGroup())
-          <option value="2">{{\Auth::user()->getPublisherInfo()->nome }}</option>
+          @for($i = 0; $i < count($group); $i++)
+          <option value="{{ $group[$i]->id }}">{{ $group[$i]->nome }}</option>
+          @endfor
           @endif
         </select>
       </div>

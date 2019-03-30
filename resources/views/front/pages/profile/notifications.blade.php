@@ -29,8 +29,9 @@
 }
 </style>
 
+<div class="container">
   <div class="publisher-home">
-    <section class="publisher-header" style="background-image: url({{asset(\Auth::user()->getBackground())}})">
+    <div class="publisher-header" style="background-image: url({{asset(\Auth::user()->getBackground())}})">
       <div class="container">
         <div class="publisher-logo">
           <img src="{{asset(\Auth::user()->getAvatar())}}" alt="Logo">
@@ -39,9 +40,8 @@
           <span>{{\Auth::user()->nome}} {{\Auth::user()->cognome}}</span>
         </div>
       </div>
-    </section>
-    <section class="publisher-body">
-      <div class="container">
+    </div>
+      <div class="publisher-body">
         <ul id="nav">
           <li><a href="{{url(\Auth::user()->slug)}}">Home</a></li>
           <li><a href="{{url(\Auth::user()->slug.'/about')}}">Informazioni</a></li>
@@ -63,13 +63,32 @@
             }
             @endphp
             @if($value->type == '1') {{-- Collaborazione --}}
-            <div class="message">
+            <div id="noty_{{ $value->id }}" class="message">
               <div class="message-content">
-                Nuova richiesta di collaborazione dalla redazione <strong>{{ $value->getPublisherName->nome }}</strong>
+                <div class="message-close float-right">&times;</div>
+                <div class="message-info">
+                  <time>{{ $value->created_at }}</time>
+                </div>
+                <div class="my-3 pl-3">
+                  Nuova richiesta di collaborazione dalla redazione <strong>{{ $value->getPublisherName->nome }}</strong>
+                  <div class="actions">
+                    <button id="acceptRequest_{{ $value->id }}" class="btn btn-primary" type="role">
+                      Accetta
+                    </button>
+                    <script>
+                    $("#acceptRequest_{{ $value->id }}").click(function(){
+                      App.query('get','{{ url("request_accepted") }}', {id: {{ $value->id }}}, false, function(data){
+                        $("#noty_{{ $value->id }}").html("<h5>Richiesta Accettata</h5>");
+                        $("#noty_{{ $value->id }}").fadeOut(2000);
+                      });
+                    });
+                  </script>
+                  </div>
+                </div>
               </div>
             </div>
             @else
-            <div class="message">
+            <div id="{{ $value->id }}" class="message">
               <div class="message-content">
                 <h2><a href="{{ url('read/'.$articolo->slug) }}">{{ $articolo->titolo }}</a></h2>
                 <p>Pubblicato da
@@ -87,9 +106,9 @@
           @else
           <p>Nessuna notifica da visualizzare</p>
           @endif
-        </section>
-      </div>
+        </div>
     </div>
+</div>
 @if($query->count())
 <script>
 function delAll() {

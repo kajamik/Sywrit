@@ -9,15 +9,13 @@
 @endphp
 
 @section('main')
-<style type="text/css">
-#header {z-index:999}
-</style>
-<div class="container">
-  <div class="publisher-home">
+<div class="publisher-home">
     @if(!empty($editore))
     <section class="publisher-header" style="background-image: url({{asset($editore->getBackground())}})">
       <div class="container">
-        <img class="publisher-logo" src="{{asset($editore->getLogo())}}" alt="Logo">
+        <div class="publisher-logo">
+          <img src="{{asset($editore->getLogo())}}" alt="Logo">
+        </div>
         <div class="info">
           <span>{{$editore->nome}}</span>
         </div>
@@ -34,44 +32,44 @@
     </section>
     @endif
     <section class="publisher-body">
-      <a href="{{url('read/'.$query->slug)}}">Annulla modifiche</a>
-      <form method="post" action="" enctype="multipart/form-data">
-        @csrf
+      <div class="container">
+        <a href="{{url('read/'.$query->slug)}}">Annulla modifiche</a>
+        <form method="post" action="" enctype="multipart/form-data">
+          @csrf
 
-      <div class="mt-5">
-        <div class="form-group row">
-            <div class="col-md-12">
+          <div class="mt-5">
+            <div class="form-group row">
+              <div class="col-md-12">
                 <input id="title" type="text" class="form-control{{ $errors->has('title') ? ' is-invalid' : '' }}" name="title" value="{!! $query->titolo !!}" disabled>
+              </div>
             </div>
-        </div>
 
-        <div class="form-group row">
-          <div class="col-md-12">
-            <label for="file-upload" class="form-control custom-upload">
-              <i class="fa fa-cloud-upload-alt"></i> Carica copertina
-            </label>
-            <input id="file-upload" type="file" name="image">
-            <div id="image_preview" class="preview"></div>
-          </div>
-        </div>
-
-        <div class="form-group row">
-            <div class="col-md-12">
-              <textarea class="document" name="document__text">{!! $query->testo !!}</textarea>
+            <div class="form-group row">
+              <div class="col-md-12">
+                <label for="file-upload" class="form-control custom-upload">
+                  <i class="fa fa-cloud-upload-alt"></i> Carica copertina
+                </label>
+                <input id="file-upload" type="file" name="image">
+                <div id="image_preview" class="preview"></div>
+              </div>
             </div>
-        </div>
 
-        <div class="form-group row">
-            <div class="col-md-6 offset-md-4">
-                <button type="submit" class="btn btn-primary">
-                    {{ __('Modifica') }}
-                </button>
+            <div class="form-group row">
+              <div class="col-md-12">
+                <textarea class="document" name="document__text">{!! $query->testo !!}</textarea>
+              </div>
             </div>
-        </div>
+
+            <div class="form-group row">
+              <div class="col-md-6 offset-md-4">
+                  <button type="submit" class="btn btn-primary">
+                      {{ __('Modifica') }}
+                  </button>
+              </div>
+            </div>
 
       </form>
-    </section>
-  </div>
+  </section>
 </div>
 <link rel="stylesheet" href="{{ asset('plugins/dist/summernote.css') }}" />
 <script src="{{ asset('plugins/dist/summernote.min.js') }}"></script>

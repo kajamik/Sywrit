@@ -47,8 +47,8 @@ Route::get('read/{slug}', 'FrontController@getArticle')->middleware('published')
 // Article Actions
 Route::group(['middleware','auth'], function(){
   // Group Actions
-  Route::post('group/invite', ['uses' => 'FilterController@inviteGroup', 'as' => 'group/action/invite']);
-  Route::post('group/leave', ['uses' => 'FilterController@leaveGroup', 'as' => 'group/action/leave']);
+  Route::post('group/invite', ['uses' => 'AjaxController@inviteGroup', 'as' => 'group/action/invite']);
+  Route::get('group/leave', ['uses' => 'AjaxController@leaveGroup', 'as' => 'group/action/leave']);
   Route::post('group/delete', ['uses' => 'FilterController@deleteGroup', 'as' => 'group/action/delete']);
   Route::post('user/promote', ['uses' => 'FilterController@promoteUser', 'as' => 'group/user/promote']);
   Route::post('user/fired', ['uses' => 'FilterController@firedUser', 'as' => 'group/user/fired']);
@@ -64,9 +64,12 @@ Route::group(['middleware','auth'], function(){
   Route::get('getStateComments', 'AjaxController@getStateComments');
   Route::get('send-comment', 'AjaxController@postComments');
   Route::get('load-comments', 'AjaxController@loadComments');
+  Route::get('send-answers', 'AjaxController@postAnswers');
+  Route::get('load-answers', 'AjaxController@loadAnswers');
   Route::get('follow', 'AjaxController@follow');
-  Route::get('like', ['uses' => 'AjaxController@like', 'as' => 'like']);
+  Route::get('rate', ['uses' => 'AjaxController@rate', 'as' => 'rate']);
   Route::get('notifications_delete', 'AjaxController@deleteAllNotifications');
+  Route::get('request_accepted', 'AjaxController@acceptGroupRequest');
 });
 
 ///////////
@@ -94,3 +97,5 @@ Route::post('publisher/create', 'FilterController@postNewPublisher')->middleware
 
 // Pages
 Route::get('page/{slug}', 'FrontController@getPages');
+
+Route::fallback(function(){ return response()->view('errors.404', [], 404); });

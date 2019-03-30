@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" prefix="og: http://ogp.me/ns#">
 <head>
     <meta charset="utf-8" />
     <title>@yield('title') {{ config('app.name') }}</title>
@@ -17,6 +17,9 @@
     <link href="{{ asset('css/app.css') }}" media="all" rel="stylesheet" />
     <link href="{{ asset('css/print.css') }}" media="print" rel="stylesheet" />
     <link href="{{ asset('css/image.css') }}" media="screen" rel="stylesheet" />
+
+    <link href="{{ asset('lib/noty.css') }}" rel="stylesheet">
+    <script src="{{ asset('lib/noty.js') }}" type="text/javascript"></script>
 
     <link rel="icon" href="{{ asset('upload/logo_white.PNG') }}" />
 
@@ -50,7 +53,7 @@
   </main>
 
   <footer id="footer">
-    <p>Sito creato da <a href="{{ url('paolocarpentras') }}">Pietro Paolo Carpentras</a>.
+    <p>Sito creato da <a href="{{ url('1-pietropaolocarpentras') }}">Pietro Paolo Carpentras</a>.
     <br/>&copy; 2019 - {{ \Carbon\Carbon::now()->format('Y') }}. Tutti i diritti riservati</p>
   </footer>
 

@@ -1,11 +1,8 @@
+<hr/>
 @php
   $count = \DB::table('article_comments')->where('article_id', $query->id)->count();
 @endphp
-<div class="card">
-  <div class="card-header text-secondary">
-    Commenti ({{ $count }})
-  </div>
-  <div class="card-body">
+  <div class="feedback my-5">
     @auth
     <div class="d-flex">
       <img style="height:6em" class="p-2" src="{{ asset(Auth::user()->getAvatar()) }}" />
@@ -22,7 +19,7 @@
     <div class="d-flex">
       <img style="height:6em" class="p-2" src="{{ asset('upload/default.png') }}" />
         <div class="d-flex flex-grow-1 bg-light">
-          <p class="text-center">Per commentare devi prima effettuare l'accesso</p>
+          <p class="mt-3 offset-1">Per commentare devi prima effettuare l'accesso</p>
         </div>
     </div>
     @endif
@@ -30,14 +27,12 @@
 
   {{-- Commenti--}}
 
-  <div id="comments-data" class="col-md-9 offset-md-2">
+  <div id="comments-data" class="py-3 col-md-12">
 
     <script>
     var instance = false;
     var count = 0;
-
-    $(function(){
-
+    
       updateComments();
 
       $("#sendMsg").click(function(){
@@ -46,8 +41,6 @@
             $(data).prependTo($("#comments-data"));
         });
       });
-
-    });
 
     function getState() {
       App.query("get","{{ url('getStateComments') }}",{id: {{ $query->id }}, count: count},false,function(data) {
@@ -71,5 +64,3 @@
   <button onclick="updateComments()" class="btn btn-light pb-2">Carica altri commenti</button>
 </div>
 @endif
-
-</div>

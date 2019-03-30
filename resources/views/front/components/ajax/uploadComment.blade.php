@@ -1,4 +1,3 @@
-@if($query->count())
 <div class="card">
   <div class="card-header bg-dark">
     <a href="#" class="text-light">{{ $query->getUserInfo->nome }} {{ $query->getUserInfo->cognome }}</a>
@@ -15,4 +14,3 @@
     </div>
   </div>
 </div>
-@endif

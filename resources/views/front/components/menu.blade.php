@@ -53,11 +53,14 @@
             <div class="dropdown-menu" role="menu">
               <a class="dropdown-item" href="{{ url(Auth::user()->slug) }}"><i class="fa fa-user"></i> Il mio profilo</a>
               <a class="dropdown-item" href="{{ url('settings') }}"><i class="fa fa-cog"></i> Impostazioni</a>
+              <hr/>
               @if(Auth::user()->haveGroup())
-              <a class="dropdown-item" href="{{ url(Auth::user()->getPublisherInfo()->slug) }}"><i class="fa fa-newspaper"></i> La mia pagina</a>
-              @else
-              <a class="dropdown-item" href="{{ url('publisher/create') }}"><i class="fa fa-newspaper"></i> Crea gruppo</a>
+              @foreach(Auth::user()->getPublishersInfo() as $value)
+                <a class="dropdown-item" href="{{ url($value->slug) }}"><i class="fa fa-newspaper"></i> {{ $value->nome }}</a>
+              @endforeach
               @endif
+              <hr/>
+              <a class="dropdown-item" href="{{ url('publisher/create') }}"><i class="fa fa-newspaper"></i> Crea redazione</a>
               @if(Auth::user()->isOperator())
               <a class="dropdown-item" href="{{ url('toolbox')}}" target="_blank"><i class="fa fa-toolbox"></i> Strumenti</a>
               @endif

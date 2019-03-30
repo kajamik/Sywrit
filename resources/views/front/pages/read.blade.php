@@ -3,7 +3,7 @@
 @section('title', $query->titolo. ' -')
 
 @php
-  $autore = \App\Models\User::find($query->autore);
+  $autore = \App\Models\User::find($query->id_autore);
   if($query->id_gruppo > 0)
     $editore = \App\Models\Editori::find($query->id_gruppo);
 
@@ -12,6 +12,13 @@
     $follow = true;
   }else{
     $follow = false;
+  }
+
+  $rating = collect(explode(',',$query->rated));
+  if(Auth::user() && $rating->some(Auth::user()->id)) {
+    $hasRate = true;
+  } else {
+    $hasRate = false;
   }
 @endphp
 
@@ -60,69 +67,76 @@ span.time {
   color: #fff;
 }
 </style>
+<div class="container">
   <div class="publisher-home">
     @if(!empty($editore))
-    <section class="publisher-header" style="background-image: url({{asset($editore->getBackground())}})">
+    <div class="publisher-header" style="background-image: url({{ asset($editore->getBackground()) }})">
       <div class="container">
         <div class="publisher-logo">
-          <img src="{{asset($editore->getLogo())}}" alt="Logo">
+          <img src="{{ asset($editore->getLogo()) }}" alt="Logo">
         </div>
         <div class="info">
-          <span>{{$editore->nome}}</span>
+          <span>{{ $editore->nome }}</span>
         </div>
       </div>
-    </section>
+    </div>
     @else
-    <section class="publisher-header" style="background-image: url({{asset($autore->getBackground())}})">
+    <div class="publisher-header" style="background-image: url({{ asset($autore->getBackground()) }})">
       <div class="container">
         <div class="publisher-logo">
           <img src="{{asset($autore->getAvatar())}}" alt="Logo">
         </div>
         <div class="info">
-          <span>{{$autore->nome}} {{$autore->cognome}}</span>
+          <span>{{ $autore->nome }} {{ $autore->cognome }}</span>
         </div>
       </div>
-    </section>
+    </div>
     @endif
-    <section class="publisher-body">
-      <div class="container">
-      @if($options)
-
-        @if($query->id_gruppo > 0)
-
-          @include('front.components.article.group_tools')
-
-        @else
-          @include('front.components.article.my_tools')
-        @endif
-
-        @if(!$query->status)
-          Articolo non pubblicato
-        @endif
-
-      @endif
-      <article class="block-article">
-        <div class="block-title">
-          <h1>{{ $query->titolo }}</h1>
-        </div>
-        <p>Scritto da <a href="{{ url($autore->slug) }}">{{ $autore->nome }} {{ $autore->cognome }}</a></p>
-          @if(Auth::user() && $query->autore != \Auth::user()->id)
-          <button id="follow" class="btn-custom">
-            <i id="follow_icon" class="@if($follow) fas @else far @endif fa-bell"></i> <span>{{ $autore->followers_count }} seguaci</span>
-          </button>
+    <div class="publisher-body">
+        @auth
+        <div class="publisher-info">
+          @if($query->id_gruppo > 0)
+            @if($query->id_autore == \Auth::user()->id)
+              @include('front.components.article.group_tools')
+            @endif
+          @else
+            @if($query->id_autore == \Auth::user()->id)
+              @include('front.components.article.my_tools')
+            @endif
+          @endif
+          @if(Auth::user() && $query->id_autore != \Auth::user()->id)
+          <div class="col-md-12">
+            <button id="follow" class="btn-custom">
+              @if($follow)
+              <span id="follow_icon" class="fas fa-bell"></span>
+              <strong id="follow_text">{{ trans('Smetti di seguire') }}</strong>
+              @else
+              <span id="follow_icon" class="far fa-bell"></span>
+              <strong id="follow_text">{{ trans('Inizia a seguire') }}</strong>
+              @endif
+            </button>
+          </div>
           <script>
           document.getElementById("follow").onclick = function(){
-            App.query('GET','{{ url("follow?q=false") }}', {id: '{{ $query->autore }}'}, false, function(data){
+            App.query('GET','{{ url("follow?q=false") }}', {id: '{{ $query->id_autore }}'}, false, function(data){
               if(data.result){
                 $("#follow_icon").attr("class","fa fa-bell");
+                $("#follow strong").text("Smetti di seguire");
               }else{
-                $("#follow_icon").attr("class","far fa-bell");
+                $("#follow_icon").attr("class","fas fa-bell");
+                $("#follow strong").text("Inizia a seguire");
               }
-              $("#follow span").text(data.counter+" Seguaci");
             });
           }
           </script>
           @endif
+        </div>
+        @endauth
+      <article class="block-article">
+        <div class="block-title">
+          <h1 class="text-uppercase">{{ $query->titolo }}</h1>
+        </div>
+        <p>Scritto da <a href="{{ url($autore->slug) }}">{{ $autore->nome }} {{ $autore->cognome }}</a></p>
           <div class="date-info">
             <span class="date"><i class="far fa-calendar-alt"></i> {{ $date }}</span>
             <span class="time"><i class="far fa-clock"></i> {{ $time }}</span><br/>
@@ -134,7 +148,7 @@ span.time {
         @if(!empty($query->tags))
         <div class="block-meta">
           <ul class="meta-tags">
-            <i class="fa fa-tags"></i>
+            <span class="fa fa-tags"></span>
             @foreach($tags as $tag)
               <li><a href="{{ url('search/tag/'.$tag) }}">#{{ $tag }}</a></li>
             @endforeach
@@ -144,11 +158,38 @@ span.time {
       <hr style="border-style:dotted"/>
       <div class="block-footer">
         <div class="socials">
-          <button id="like" class="btn-custom @if($like) _button_active_ @endif">
-            {{ $query->likes_count }} Mi piace
-          </button>
-          <p><a id="share" href="#share">Condividi</a></p>
-          @auth<p><a id="report" href="#report">Segnala</a></p>@endauth
+          @if(Auth::user() && Auth::user()->id != $query->id_autore)
+          @if(!$hasRate)
+          <div id="ui-rating-box" class="float-left d-inline">
+            <a href="#">
+              <select id="ui-rating-select" name="rating" autocomplete="off">
+                <option value=""></option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+            </a>
+          </div>
+          @else
+          <span>Hai già votato</span>
+          @endif
+          @endif
+          <a id="share_on_facebook" href="https://www.facebook.com/share.php?u={{Request::url()}}">
+            <span class="fa-2x fab fa-facebook-square"></span>
+          </a>
+          <a id="share_on_linkedin" href="https://www.facebook.com/share.php?u={{Request::url()}}">
+            <span class="fa-2x fab fa-linkedin"></span>
+          </a>
+          @auth
+          <a data-toggle="dropdown" href="#">
+            <span class="fa-2x fas fa-ellipsis-v"></span>
+          </a>
+          <div class="dropdown-menu">
+            <a id="report" class="dropdown-item" href="#report">Segnala Articolo</a>
+          </div>
+          @endauth
         </div>
       </div>
     </article>
@@ -159,19 +200,9 @@ span.time {
     {{-- Commenti --}}
     @include('front.components.article.comments')
 
-  </section>
+  </div>
   @auth
   <script>
-    document.getElementById("like").onclick = function(){
-      App.query('GET','{{ url("like") }}', {id: '{{ $query->id }}'}, false, function(data){
-        if($("#like").hasClass("_button_active_")){
-          $("#like").removeClass("_button_active_");
-        }else{
-          $("#like").addClass("_button_active_");
-        }
-          $("#like").text(data.counter+" Mi piace");
-      });
-    }
     document.getElementById("report").onclick = function(){
       App.getUserInterface({
       "ui": {
@@ -201,9 +232,25 @@ span.time {
     });
   }
   </script>
+  <script src="{{ asset('js/_xs_r.js') }}"></script>
+  <script>
+  $('#ui-rating-select').barrating('show', {
+    theme: 'bars-square',
+    showValues: true,
+    showSelectedRating: false,
+    onSelect: function(value, text) {
+      App.query("GET", "{{ route('rate') }}", {id:{{ $query->id }}, rate_value:value}, false, function() {
+        $(".br-wrapper").fadeOut(1500, function(){
+          $(this).fadeIn();
+          $(this).text("Grazie per aver votato!!");
+        });
+      });
+    }
+  });
+  </script>
   @else
   <script>
-  document.getElementById("like").onclick = function(){guest();};
+  document.getElementById("rating").onclick = function(){guest();};
   function guest(){
     App.getUserInterface({
       "ui": {
@@ -216,23 +263,6 @@ span.time {
   }
   </script>
   @endauth
-  <script>
-    document.getElementById("share").onclick = function(){
-      App.getUserInterface({
-      "ui": {
-        "title": "Condividi su",
-        "styles": {
-          "padding":"5px",
-        },
-        "content": [
-          {"type": ["a"], "target": "_blank", "href": "https://www.facebook.com/share.php?u={{Request::url()}}", "text":"<span style='font-size:50px' class='fab fa-facebook-square share-url'></span>"},
-          {"type": ["a"], "target": "_blank", "href": "https://twitter.com/intent/tweet?url={{Request::url()}}", "text": "<span style='font-size:50px' class='fab fa-twitter-square share-url'></span>"},
-          {"type": ["a"], "target": "_blank", "href": "https://www.linkedin.com/sharing/share-offsite/?url={{Request::url()}}", "text": "<span style='font-size:50px' class='fab fa-linkedin share-url'></span>"}
-        ],
-      }
-    });
-  }
-
-  </script>
   </div>
+</div>
 @endsection

@@ -6,11 +6,14 @@
 <div class="container">
   <div class="publisher-home">
     <div class="publisher-body">
+      <div class="offset-md-1">
+        <img src="{{ asset('upload/editoria.png') }}" alt="" />
+      </div>
       <form action="" method="POST">
         @csrf
 
         <div class="form-group row">
-          <label for="name" class="col-md-4 col-form-label text-md-right required" required>Nome Editoria</label>
+          <label for="name" class="col-md-4 col-form-label text-md-right required" required>Nome Redazione</label>
 
           <div class="col-md-6">
             <input type="text" class="form-control" name="publisher_name">
@@ -22,16 +25,6 @@
 
           <div class="col-md-6">
             <input type="text" class="form-control" name="publisher_bio">
-          </div>
-        </div>
-
-        <div class="form-group row">
-          <label for="_tp" class="col-md-4 col-form-label text-md-right">Tipo restrizione</label>
-          <div class="col-md-6">
-            <select id="_tp" class="form-control" name="_tp_sel">
-              <option value="1">Pubblicazione senza revisione</option>
-              <option value="2">Pubblicazione con revisione</option>
-            </select>
           </div>
         </div>
 

@@ -11,42 +11,41 @@ h2, h5 {
 }
 </style>
 
-@guest
-<div class="block-hero">
-  <div class="container">
-    <div class="caption">
-      <h1>Benvenuto su Sywrit</h1>
-      <h3>La piattaforma di scrittura</h3>
-      <a href="{{ url('register') }}">
-        <button style="padding:15px" class="btn btn-dark">
-          Crea il tuo primo articolo
-        </button>
-      </a>
-    </div>
-  </div>
-</div>
-@endguest
-
 <div id="_home" class="container">
   <div class="publisher-home">
     <div class="publisher-body">
 
+    @guest
+    <div class="block-hero">
+      <div class="container">
+        <div class="caption">
+          <h1>Benvenuto su Sywrit</h1>
+          <h3>La piattaforma italiana di scrittura</h3>
+          <a href="{{ url('register') }}">
+            <button style="padding:7px;margin:6px;" class="btn btn-dark">
+              Crea il tuo primo articolo
+            </button>
+            <button style="padding:7px;margin:6px;" class="btn btn-dark">
+              Il nostro progetto
+            </button>
+          </a>
+        </div>
+      </div>
+    </div>
+    @endguest
+
       @if(count($ultimi_articoli))
-      <h2>Ultimi articoli</h2>
       <div class="row">
       @foreach($ultimi_articoli as $value)
-        <div class="col-lg-4 col-sm-6 col-xs-12">
-          <a href="{{ url('read/'.$value->slug)}}">
+        <div class="col-lg-4 col-sm-12 col-xs-12">
+          <a href="{{ url('read/'.$value->article_slug)}}">
+            <div class="card-header">{{ $value->created_at->diffForHumans() }}</div>
             <div class="card border-0">
-              <img class="card-img-top" src="{{asset($value->getBackground())}}" alt="Copertina Articolo">
-                <h5 class="card-title">{{ $value->titolo }}</h5>
+              <img class="card-img-top" src="{{ asset($value->getBackground()) }}" alt="Copertina Articolo">
+                <h4 class="card-title">{{ $value->article_title }}</h4>
                 <div class="author">
                   Pubblicato da
-                  @if(!empty($value->id_gruppo))
-                    <a href="{{ url($value->getRedazione->slug) }}"><span><span>{{ $value->getRedazione->nome }}</span></a>
-                  @else
-                    <a href="{{ url($value->getAutore->slug) }}"><span><span>{{ $value->getAutore->nome }} {{ $value->getAutore->cognome }}</span></a>
-                  @endif
+                    <a href="{{ url($value->user_slug) }}"><span><span>{{ $value->user_name }} {{ $value->user_surname }}</span></a>
                 </div>
             </div>
           </a>
@@ -56,7 +55,8 @@ h2, h5 {
       <hr/>
       @endif
 
-        {{--<div class="col-lg-3 col-sm-6 col-xs-12">
+        {{--
+        <div class="col-lg-3 col-sm-6 col-xs-12">
         <div class="card border-0 text-center">
           <div class="card-header">
             <span class="far fa-star"></span>
@@ -72,24 +72,21 @@ h2, h5 {
           </a>
         </div>
       </div>
-      <hr/>--}}
+      <hr/>
+      --}}
 
       @if(count($articoli))
-      <h2>Articoli</h2>
-      <div class="row" id="news">
+      <div class="py-2 row" id="news">
       @foreach($articoli as $value)
         <div class="col-lg-3 col-sm-4 col-xs-12">
-          <a href="{{ url('read/'.$value->slug)}}">
+          <a href="{{ url('read/'.$value->article_slug)}}">
+            <div class="card-header">{{ $value->created_at->diffForHumans() }}</div>
             <div class="card border-0">
               <img class="card-img-top" src="{{asset($value->getBackground())}}" alt="Copertina Articolo">
-                <h5 class="card-title">{{ $value->titolo }}</h5>
+                <h4 class="card-title">{{ $value->article_title }}</h4>
                 <div class="author">
                   Pubblicato da
-                  @if(!empty($value->id_gruppo))
-                    <a href="{{ url($value->getRedazione->slug) }}"><span><span>{{ $value->getRedazione->nome }}</span></a>
-                  @else
-                    <a href="{{ url($value->getAutore->slug) }}"><span><span>{{ $value->getAutore->nome }} {{ $value->getAutore->cognome }}</span></a>
-                  @endif
+                    <a href="{{ url($value->user_slug) }}"><span><span>{{ $value->user_name }} {{ $value->user_surname }}</span></a>
                 </div>
             </div>
           </a>

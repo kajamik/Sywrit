@@ -35,23 +35,17 @@ App.insl = function(id){
     }
   });
 }
+
 App.loadData = function(a,f){
   App.query('get',f+1,null,false,function(data){
     $(a).append(data.posts);
   });
 }
-App.upload = function(n, resize = true){
-  var node = setNode(n, {
-    html:
-    {
-      id : 'node_'+n.id
-    }
-  },"div");
 
-  $("<div/>").html("<div class='preview_body'><div class='image-wrapper' id='preview-wrapper'><img id='image_"+node.html.id+"' src="+URL.createObjectURL(event.target.files[0])+"></div></div>").appendTo($("#"+node.html.id));
-
+App.upload = function(b, resize = true){
+  $(b).html("<div class='preview_body'><div class='image-wrapper' id='preview-wrapper'><img id='image_"+$(b).attr('id')+"' src="+URL.createObjectURL(event.target.files[0])+"></div></div>");
   if(resize){
-    $('#image_'+node.html.id).rcrop();
+    $('#image_'+$(b).attr('id')).rcrop();
   }
 }
 
@@ -133,11 +127,19 @@ App.getUserInterface = function(t){
 
   let n = 0;
   for(var i in content){
-      content[i].label = (content[i].label) ? "<label>"+content[i].label+"</label>" : '';
-      if(header) {
-        $("<div class='form-group'>"+f(content[i])+content[i].label).appendTo( ($("div").hasClass("__ui__g_form_control")) ? $(".__ui__g_form_control") : $(".__ui__g_body") );
+      if(typeof content[i].type[0] == 'object') {
+        var select = content[i].type[0].select;
+        var selClass = $("<div class='form-group'><select id='"+content[i].name+"' class='"+content[i].class+"' name='"+content[i].name+"'></select></div>").appendTo( ($("div").hasClass("__ui__g_form_control")) ? $(".__ui__g_form_control") : $(".__ui__g_body") );
+        for(var b in select) {
+          $("#publisherSelector").append("<option value='"+select[b].value+"'>"+select[b].text+"</option>");
+        }
       } else {
-        $(f(content[i])+content[i].label).appendTo( ($("div").hasClass("__ui__g_form_control")) ? $(".__ui__g_form_control") : $(".__ui__g_body") );
+        content[i].label = (content[i].label) ? "<label>"+content[i].label+"</label>" : '';
+        if(header) {
+          $("<div class='form-group'>"+f(content[i])+content[i].label).appendTo( ($("div").hasClass("__ui__g_form_control")) ? $(".__ui__g_form_control") : $(".__ui__g_body") );
+        } else {
+          $(f(content[i])+content[i].label).appendTo( ($("div").hasClass("__ui__g_form_control")) ? $(".__ui__g_form_control") : $(".__ui__g_body") );
+        }
       }
   }
 

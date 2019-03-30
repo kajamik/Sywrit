@@ -18,16 +18,17 @@
   min-height: 200px;
 }
 </style>
-<div class="publisher-home">
-    <section class="publisher-header" style="background-image: url({{asset(Auth::user()->getBackground())}})">
+<div class="container">
+  <div class="publisher-home">
+    <div class="publisher-header" style="background-image: url({{asset(Auth::user()->getBackground())}})">
       <div class="container">
         <img class="publisher-logo" src="{{asset(Auth::user()->getAvatar())}}" alt="Logo">
         <div class="info">
           <span>{{Auth::user()->nome}} {{Auth::user()->cognome}}</span>
         </div>
       </div>
-    </section>
-    <section class="publisher-body">
+    </div>
+    <div class="publisher-body">
       <div class="container">
         <ul id='nav'>
           <li><a href="{{ url(Auth::user()->slug) }}">Home</a></li>
@@ -62,7 +63,8 @@
         </div>
     </div>
   </div>
-</section>
+</div>
+</div>
 <script>
   App.insl('articles');
 </script>

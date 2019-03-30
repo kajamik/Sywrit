@@ -24,7 +24,7 @@ class CreatePublisherTable extends Migration
             $table->integer('followers_count');
             $table->integer('direttore')->unique();
             $table->integer('avvisi');
-            $table->integer('accesso');
+            $table->enum('accesso', ['0','1']);
             $table->timestamps();
         });
     }

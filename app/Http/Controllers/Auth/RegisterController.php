@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 
+use Illuminate\Support\Str;
+use Image;
+
 class RegisterController extends Controller
 {
     /*
@@ -63,13 +66,28 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+      $img = Image::make(Image::canvas(160, 160, 'rgba(199, 191, 230,1)'));
+      $img->text(Str::limit($data['name'], 1, '').Str::limit($data['surname'], 1, ''), 80, 48, function($font) {
+        $font->file(public_path('fonts/RobotoSlab-Regular.ttf'));
+        $font->size(80);
+        $font->color('#000');
+        $font->align('center');
+        $font->valign('top');
+        $font->angle(0);
+      });
+      $img_name = '_160x160'.Str::random(64).'.jpg';
+      $img->save(public_path('storage/accounts/'.$img_name));
+
         return User::create([
             'nome' => $data['name'],
             'cognome' => $data['surname'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'slug' => str_slug($data['name'].$data['surname'], ''),
+            'avatar' => $img_name,
             // informazioni aggiuntive
+            'rank' => '1',
+            'points' => '0',
             'followers_count' => '0',
             'notifications_count' => '0',
         ]);

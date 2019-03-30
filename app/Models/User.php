@@ -20,7 +20,8 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'id', 'nome', 'cognome', 'email', 'password', 'slug',
+        'id', 'nome', 'cognome', 'email', 'password', 'slug', 'avatar',
+        'rank', 'points', 'followers_count', 'notifications_count',
     ];
 
     /**
@@ -53,13 +54,14 @@ class User extends Authenticatable
       $file = $this->storage.'/'.$this->copertina;
       if($this->copertina && file_exists($file))
         return $file;
-      return 'upload/no-copertina.png';
+      return 'upload/bg.jpg';
     }
 
     public function getAvatar() {
       $file = $this->storage.'/'.$this->avatar;
-      if($this->avatar && file_exists($file))
+      if($this->avatar && file_exists($file)) {
         return $file;
+      }
       return 'upload/default.png';
     }
 
@@ -67,15 +69,32 @@ class User extends Authenticatable
       return ($this->id_gruppo > 0);
     }
 
-    public function isDirector() {
-      return ($this->getPublisherInfo()->direttore == $this->id);
+    public function hasFoundedGroup() {
+
+      return 1;
     }
 
-    public function getPublisherInfo() {
-      if($this->haveGroup()){
-        $query = \DB::table('editori')->where('id',$this->id_gruppo)->first();
-        return $query;
+    public function getPublishersInfo() {
+      if($this->haveGroup()) {
+        $collection = collect();
+        $groups = array();
+        foreach(explode(',', $this->id_gruppo) as $value) {
+          $query = \DB::table('editori')->select('id', 'nome', 'slug')->where('id', $value)->first();
+          $collection->push($query);
+        }
+        return $collection;
       }
+    }
+
+    public function hasMemberOf($id) {
+      if($this->haveGroup()) {
+        foreach($this->getPublishersInfo() as $value) {
+          if($value->id == $id) {
+            return true;
+          }
+        }
+      }
+      return false;
     }
 
     public function getRankName() {

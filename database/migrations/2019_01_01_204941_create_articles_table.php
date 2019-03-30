@@ -21,10 +21,10 @@ class CreateArticlesTable extends Migration
             $table->text('testo');
             $table->string('copertina')->nullable();
             $table->integer('id_gruppo')->nullable(); // id editoria
-            $table->integer('autore'); // id autore
+            $table->integer('id_autore'); // id autore
             $table->integer('count_view');
-            $table->text('likes')->nullable();
-            $table->integer('likes_count');
+            $table->integer('rating_count');
+            $table->text('rated')->nullable();
             $table->enum('status',['0','1']); // no e si
             $table->timestamp('published_at');
             $table->timestamps();

@@ -20,7 +20,7 @@ class Editori extends Model
       if($this->background && file_exists($file)){
         return $file;
       }else{
-        return 'upload/no-copertina.png';
+        return 'upload/bg.jpg';
       }
     }
 

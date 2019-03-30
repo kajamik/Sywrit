@@ -27,11 +27,14 @@ class CreateUsersTable extends Migration
             $table->string('instagram')->nullable();
             $table->string('linkedin')->nullable();
             //---
+            $table->integer('rank');
+            $table->float('points');
+            //---
             $table->text('followers')->nullable();
-            $table->integer('followers_count', 0);
-            $table->integer('notifications_count', 0);
-            $table->int('id_gruppo')->nullable();
-            $table->enum('permission', ['0','1']);
+            $table->integer('followers_count');
+            $table->integer('notifications_count');
+            $table->text('id_gruppo')->nullable();
+            $table->enum('permission', ['1','2','3','4']);
             $table->enum('accesso', ['0','1']);
             $table->rememberToken();
             $table->timestamps();

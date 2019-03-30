@@ -163,6 +163,7 @@ return [
         Illuminate\View\ViewServiceProvider::class,
         Intervention\Image\ImageServiceProvider::class,
         Artesaos\SEOTools\Providers\SEOToolsServiceProvider::class,
+        RSmalc\Noty\NotyServiceProvider::class,
         /*
          * Package Service Providers...
          */

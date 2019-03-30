@@ -5,13 +5,18 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
+use App\Http\Requests\UpdateUsername;
+use App\Http\Requests\UpdatePassword;
+
 use App\Models\User;
 use App\Models\Articoli;
 use App\Models\Editori;
 use App\Models\BackupAccountsImages;
 use App\Models\BackupGroupsImages;
 use App\Models\Notifications;
+use App\Models\PublisherRequest;
 
+use Validator;
 use Carbon\Carbon;
 use Storage;
 use Image;
@@ -76,18 +81,8 @@ class FilterController extends Controller
     return redirect('settings');
   }
 
-  public function postChangeUsername(Request $request)
+  public function postChangeUsername(UpdateUsername $request)
   {
-    $this->validate($request,[
-      'slug' => 'required|unique:utenti|regex:/(^[A-Za-z0-9 ]+$)+/',
-      'verification' => 'required'
-    ],[
-      'slug.required' => 'Nome utente richiesto',
-      'slug.unique' => ':username già esistente',
-      'slug.regex' => 'Caratteri non consentiti',
-      'verification.required' => 'Password necessaria'
-    ]);
-
     $query = User::find(\Auth::user()->id);
     $query->slug = Str::slug($request->slug,'-');
     $query->save();
@@ -96,61 +91,29 @@ class FilterController extends Controller
 
   public function postChangePassword(Request $request)
   {
-    $this->validate($request,[
-      'old_password' => 'required|min:6',
-      'password' => 'required|min:6|different:old_password'
+    $query = User::find(\Auth::user()->id);
+
+    $validation = Validator::make($request->all(),[
+      'old_password' => 'required|min:6|hash:'.$query->password,
+      'password' => 'required|min:6|different:old_password',
+      'password_confirmation' => 'required|min:6|same:password'
     ],[
       'old_password.required' => 'La password è richiesta',
       'old_password.min' => 'La password deve essere lunga almeno 6 caratteri',
+      'old_password.hash' => 'La password non è valida',
       'password.required' => 'La password è richiesta',
       'password.min' => 'La password deve essere lunga almeno 6 caratteri',
-      'password.different' => 'La nuova password non dev\'essere uguale alla precedente',
-      'password.confirmed' => 'Password non confermata'
+      'password.different' => 'La nuova password non può essere uguale alla precedente',
     ]);
-    $query = User::find(\Auth::user()->id);
+
+    if ($validation->fails()) {
+      //return $validation->errors();
+      return redirect()->back()->withErrors($validation->errors());
+    }
     $query->password = bcrypt($request->password);
     $query->save();
     return redirect('settings');
   }
-
-  public function inviteGroup(Request $request)
-  {
-    $query = User::find($request->id);
-    if(Auth::user()->isDirector() && !$query->haveGroup()){
-      $message = new Notifications();
-      $message->sender_id = Auth::user()->id;
-      $message->target_id = $query->id;
-      $message->text = $request->text;
-      $message->type = '1'; // group request
-      $message->marked = '0';
-      $message->save();
-      $query->notifications_count++;
-      $query->save();
-    }
-  }
-
-  public function leaveGroup(Request $request)
-  {
-      $query = Editori::where('id',\Auth::user()->id_gruppo)->first();
-      $slug = $query->slug;
-
-      if($query->direttore == \Auth::user()->id)
-        return redirect($slug)->with(['type' => 'container_right__small', 'message' => 'Non puoi lasciare il gruppo se sei il direttore']);
-
-      try{
-        $collection = collect(explode(',',$query->componenti));
-        $collection->splice($collection->search(\Auth::user()->id),1);
-        $query->componenti = $collection->implode(',');
-        $query->save();
-        $user = User::find(\Auth::user()->id);
-        $user->id_gruppo = null;
-        $user->save();
-      }catch(ErrorException $error){
-        //
-      }
-
-      return redirect($slug);
-    }
 
     public function deleteGroup(Request $request)
     {
@@ -185,14 +148,12 @@ class FilterController extends Controller
 
     public function postNewPublisher(Request $request)
     {
-      if(Auth::user()->haveGroup())
-        abort(404);
-
       $this->validate($request, [
-        'publisher_name' => 'required|string|min:4|max:16',
+        'publisher_name' => 'required|min:2|max:30',
       ], [
-        'publisher_name.required' => 'Nome editoria richiesto',
-        'publisher_name.string' => 'Il nome editoria dev\'essere una stringa'
+        'publisher_name.required' => 'Nome richiesto',
+        'publisher_name.min' => 'Nome troppo corto',
+        'publisher_name.max' => 'Nome troppo lungo'
       ]);
       $query = new Editori();
       $query->nome = $request->publisher_name;
@@ -206,7 +167,11 @@ class FilterController extends Controller
       $query->slug = Str::slug($query->nome,'-');
       $query->save();
       $user = User::find(Auth::user()->id);
-      $user->id_gruppo = $query->id;
+      if(!empty($user->id_gruppo)) {
+        $user->id_gruppo = $user->id_gruppo.','.$query->id;
+      } else {
+        $user->id_gruppo = $query->id;
+      }
       $user->save();
       return redirect($query->slug);
     }
@@ -302,7 +267,7 @@ class FilterController extends Controller
       ]);
       $query = new Articoli();
       $query->titolo = $request->document__title;
-      $query->tags = str_slug($request->tags,',');
+      $query->tags = str_slug($request->tags, ',');
       $query->testo = $request->document__text;
       if($a = $request->image){
         $resize = '__492x340'.Str::random(64).'.jpg';
@@ -313,42 +278,15 @@ class FilterController extends Controller
         Storage::disk('articles')->put($normal_image, $image);
         $query->copertina = $resize;
       }
-      if(\Auth::user()->id_gruppo > 0 && $request->_au == 2){
-        $query->id_gruppo = Auth::user()->id_gruppo;
+      if($request->_au > 0) {
+        if(Auth::user()->hasMemberOf($request->_au)) {
+          $query->id_gruppo = $request->_au;
+        }
       }
-      $query->autore = \Auth::user()->id;
-      if($request->save){
-        $query->status = '0';
-      }else{
-        $query->status = '1'; // pubblicato
-        // Sistema punti
-        $query->score = 0;
-        $points = 0;
-        foreach(explode('<br>', $request->document__text) as $value) {
-          $pattern = '/<h2[^>]*>(.*?)<\/h2><p[^>]*>(.*?)<\/p>/is';
-          $headers = preg_match( $pattern, $request->document__text );
-          if($headers) {
-            if($points < 2) {
-
-            } else {
-              if($points > 0) {
-                $points -= 0.15;
-              }
-            }
-          }
-          // END
-        }
-      /*  $user = User::find(Auth::user()->id);
-        if($words == (1000 * $user->rank)+1) {
-          $user->rank += 1;
-          $user->points = $points;
-        } else {
-          $user->points += $words;
-        }
-        $user->save();*/
-    }
+      $query->id_autore = \Auth::user()->id;
       $query->count_view = '0';
-      $query->likes_count = '0';
+      $query->rating_count = '0';
+      $query->rating = '0';
       $query->save();
 
       // Slug
@@ -356,12 +294,13 @@ class FilterController extends Controller
         $query->save();
       //
       // Notifications
-      if(!empty(Auth::user()->getPublisherInfo()->followers)) {
-        foreach(explode(',',Auth::user()->getPublisherInfo()->followers) as $value) {
+      $editore = \DB::table('editori')->where('id', $request->id)->first();
+      if(!empty($editore->followers)) {
+        foreach(explode(',', $editore->followers) as $value) {
           if($value != Auth::user()->id) {
             $notifiche = new \App\Models\Notifications();
             if($query->id_gruppo != null){
-              $notifiche->sender_id = Auth::user()->getPublisherInfo()->id;
+              $notifiche->sender_id = $editore->id;
               $notifiche->type = '3';
             }else{
               $notifiche->sender_id = Auth::user()->id;
@@ -380,7 +319,7 @@ class FilterController extends Controller
 
       return redirect('read/'.$query->slug);
     }
-    
+
     public function ArticlePublish(Request $request)
     {
       $query = Articoli::find($request->_rq_token);
@@ -400,7 +339,7 @@ class FilterController extends Controller
         'document__text.required' => 'Non è consentito pubblicare un articolo senza contenuto'
       ]);
       $query = Articoli::find($id);
-      if((\Auth::user()->id_gruppo > 0 && $query->id_gruppo == \Auth::user()->id_gruppo) || (\Auth::user()->id == $query->autore)){
+      if((\Auth::user()->id_gruppo > 0 && $query->id_gruppo == \Auth::user()->id_gruppo) || (\Auth::user()->id == $query->id_autore)){
         $query->testo = $request->document__text;
         if($a = $request->image){
           $resize = '__492x340'.Str::random(64).'.jpg';
@@ -419,7 +358,7 @@ class FilterController extends Controller
     public function ArticleDelete(Request $request)
     {
       $query = Articoli::find($request->_rq_token);
-      if((Auth::user()->id_gruppo > 0 && $query->id_gruppo == \Auth::user()->id_gruppo) || (\Auth::user()->id == $query->autore)){
+      if((Auth::user()->id_gruppo > 0 && $query->id_gruppo == \Auth::user()->id_gruppo) || (\Auth::user()->id == $query->id_autore)){
         $query->delete();
       }
       return redirect('/');

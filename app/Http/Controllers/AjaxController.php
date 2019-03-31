@@ -100,8 +100,7 @@ class AjaxController extends Controller
         $search = $request->q;
 
       if(!is_null($search)){
-        $query = User::where('nome', 'like', $search .'%')
-              ->orWhere('cognome', 'like', $search .'%')
+        $query = User::where(\DB::raw("concat(nome, cognome)"), 'like', '%'.$search.'%')
               ->limit(5)
               ->get();
 

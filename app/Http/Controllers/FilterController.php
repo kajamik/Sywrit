@@ -269,7 +269,7 @@ class FilterController extends Controller
       $query->titolo = $request->document__title;
       $query->tags = str_slug($request->tags, ',');
       $query->testo = $request->document__text;
-      if($a = $request->image){
+      if($a = $request->image) {
         $resize = '__492x340'.Str::random(64).'.jpg';
         $normal_image = '__'.Str::random(64).'.jpg';
         $image = Image::make($a)->crop($request->width[0],$request->height[0],$request->x[0],$request->y[0])->resize(492, 340)->encode('jpg');
@@ -282,6 +282,11 @@ class FilterController extends Controller
         if(Auth::user()->hasMemberOf($request->_au)) {
           $query->id_gruppo = $request->_au;
         }
+      }
+      if($request->save) {
+        $query->status = '0';
+      } else {
+        $query->status = '1';
       }
       $query->id_autore = \Auth::user()->id;
       $query->count_view = '0';

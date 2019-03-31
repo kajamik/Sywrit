@@ -59,6 +59,6 @@ class SearchController extends Controller
                                     'articoli.titolo as article_title', 'articoli.slug as article_slug', 'articoli.copertina as copertina', 'articoli.created_at as created_at')
                         ->orderBy('published_at','desc')
                         ->get();;
-    return view('front.pages.search', compact('slug','input','query'));
+    return view('front.pages.search', compact('slug','query'));
   }
 }

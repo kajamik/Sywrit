@@ -43,30 +43,42 @@ class FrontController extends Controller
 
     public function index(Request $request)
     {
-        $INDEX_LIMIT = 6;
+        $INDEX_LIMIT = 9;
+        $current_page = 1 + $request->page;
+
         $ultimi_articoli = Articoli::take(3)
                           ->join('utenti', 'articoli.id_autore', '=', 'utenti.id')
                           ->addSelect('utenti.slug as user_slug', 'utenti.nome as user_name', 'utenti.cognome as user_surname',
-                                      'articoli.titolo as article_title', 'articoli.slug as article_slug', 'articoli.copertina as copertina', 'articoli.created_at as created_at')
+                                      'articoli.titolo as article_title', 'articoli.slug as article_slug', 'articoli.testo as article_text', 'articoli.copertina as copertina', 'articoli.created_at as created_at')
                           ->where('status','1')
                           ->orderBy('published_at','desc')
                           ->get();
 
-        $articoli = Articoli::skip(3 + ( $INDEX_LIMIT * ($request->page-1) ))->take($INDEX_LIMIT)
+        $articoli = Articoli::skip(3 + ( $INDEX_LIMIT * ($current_page-1) ) )->take($INDEX_LIMIT)
                     ->join('utenti', 'articoli.id_autore', '=', 'utenti.id')
                     ->addSelect('utenti.slug as user_slug', 'utenti.nome as user_name', 'utenti.cognome as user_surname',
-                                'articoli.titolo as article_title', 'articoli.slug as article_slug', 'articoli.copertina as copertina', 'articoli.created_at as created_at')
+                                'articoli.titolo as article_title', 'articoli.slug as article_slug', 'articoli.testo as article_text', 'articoli.copertina as copertina', 'articoli.created_at as created_at')
                     ->where('status','1')
                     ->orderBy('published_at','desc')
                     ->get();
 
+        $top = Articoli::take(6)
+                    ->join('utenti', 'articoli.id_autore', '=', 'utenti.id')
+                    ->addSelect('utenti.slug as user_slug', 'utenti.nome as user_name', 'utenti.cognome as user_surname',
+                                'articoli.titolo as article_title', 'articoli.slug as article_slug', 'articoli.testo as article_text', 'articoli.copertina as copertina', 'articoli.created_at as created_at')
+                    ->where('status','1')
+                    ->orderBy('rating','desc')
+                    ->orderBy('published_at','desc')
+                    ->get();
+
           if($request->ajax()){
+            $current_page = 1;
             if(count($articoli)){
               return ['posts' => view('front.components.ajax.loadAll')->with(compact('articoli'))->render()];
             }
           }
 
-      return view('front.pages.welcome',compact('articoli','ultimi_articoli', 'autore'));
+      return view('front.pages.welcome',compact('articoli','ultimi_articoli','top'));
     }
 
     // PROFILE
@@ -93,7 +105,7 @@ class FrontController extends Controller
 
       $this->listGroups($query);
 
-      return view('front.pages.profile.index',compact('query','query2','follow','count','articoli','group'));
+      return view('front.pages.profile.index',compact('query','query2','follow','count','articoli'));
     }
 
     public function getAbout($slug)
@@ -105,9 +117,6 @@ class FrontController extends Controller
 
       $query2 = \App\Models\Articoli::where('status','1')->where('id_autore',$query->id);
       $count = $query2->count();
-
-      if(!$query->accesso && (Auth::guest() || Auth::user()->id != $query->direttore))
-        abort(404);
 
       $followers = array();
       if($query->followers != null)
@@ -149,6 +158,7 @@ class FrontController extends Controller
 
         $publisher = array();
         $followers = array();
+        $follow = false;
 
         if($request->ajax()){
             $articoli = Articoli::where('id_gruppo',$query->id)->skip(($request->page-1)*12)->take(12)->get();
@@ -208,7 +218,8 @@ class FrontController extends Controller
 
     public function getArticle($slug)
     {
-      $query = Articoli::where('slug',$slug)->orderBy('id', 'asc')->first();
+      $query = Articoli::where('slug',$slug)->first();
+      $collection = collect(explode(',', Auth::user()->id_gruppo));
 
       if( Auth::user() ){
         $options = true;

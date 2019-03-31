@@ -23,6 +23,8 @@
 
     <link rel="icon" href="{{ asset('upload/logo_white.PNG') }}" />
 
+    <link rel="canonical" href="{{ Request::url() }}" />
+
     @yield('styles')
 </head>
 <body id="__ui">
@@ -53,8 +55,13 @@
   </main>
 
   <footer id="footer">
+    <ul class="footer-links">
+      <li><a href="{{ url('page/project') }}">Il nostro progetto</a></li>
+      <li><a href="{{ url('page/about/privacy') }}">Privacy</a></li>
+      <li><a href="{{ url('page/legal/terms') }}">Termini e condizioni</a></li>
+    </ul>
     <p>Sito creato da <a href="{{ url('1-pietropaolocarpentras') }}">Pietro Paolo Carpentras</a>.
-    <br/>&copy; 2019 - {{ \Carbon\Carbon::now()->format('Y') }}. Tutti i diritti riservati</p>
+    &copy; 2019 - {{ \Carbon\Carbon::now()->format('Y') }}. Tutti i diritti riservati</p>
   </footer>
 
   <script type="text/javascript">

@@ -30,10 +30,10 @@
       <div class="publisher-body">
         <nav>
           <ul id='nav'>
-            <li><a href="{{ url($query->slug) }}">Home</a></li>
-            <li><a href="{{ url($query->slug.'/about') }}">Informazioni</a></li>
+            <li><a href="{{ url($query->slug) }}">Profilo</a></li>
+            <li><a href="{{ url($query->slug.'/about') }}">Contatti</a></li>
             @if(\Auth::user() && \Auth::user()->id == $query->id)
-            <li><a href="{{ url($query->slug.'/archive') }}">Articoli Salvati</a></li>
+            <li><a href="{{ url($query->slug.'/archive') }}">Archivio</a></li>
             @endif
           </ul>
         </nav>

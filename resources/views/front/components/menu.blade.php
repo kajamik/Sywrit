@@ -1,7 +1,7 @@
 <div class="navbar">
   <div class="navbar-left">
     <a href="{{url('/')}}" class="brand">
-      <img src="{{ asset('upload/logo_white.png') }}" alt="Logo">
+      <img src="{{ asset('upload/logo.png') }}" alt="Logo">
     </a>
   </div>
 
@@ -9,13 +9,24 @@
         <ul class="user-navbar">
           <li>
             <div class="ty-search" id="search">
+              <div class="d-flex">
+                <input id="search_query" type="text" placeholder="Cerca" onkeyup="fetch_live_search(this.value);" />
+                <button style="background:transparent;border:none;">
+                  <span class="fa fa-search"></span>
+                </button>
+              </div>
+              <div class="data-list"></div>
+            </div>
+          </li>
+          {{--<li>
+            <div class="ty-search" id="search">
               <input id="search_query" type="text" placeholder="Cerca" onkeyup="fetch_live_search(this.value);" />
               <button style="background:transparent;border:none;">
                 <span class="fa fa-search"></span>
               </button>
               <div class="data-list"></div>
             </div>
-          </li>
+          </li>--}}
           @if(Auth::user())
           <li>
             <a href="{{url('write')}}">
@@ -68,8 +79,8 @@
             </div>
             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">{{ csrf_field() }}</form>
           @else
-            <li><a class="text-primary" href="{{ route('login') }}">Accedi</a></li>
-            <li><a class="text-primary" href="{{ route('register') }}">Iscriviti</a></li>
+            <li><a class="text-white" href="{{ route('login') }}">Accedi</a></li>
+            <li><a class="text-white" href="{{ route('register') }}">Iscriviti</a></li>
         @endif
         </li>
        </ul>

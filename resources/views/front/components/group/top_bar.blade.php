@@ -12,7 +12,6 @@
   cursor: pointer;
 }
 </style>
-@auth
 <div class="container">
   <div class="publisher-home">
     <div class="publisher-header" style="background-image: url({{asset($query->getBackground())}});border-radius:4px 4px 0 0;">
@@ -32,7 +31,7 @@
           <li><a href="{{url($query->slug.'/about')}}">Informazioni</a></li>
           <li><a href="{{url($query->slug.'/archive')}}">Articoli Salvati</a></li>
 
-          @if($query->hasMember())
+          @if(Auth::user() && $query->hasMember())
           <li>
             <a data-toggle="dropdown" href="#">
               Impostazioni
@@ -91,6 +90,7 @@
         <h3>Questa pagina è stata disabilita. Per riattivarla vai sulle impostazioni della pagina.</h3>
       </div>
     @endif
+    @auth
       <div id="follow" class="_ou">
       @if(!$follow)
       <i class="fas fa-bell"></i> <span>Inizia a seguire</span>

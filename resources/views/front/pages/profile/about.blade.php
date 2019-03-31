@@ -1,6 +1,6 @@
 @extends('front.layout.app')
 
-@section('title', 'Articoli Salvati -')
+@section('title', 'Informazioni - '.$query->nome.' '.$query->cognome.' -')
 
 @section('main')
 @include('front.components.profile.top_bar')
@@ -20,7 +20,6 @@ address > a, address > a:hover {
 </style>
 
         <div class="publisher-content">
-          <h1>Informazioni utente</h1>
           <div class="py-3">
             @if(!empty($query->biography))
             <h2>Biografia</h2>
@@ -30,6 +29,7 @@ address > a, address > a:hover {
             <hr/>
             @endif
             @if(!empty($query->facebook) || !empty($query->instagram) || !empty($query->linkedin))
+            <h1>Informazioni utente</h1>
             <h2>Socials Link</h2>
             <div class"col-lg-12">
               @if(!empty($query->facebook))
@@ -49,7 +49,7 @@ address > a, address > a:hover {
               @endif
             </div>
             @else
-              <p>Questo utente non ha ancora aggiornato le sue Informazioni</p>
+              <p>Nessun contatto</p>
             @endif
           </div>
     </div>

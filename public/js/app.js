@@ -177,9 +177,9 @@ App.update = function(){
         $(".navbar > *").css('display','none');
         $(".ty-search").addClass('full-width');
         /* Add full search input block */
-        var left_arrow = "<span id='search_back' class='fa fa-arrow-left' style='cursor:pointer'></span>";
+        var left_arrow = "<span id='search_back' class='fa fa-arrow-left' style='margin: 9px 5px 0 0;cursor:pointer'></span>";
         $(".ty-search").appendTo($(".navbar"));
-        $(".ty-search").prepend(left_arrow);
+        $(left_arrow).insertBefore($(".ty-search input"));
       }
       //
         $(".navbar #search_back").click(function(){

@@ -13,7 +13,11 @@ class Handler extends ExceptionHandler
      * @var array
      */
     protected $dontReport = [
-        //
+      \Illuminate\Auth\AuthenticationException::class,
+      \Illuminate\Auth\Access\AuthorizationException::class,
+      \Symfony\Component\HttpKernel\Exception\HttpException::class,
+      \Illuminate\Database\Eloquent\ModelNotFoundException::class,
+      \Illuminate\Validation\ValidationException::class,
     ];
 
     /**
@@ -46,7 +50,11 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
-        //return response()->view('errors.404', [], 404);
+      if($exception instanceof \Illuminate\Validation\ValidationException) {
         return parent::render($request, $exception);
+      } else if(!$exception instanceof \Illuminate\Auth\AuthenticationException) {
+        return response()->view('errors.404', [], 404);
+      }
+      return parent::render($request, $exception);
     }
 }

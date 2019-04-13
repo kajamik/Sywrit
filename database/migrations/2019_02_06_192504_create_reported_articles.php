@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateActivitiesReports extends Migration
+class CreateReportedArticles extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,17 @@ class CreateActivitiesReports extends Migration
      */
     public function up()
     {
-        Schema::create('activities_reports', function (Blueprint $table) {
-            $table->increments('id');
+        Schema::create('reported_articles', function (Blueprint $table) {
+            $table->bigIncrements('id');
             $table->integer('user_id');
             $table->integer('article_id');
             /*****************
-              0 = contenuto di natura sessuale
-              1 = incita all'odio od offensivi
-              2 = promuove il terrorismo
-              3 = violazione del diritto d'autore
+            0 = Contenuto di natura sessuale
+            1 = Contenuto violento o che incita all'odio
+            2 = Promuove il terrorismo o attività criminali
+            3 = Notizia Falsa ( Fake News )
+            4 = Violazione del diritto d'autore
+            5 = Spam
             /*****************/
             $table->enum('report', ['0','1','2','3']);
             $table->string('report_token');

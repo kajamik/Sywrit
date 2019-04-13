@@ -26,8 +26,8 @@ Route::group(['prefix' => 'search'], function() {
   Route::get('{slug}', 'SearchController@getResults');
   // Advanced search
   Route::get('tag/{slug}', 'SearchController@getResultsByTagName');
-  Route::get('articles/{slug}', 'SearchController@getResultsByArticlesName');
-  Route::get('users/{slug}', 'SearchController@getResultsByUsersName');
+  /*Route::get('articles/{slug}', 'SearchController@getResultsByArticlesName');
+  Route::get('users/{slug}', 'SearchController@getResultsByUsersName');*/
 });
 Route::get('live_search', ['uses' => 'AjaxController@SearchLiveData', 'as' => 'live_search']);
 Route::get('live_notif', ['uses' => 'AjaxController@getNotifications', 'as' => 'live_notif']);
@@ -51,23 +51,27 @@ Route::group(['middleware','auth'], function(){
   Route::get('group/leave', ['uses' => 'AjaxController@leaveGroup', 'as' => 'group/action/leave']);
   Route::post('group/delete', ['uses' => 'FilterController@deleteGroup', 'as' => 'group/action/delete']);
   Route::post('user/promote', ['uses' => 'FilterController@promoteUser', 'as' => 'group/user/promote']);
-  Route::post('user/fired', ['uses' => 'FilterController@firedUser', 'as' => 'group/user/fired']);
-  //Route::post('user/invite', ['uses' => 'FilterController@inviteUser', 'as' => 'group/user/invite']);
+  Route::post('user/fired', ['uses' => 'FilterController@UserReport', 'as' => 'group/user/fired']);
+  // User action
+  Route::get('user/report', ['uses' => 'FilterController@ArticleReport', 'as' => 'user/action/report']);
   ///////
   // Article Actions
   Route::post('post/publish', ['uses' => 'FilterController@ArticlePublish', 'as' => 'article/action/publish']);
   Route::get('post/{id}/edit', 'FrontController@getArticleEdit');
   Route::post('post/{id}/edit', 'FilterController@postArticleEdit');
   Route::post('post/delete', ['uses' => 'FilterController@ArticleDelete', 'as' => 'article/action/delete']);
-  Route::post('post/report', ['uses' => 'FilterController@ArticleReport', 'as' => 'article/action/report']);
+  Route::get('post/report', ['uses' => 'FilterController@ArticleReport', 'as' => 'article/action/report']);
   // Other
+  Route::get('getStateNotifications', 'AjaxController@getStateNotifications');
   Route::get('getStateComments', 'AjaxController@getStateComments');
   Route::get('send-comment', 'AjaxController@postComments');
   Route::get('load-comments', 'AjaxController@loadComments');
   Route::get('send-answers', 'AjaxController@postAnswers');
   Route::get('load-answers', 'AjaxController@loadAnswers');
-  Route::get('follow', 'AjaxController@follow');
+  Route::get('comment/report', ['uses' => 'FilterController@CommentReport', 'as' => 'comment/action/report']);
+  //Route::get('follow', 'AjaxController@follow');
   Route::get('rate', ['uses' => 'AjaxController@rate', 'as' => 'rate']);
+  //Route::get('article_history', 'AjaxController@history');
   Route::get('notifications_delete', 'AjaxController@deleteAllNotifications');
   Route::get('request_accepted', 'AjaxController@acceptGroupRequest');
 });
@@ -87,6 +91,9 @@ Route::group(['middleware' => 'auth'], function(){
   Route::post('change_password', ['uses' => 'FilterController@postChangePassword', 'as' => 'settings/password']);
 });
 
+// Topic
+Route::get('topic/{slug}', 'FrontController@getTopic');
+
 // Profile
 Route::get('{slug}', 'FrontController@getProfile');
 Route::get('{slug}/archive', 'FrontController@getPrivateArchive')->middleware('auth');
@@ -95,7 +102,11 @@ Route::get('{slug}/archive', 'FrontController@getPrivateArchive')->middleware('a
 Route::get('publisher/create', 'FrontController@getNewPublisher')->middleware('auth');
 Route::post('publisher/create', 'FilterController@postNewPublisher')->middleware('auth');
 
+// Article Archive
+Route::get('archive/article/read', 'FrontController@getArticleArchive');
+
 // Pages
 Route::get('page/{slug}', 'FrontController@getPages');
+Route::get('page/{slug}/{slug2}', 'FrontController@getPages');
 
 Route::fallback(function(){ return response()->view('errors.404', [], 404); });

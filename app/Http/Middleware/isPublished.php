@@ -18,7 +18,9 @@ class isPublished
     public function handle($request, Closure $next)
     {
       $query = Articoli::where('slug',$request->slug)->first();
-      $collection = collect(explode(',', Auth::user()->id_gruppo));
+      if(Auth::user()) {
+        $collection = collect(explode(',', Auth::user()->id_gruppo));
+      }
         if($query->status || ( Auth::user() && (Auth::user()->id == $query->id_autore || $collection->some($query->id_gruppo)))){
           return $next($request);
         }

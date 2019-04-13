@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateBackupGroupsImages extends Migration
+class CreateArticleCategory extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,10 @@ class CreateBackupGroupsImages extends Migration
      */
     public function up()
     {
-        Schema::create('backup_groups_images', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('img_title');
-            $table->integer('group_id');
+        Schema::create('article_category', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('name');
+            $table->string('slug');
             $table->timestamps();
         });
     }
@@ -28,6 +28,6 @@ class CreateBackupGroupsImages extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('backup_groups_images');
+        Schema::dropIfExists('article_category');
     }
 }

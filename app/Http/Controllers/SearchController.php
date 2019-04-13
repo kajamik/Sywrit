@@ -16,8 +16,7 @@ class SearchController extends Controller
 
   public function getResults(Request $request, $slug)
   {
-    $query = User::where('nome', 'like', $slug .'%')
-          ->orWhere('cognome', 'like', $slug .'%')
+    $query = User::where(\DB::raw("concat(nome, ' ', cognome)"), 'like', '%'.$slug.'%')
           ->limit(5)
           ->get();
 

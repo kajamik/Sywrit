@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ActivitiesReports extends Model
 {
-  protected $table = 'activities_reports';
+  protected $table = 'reported_comments';
 
   public function getReportName()
   {
@@ -15,13 +15,13 @@ class ActivitiesReports extends Model
         $msg = 'Contenuto di natura sessuale';
         break;
       case 1:
-        $msg = 'Contenuti violenti o che incitano all\'odio';
+        $msg = 'Contenuto violento o che incitano all\'odio';
         break;
       case 2:
         $msg = 'Promuove il terrorismo o attività criminali';
         break;
       case 3:
-        $msg = 'Violazione del diritto d\'autore';
+        $msg = 'Spam';
         break;
       default:
         $msg = '';

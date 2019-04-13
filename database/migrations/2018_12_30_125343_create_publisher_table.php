@@ -14,7 +14,7 @@ class CreatePublisherTable extends Migration
     public function up()
     {
         Schema::create('editori', function (Blueprint $table) {
-            $table->increments('id');
+            $table->bigIncrements('id');
             $table->string('nome')->unique();
             $table->text('componenti');
             $table->string('slug')->nullable();

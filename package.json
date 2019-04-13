@@ -22,5 +22,11 @@
         "sass-loader": "^7.1.0",
         "vue": "^2.5.17",
         "vue-template-compiler": "^2.5.22"
+    },
+    "dependencies": {
+        "express": "^4.16.4",
+        "gulp": "^4.0.0",
+        "ioredis": "^4.9.0",
+        "socket.io": "^2.2.0"
     }
 }

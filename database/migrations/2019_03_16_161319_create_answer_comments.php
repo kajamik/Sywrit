@@ -14,7 +14,7 @@ class CreateAnswerComments extends Migration
     public function up()
     {
         Schema::create('answer_comments', function (Blueprint $table) {
-            $table->increments('id');
+            $table->bigIncrements('id');
             $table->integer('user_id');
             $table->text('text');
             $table->integer('comment_id');

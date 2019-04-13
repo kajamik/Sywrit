@@ -16,6 +16,8 @@ use App\Models\BackupGroupsImages;
 use App\Models\Notifications;
 use App\Models\PublisherRequest;
 
+use App\Models\ArticleHistory;
+
 use Validator;
 use Carbon\Carbon;
 use Storage;
@@ -135,13 +137,41 @@ class FilterController extends Controller
 
     public function ArticleReport(Request $request)
     {
-      $query = new \App\Models\ActivitiesReports();
-      $query->user_id = Auth::user()->id;
-      $query->article_id = $request->id;
-      $query->report = $request->selector;
-      $query->report_text = $request->text;
-      $query->report_token = Str::random(64);
-      $query->save();
+      if($request->ajax()){
+        $query = new \App\Models\ReportedArticles();
+        $query->user_id = Auth::user()->id;
+        $query->article_id = $request->id;
+        $query->report = $request->selector;
+        $query->report_text = $request->text;
+        $query->report_token = Str::random(64);
+        $query->save();
+      }
+    }
+
+    public function UserReport(Request $request)
+    {
+      if($request->ajax()){
+        $query = new \App\Models\ReportedUsers();
+        $query->user_id = Auth::user()->id;
+        $query->article_id = $request->id;
+        $query->report = $request->selector;
+        $query->report_text = $request->text;
+        $query->report_token = Str::random(64);
+        $query->save();
+      }
+    }
+
+    public function CommentReport(Request $request)
+    {
+      if($request->ajax()){
+        $query = new \App\Models\ReportedComments();
+        $query->user_id = Auth::user()->id;
+        $query->article_id = $request->id;
+        $query->report = $request->selector;
+        $query->report_text = $request->text;
+        $query->report_token = Str::random(64);
+        $query->save();
+      }
     }
 
     /** Publishers **/
@@ -220,13 +250,6 @@ class FilterController extends Controller
       }
       $query->save();
 
-      /*if($a){
-        // Backup dell'immage non ridimensionata
-        $backup = new BackupGroupsImages();
-        $backup->img_title = $normal_image;
-        $backup->group_id = $query->id;
-        $backup->save();
-      }*/
       return redirect()->back();
     }
 
@@ -245,10 +268,12 @@ class FilterController extends Controller
       $query = Editori::where('id',Auth::user()->id_gruppo)->first();
 
       $collection = collect(explode(',',$query->componenti));
-      $collection->splice($collection->search($user->id),1);
+      $collection->splice($user->id);
       $query->componenti = $collection->implode(',');
       $query->save();
-      $user->id_gruppo = null;
+      $collection = collect(explode(',',$user->id_gruppo));
+      $collection->splice($query->id);
+      $user->id_gruppo = $collection->implode(',');
       $user->save();
     }
 
@@ -257,6 +282,10 @@ class FilterController extends Controller
     // Articoli
     public function postWrite(Request $request)
     {
+      $input = $request->all();
+      $testo = $request->document__text;
+      $input['document__text'] = strip_tags(str_replace('&nbsp;','',$request->document__text));
+      $request->replace($input);
       $this->validate($request,[
         'document__title' => 'required|min:5|max:30',
         'document__text' => 'required'
@@ -268,7 +297,8 @@ class FilterController extends Controller
       $query = new Articoli();
       $query->titolo = $request->document__title;
       $query->tags = str_slug($request->tags, ',');
-      $query->testo = $request->document__text;
+      $query->topic_id = collect($request->_ct_sel_)->implode(',');
+      $query->testo = $testo;
       if($a = $request->image) {
         $resize = '__492x340'.Str::random(64).'.jpg';
         $normal_image = '__'.Str::random(64).'.jpg';
@@ -290,8 +320,6 @@ class FilterController extends Controller
       }
       $query->id_autore = \Auth::user()->id;
       $query->count_view = '0';
-      $query->rating_count = '0';
-      $query->rating = '0';
       $query->save();
 
       // Slug
@@ -299,7 +327,7 @@ class FilterController extends Controller
         $query->save();
       //
       // Notifications
-      $editore = \DB::table('editori')->where('id', $request->id)->first();
+      /*$editore = \DB::table('editori')->where('id', $request->id)->first();
       if(!empty($editore->followers)) {
         foreach(explode(',', $editore->followers) as $value) {
           if($value != Auth::user()->id) {
@@ -320,7 +348,7 @@ class FilterController extends Controller
             $user->save();
           }
         }
-      }
+      }*/
 
       return redirect('read/'.$query->slug);
     }
@@ -338,14 +366,19 @@ class FilterController extends Controller
 
     public function postArticleEdit($id, Request $request)
     {
+      $input = $request->all();
+      $testo = $request->document__text;
+      $input['document__text'] = strip_tags(str_replace('&nbsp;','',$request->document__text));
+      $request->replace($input);
       $this->validate($request, [
         'document__text' => 'required',
       ],[
         'document__text.required' => 'Non è consentito pubblicare un articolo senza contenuto'
       ]);
       $query = Articoli::find($id);
+      $o_txt = $query->testo;
       if((\Auth::user()->id_gruppo > 0 && $query->id_gruppo == \Auth::user()->id_gruppo) || (\Auth::user()->id == $query->id_autore)){
-        $query->testo = $request->document__text;
+        $query->testo = $testo;
         if($a = $request->image){
           $resize = '__492x340'.Str::random(64).'.jpg';
           $normal_image = '__'.Str::random(64).'.jpg';
@@ -356,6 +389,13 @@ class FilterController extends Controller
           $query->copertina = $resize;
         }
         $query->save();
+
+      /*  $report = new ArticleHistory();
+        $report->user_id = Auth::user()->id;
+        $report->article_id = $id;
+        $report->text = $o_txt;
+        $report->token = str_random(32);
+        $report->save();*/
       }
       return redirect('read/'.$query->slug);
     }

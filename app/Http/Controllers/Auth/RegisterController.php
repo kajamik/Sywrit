@@ -78,12 +78,11 @@ class RegisterController extends Controller
       $img_name = '_160x160'.Str::random(64).'.jpg';
       $img->save(public_path('storage/accounts/'.$img_name));
 
-        return User::create([
+        $user = User::create([
             'nome' => $data['name'],
             'cognome' => $data['surname'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
-            'slug' => str_slug($data['name'].$data['surname'], ''),
             'avatar' => $img_name,
             // informazioni aggiuntive
             'rank' => '1',
@@ -91,5 +90,10 @@ class RegisterController extends Controller
             'followers_count' => '0',
             'notifications_count' => '0',
         ]);
+
+        $user->slug = $user->id.'-'.str_slug($data['name'].$data['surname'], '');
+        $user->save();
+
+        return $user;
     }
 }

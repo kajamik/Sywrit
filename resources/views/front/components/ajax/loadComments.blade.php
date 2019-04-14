@@ -13,17 +13,60 @@
         <div class="d-flex flex-grow-1">
           {{ $value->text }}
         </div>
+        @auth
+        <div class="report d-inline float-right">
+          <a data-toggle="dropdown" href="#">
+            <span class="fas fa-ellipsis-v"></span>
+          </a>
+          <div class="dropdown-menu">
+            <a id="report_comment_{{ $value->id }}" class="dropdown-item" href="#report">{{ trans('Segnala commento') }}</a>
+          </div>
+        </div>
+        <script>
+        $("#report_comment_{{ $value->id }}").click(function(){
+          App.getUserInterface({
+          "ui": {
+            "header":{"action": "{{route('article/action/report')}}", "method": "POST"},
+            "data":{"id": "{{ $value->id }}", "_token": "{{ csrf_token() }}", "selector": "#selOption:checked", "text": "#reasonText"},
+            "title": 'Segnala commento',
+            "content": [
+              {"type": ["input","radio"], "id":"selOption", "name": "option", "value": "0", "class": "col-md-1", "label": "Contenuto di natura sessuale", "required": true},
+              {"type": ["input","radio"], "id":"selOption", "name": "option", "value": "1", "class": "col-md-1", "label": "Contenuto violento o che incitano all\'odio", "required": true},
+              {"type": ["input","radio"], "id":"selOption", "name": "option", "value": "2", "class": "col-md-1", "label": "Promuove il terrorismo o attività criminali", "required": true},
+              {"type": ["input","radio"], "id":"selOption", "name": "option", "value": "3", "class": "col-md-1", "label": "Spam", "required": true},
+              {"type": ["textarea"], "id":"reasonText", "name": "reason", "value": "", "class": "form-control", "placeholder": "Motiva la segnalazione (opzionale)"},
+              {"type": ["button","submit"], "name": "radio", "class": "btn btn-danger", "text": "invia segnalazione"}
+            ],
+            "done": function(){
+              App.getUserInterface({
+                "ui": {
+                  "title": "Segnalazione",
+                  "content": [
+                    {"type": ["h5"], "text": "Grazie per la segnalazione."}
+                  ]
+                }
+              });
+            }
+
+          } // -- End Interface --
+        });
+        });
+      </script>
+        @endauth
     </div>
     <hr/>
+    @auth
     <div class="col-md-12">
       <button id="reply_{{ $value->id }}" class="btn btn-link">Rispondi</button>
     </div>
+    @endauth
   </div>
 
   {{-- Risposte--}}
 
   <div id="comment_{{ $value->id }}"></div>
 
+  @auth
   <script>
 
     updateAnswers();
@@ -50,6 +93,15 @@
     }
 
   </script>
+  @else
+  <script>
+  $(function() {
+    App.query("get","{{ url('load-answers') }}", { id: {{ $value->id }} }, false, function(data) {
+      $("#comment_{{ $value->id }}").append(data);
+    });
+  });
+  </script>
+  @endif
 
 </div>
 @endforeach

@@ -1,6 +1,6 @@
 @extends('tools.layout.app')
 
-@section('title', 'Schermata Utenti -')
+@section('title', 'Utenti')
 
 @section('main')
 <div class="container">

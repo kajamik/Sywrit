@@ -28,7 +28,7 @@
               App.insl("articles");
             </script>
             @else
-              @if(Auth::user()->id == $query->id)
+              @if(Auth::user() && Auth::user()->id == $query->id)
               <p>Pubblica il tuo primo articolo</p>
               @else
               <p>Questo utente non ha ancora iniziato a pubblicare</p>

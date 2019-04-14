@@ -7,6 +7,8 @@
 #nav > li {
   display: inline-block;
   margin-top: 5px;
+  margin-bottom: 10px;
+  font-size: 20px;
 }
 #nav > li:not(:last-child)::after {
   content: '\00a0|';
@@ -22,18 +24,19 @@
   <div class="publisher-home">
     <div class="publisher-header" style="background-image: url({{asset(Auth::user()->getBackground())}})">
       <div class="container">
-        <img class="publisher-logo" src="{{asset(Auth::user()->getAvatar())}}" alt="Logo">
-        <div class="info">
-          <span>{{Auth::user()->nome}} {{Auth::user()->cognome}}</span>
+        <div class="publisher-logo d-flex">
+          <img src="{{ asset(Auth::user()->getAvatar()) }}" alt="Logo">
+          <div class="ml-4 mt-3 info">
+            <span>{{ Auth::user()->nome }} {{ Auth::user()->cognome }}</span>
+          </div>
         </div>
       </div>
     </div>
     <div class="publisher-body">
-      <div class="container">
-        <ul id='nav'>
-          <li><a href="{{ url(Auth::user()->slug) }}">Home</a></li>
-          <li><a href="{{ url(Auth::user()->slug.'/about') }}">Informazioni</a></li>
-          <li><a href="{{ url(Auth::user()->slug.'/archive') }}">Articoli Salvati</a></li>
+      <ul id='nav'>
+        <li><a href="{{ url(Auth::user()->slug) }}">Profilo</a></li>
+        <li><a href="{{ url(Auth::user()->slug.'/about') }}">Contatti</a></li>
+        <li><a href="{{ url(Auth::user()->slug.'/archive') }}">Archivio</a></li>
       </ul>
       <hr/>
         <div class="publisher-content">
@@ -61,7 +64,6 @@
             @endif
           </div>
         </div>
-    </div>
   </div>
 </div>
 </div>

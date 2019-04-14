@@ -6,9 +6,20 @@
 
   <div class="publisher-home">
 
-      <div class="block-hero"></div>
+      <div class="box">
+        @foreach($categorie as $value)
+        <a href="{{ url('topic/'.$value->slug) }}">
+          <div class="box-body">
+            {{ $value->name }}
+          </div>
+        </a>
+        @endforeach
+      </div>
 
     <div class="publisher-body">
+
+      <div class="block-hero">
+      </div>
 
 
     {{--<div class="row">
@@ -30,35 +41,13 @@
     </div>
     </div>--}}
 
-      @if(count($ultimi_articoli))
       <div class="row">
-      @foreach($ultimi_articoli as $value)
-        <div class="col-lg-4 col-sm-12 col-xs-12">
-          <a href="{{ url('read/'.$value->article_slug)}}">
-            <div class="card-header">{{ $value->created_at->diffForHumans() }}</div>
-            <div class="card border-0">
-              <img class="card-img-top" src="{{ asset($value->getBackground()) }}" alt="Copertina Articolo">
-                <h4 class="card-title">{{ $value->article_title }}</h4>
-                <div class="author">
-                  Pubblicato da
-                    <a href="{{ url($value->user_slug) }}"><span>{{ $value->user_name }} {{ $value->user_surname }}</span></a>
-                </div>
-            </div>
-          </a>
-        </div>
-      @endforeach
-      </div>
-      <hr/>
-      @endif
 
-      <div class="col-md-12">
-      <div class="row" id="news">
-
-        <div class="col-lg-8 col-md-12 col-sm-12">
+        <div class="col-lg-12 col-md-12 col-sm-12" >
           @if(count($articoli))
-          <div class="row">
+          <div class="row" id="news">
             @foreach($articoli as $value)
-            <div class="col-lg-4 col-sm-6 col-xs-12">
+            <div class="col-lg-3 col-sm-6 col-xs-12">
             <a href="{{ url('read/'.$value->article_slug)}}">
               <div class="card-header">{{ $value->created_at->diffForHumans() }}</div>
               <div class="card border-0">
@@ -76,8 +65,8 @@
         @endif
         </div>
 
-        <div class="col-lg-4 col-xs-12">
-          {{--<div class="col-lg-12 col-sm-12 col-xs-12">
+        {{--<div class="col-lg-4 col-xs-12">
+          <div class="col-lg-12 col-sm-12 col-xs-12">
           <div class="card border-0 text-center">
             <div class="card-header">
               <span class="far fa-star"></span>
@@ -92,7 +81,7 @@
               </div>
             </a>
           </div>
-        </div>--}}
+        </div>
         <div class="border-left col-lg-12 col-sm-12 col-xs-12">
           <h2>Articoli del mese</h2>
           <hr/>
@@ -114,10 +103,8 @@
               @endforeach
 
           </div>
-        </div>
+        </div>--}}
       </div>
-
-    </div>
 
       <script>
         App.insl('news');

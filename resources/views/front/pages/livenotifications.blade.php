@@ -16,10 +16,10 @@
     </div>
   </a>
   @endif
-  @if($value->type == '2' || $value->type == '3') {{-- Utente --}}
-  <a class="dropdown-item" href="{{ url('read/'.$articolo->slug) }}">
+  @if($value->type == '2') {{-- Valutazione Articolo --}}
+  <a class="dropdown-item" href="{{ url('notifications#'.$value->id) }}">
     <div class="container">
-      Nuovo articolo <strong>{{ $articolo->titolo }}</strong>
+      Il tuo articolo <strong>{{ $articolo->titolo }}</strong> ha ricevuto una valutazione.
     </div>
   </a>
   @endif

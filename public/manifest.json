@@ -1,0 +1,11 @@
+{
+  "short_name": "Sywrit",
+  "name": "Sywrit",
+  "icons": [
+    {
+      "src": "upload/.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}

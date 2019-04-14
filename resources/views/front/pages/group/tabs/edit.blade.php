@@ -1,4 +1,4 @@
-@section('title', 'Impostazioni -')
+@section('title', 'Impostazioni redazione -')
 
 <form method="post" action="" enctype="multipart/form-data">
   @csrf

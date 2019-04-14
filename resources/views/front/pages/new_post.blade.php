@@ -24,11 +24,12 @@
 
   <div class="mt-5">
     <div class="form-group row">
+      <label for="title" class="col-md-4 col-form-label required">Titolo Articolo</label>
         <div class="col-md-12">
-            <input id="title" type="text" class="form-control{{ $errors->has('title') ? ' is-invalid' : '' }}" name="document__title" placeholder="Titolo Articolo" required autofocus>
-            @if ($errors->has('title'))
+            <input id="title" type="text" class="form-control{{ $errors->has('document__title') ? ' is-invalid' : '' }}" name="document__title" required autofocus>
+            @if ($errors->has('document__title'))
                 <span class="invalid-feedback" role="alert">
-                    <strong>{{ $errors->first('title') }}</strong>
+                    <strong>{{ $errors->first('document__title') }}</strong>
                 </span>
             @endif
         </div>
@@ -70,14 +71,34 @@
 
     <div class="form-group row">
         <div class="col-md-12">
-          <textarea class="document" name="document__text"></textarea>
+          @if ($errors->has('document__title'))
+              <span class="invalid-feedback" role="alert">
+                  <strong>{{ $errors->first('document__title') }}</strong>
+              </span>
+          @endif
+          <textarea class="document{{ $errors->has('document__text') ? ' is-invalid' : '' }}" name="document__text"></textarea>
+        </div>
+    </div>
+
+    <div class="form-group row">
+      <label for="_ct_sel_" class="col-md-4 col-form-label">Selezione categoria</label>
+        <div class="col-md-12">
+          <select id="_ct_sel_" class="mdb-select md-form form-control" name="_ct_sel_" required>
+            @if(!Request::get('_topic'))
+            @foreach($categories as $value)
+            <option value="{{ $value->id }}">{{ $value->name }}</option>
+            @endforeach
+            @else
+            <option value="{{ $categories->id }}">{{ $categories->name }}</option>
+            @endif
+          </select>
         </div>
     </div>
 
     <div class="form-group row">
       <label for="tags" class="col-md-4 col-form-label"><span class="fa fa-tag"></span> Etichette</label>
         <div class="col-md-12">
-          <input type="text" class="form-control" name="tags" placeholder="Moda Bellezza ..." />
+          <input type="text" class="form-control" name="tags" placeholder="&quot;globalwarming climatestrike&quot; risulterà come #globalwarming #climatestrike" />
         </div>
     </div>
 

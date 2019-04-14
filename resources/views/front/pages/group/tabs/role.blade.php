@@ -1,4 +1,4 @@
-@section('title', 'Gestione ruoli -')
+@section('title', 'Gestione ruoli redazione -')
 
 <h2>Gestione utenti</h2>
 
@@ -13,7 +13,12 @@
 
 <div class="col-lg-12">
   <div class="row">
-  @foreach(explode(',',$query->componenti) as $value)
+    @php
+      $components = collect(explode(',',$query->componenti))->filter(function ($value, $key) {
+        return $value != "";
+      });
+    @endphp
+  @foreach($components as $value)
     @php
       $user = \App\Models\User::where('id',$value)->first();
       @endphp

@@ -125,7 +125,7 @@ App.getUserInterface = function(t){
   return str;
  }
 
-  let n = 0;
+  var n = 0;
   for(var i in content){
       if(typeof content[i].type[0] == 'object') {
         var select = content[i].type[0].select;
@@ -170,7 +170,7 @@ App.setUIStyle = function(c, section) {
 }
 
 App.update = function(){
-    $(".ty-search button").click(function(){
+    $(".ty-search button#search").click(function(){
       if($(window).width() < 1004){
       //
       if(!$(".ty-search").hasClass("full-width")){
@@ -202,5 +202,22 @@ function resetCss(){
   $(".navbar #search_back").remove();
   $(".navbar > *").css('display','block');
   $(".ty-search").removeClass("full-width");
-  $(".navbar .user-navbar > li:first-child").prepend(search);
+  $(".navbar .user-navbar > li:first-child").prepend($(".ty-search"));
+}
+
+function notify(title, text, url = '') {
+  if (Notification.permission !== "granted") {
+    Notification.requestPermission();
+  } else {
+    var notification = new Notification(title, {
+      icon: '../../upload/57x57/rgb_logo.png',
+      body: text,
+    });
+  }
+
+  if(url != ''){
+    notification.onclick = function() {
+      window.open(url);
+    }
+  }
 }

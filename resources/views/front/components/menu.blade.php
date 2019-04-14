@@ -1,32 +1,25 @@
 <div class="navbar">
   <div class="navbar-left">
     <a href="{{url('/')}}" class="brand">
-      <img src="{{ asset('upload/logo.png') }}" alt="Logo">
+      <img src="{{ asset('upload/46x46/black_logo.png') }}" alt="Logo">
     </a>
   </div>
 
   <div class="nav navbar-right">
         <ul class="user-navbar">
           <li>
-            <div class="ty-search" id="search">
+            <div class="ty-search">
               <div class="d-flex">
                 <input id="search_query" type="text" placeholder="Cerca" onkeyup="fetch_live_search(this.value);" />
-                <button style="background:transparent;border:none;">
-                  <span class="fa fa-search"></span>
-                </button>
+                <div class="set d-flex">
+                  <button id="search">
+                    <span class="fa fa-search"></span>
+                  </button>
+                </div>
               </div>
               <div class="data-list"></div>
             </div>
           </li>
-          {{--<li>
-            <div class="ty-search" id="search">
-              <input id="search_query" type="text" placeholder="Cerca" onkeyup="fetch_live_search(this.value);" />
-              <button style="background:transparent;border:none;">
-                <span class="fa fa-search"></span>
-              </button>
-              <div class="data-list"></div>
-            </div>
-          </li>--}}
           @if(Auth::user())
           <li>
             <a href="{{url('write')}}">
@@ -34,11 +27,8 @@
             </a>
           </li>
           <li class="dropdown">
-            <a href="#" data-toggle="dropdown" role="button" aria-expanded="false" href="#" onclick="fetch_live_notifications();">
+            <a id="notification" href="#" data-toggle="dropdown" role="button" aria-expanded="false" href="#" onclick="fetch_live_notifications();">
               <i class="fa fa-bell" aria-hidden="true" title="Notifiche"></i>
-              @if(\Auth::user()->notifications_count)
-              <span class="badge badge-notification">{{ \Auth::user()->notifications_count }}</span>
-              @endif
             </a>
             <div class="dropdown-menu" role="menu">
               <div class="notification-header">
@@ -79,8 +69,8 @@
             </div>
             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">{{ csrf_field() }}</form>
           @else
-            <li><a class="text-white" href="{{ route('login') }}">Accedi</a></li>
-            <li><a class="text-white" href="{{ route('register') }}">Iscriviti</a></li>
+            <li><a href="{{ route('login') }}">Accedi</a></li>
+            <li><a href="{{ route('register') }}">Iscriviti</a></li>
         @endif
         </li>
        </ul>

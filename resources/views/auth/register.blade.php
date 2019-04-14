@@ -77,7 +77,7 @@
 
                         <div class="form-group">
                           <div class="col-md-6 offset-md-4">
-                            <label>Cliccando su "Iscriviti" accetti le nostre <a class="text-underline" href="{{ url('page/legal/terms') }}" target="_blank">Condizioni</a> e la nostra <a class="text-underline" href="{{ url('page/legal/privacy') }}" target="_blank">normativa</a> sulla privacy.</label>
+                            <label>Cliccando su "Iscriviti" accetti le nostre <a class="text-underline" href="{{ url('page/legal/terms') }}" target="_blank">Condizioni</a> e la nostra <a class="text-underline" href="{{ url('page/legal/privacy') }}" target="_blank">normativa sui cookie.</a></label>
                           </div>
                         </div>
 

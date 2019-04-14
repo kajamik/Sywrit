@@ -1,13 +1,12 @@
   <ul>
     @if($query->count())
-    {{ $query }}
-      {{--@foreach($query as $value)
+      @foreach($query as $value)
         @if(!empty($value->titolo))
         <a href="{{ url('read/'.$value->slug) }}"><li>{{ str_limit($value->titolo, 45, '...') }}</li></a>
         @else
-        <a href="{{ url($value->slug) }}"><li>{{ $value->nome }}</li></a>
+        <a href="{{ url($value->slug) }}"><li>{{ $value->nome }} {{ $value->cognome }}</li></a>
         @endif
-      @endforeach--}}
+      @endforeach
     @else
       <a href="{{ url('search/'.$key) }}"><li>{{ str_limit($key, 45, '...') }}</li></a>
     @endif

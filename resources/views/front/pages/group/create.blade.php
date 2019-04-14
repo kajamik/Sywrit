@@ -1,6 +1,6 @@
 @extends('front.layout.app')
 
-@section('title', 'Nuova editoria -')
+@section('title', 'Nuova redazione -')
 
 @section('main')
 <div class="container">

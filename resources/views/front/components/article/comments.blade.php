@@ -32,7 +32,7 @@
     <script>
     var instance = false;
     var count = 0;
-    
+
       updateComments();
 
       $("#sendMsg").click(function(){

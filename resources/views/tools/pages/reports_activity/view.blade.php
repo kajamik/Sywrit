@@ -1,6 +1,6 @@
 @extends('tools.layout.app')
 
-@section('title', 'Schermata Pagine -')
+@section('title', 'Attività segnalazioni')
 
 @section('main')
 <div class="container">

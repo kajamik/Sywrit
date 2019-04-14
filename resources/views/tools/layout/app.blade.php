@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-  <title>@yield('title') Sywrit</title>
+  <title>@yield('title') - Sywrit</title>
 
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
@@ -19,8 +19,9 @@
     <div class="sidebar" data-color="purple" data-background-color="black" data-image="./assets/img/sidebar-2.jpg">
 
       <div class="logo">
-        <img src="{{ url('upload/logo.png') }}" alt="logo" class="brand">
+        <img src="{{ url('upload/logo_color.png') }}" alt="logo">
       </div>
+
       <div class="sidebar-wrapper">
         <ul class="nav">
           <li class="nav-item @if(request()->is('toolbox')) active @endif">
@@ -47,6 +48,12 @@
               <p>Reports Activity</p>
             </a>
           </li>
+          <li class="nav-item @if(request()->is('toolbox/live_stream')) active @endif">
+            <a class="nav-link" href="{{ url('toolbox/live_stream') }}">
+              <i class="fa fa-user-clock"></i>
+              <p>Live Stream</p>
+            </a>
+          </li>
         </ul>
       </div>
     </div>
@@ -55,7 +62,7 @@
       <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
         <div class="container-fluid">
           <div class="navbar-wrapper">
-            <a class="navbar-brand" href="javascript:void(0)">Dashboard</a>
+            <a class="navbar-brand" href="javascript:void(0)">@yield('title')</a>
           </div>
           <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
             <span class="sr-only">Toggle navigation</span>

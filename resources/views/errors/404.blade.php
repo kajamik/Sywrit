@@ -14,12 +14,8 @@
   $n = array_rand($str,1);
 @endphp
 <style>
-.container {
-  padding: 15px;
-  background-color: #fff;
-}
 .container article {
-  padding: 12px;
+  padding: 26px;
 }
 </style>
 <div class="container">

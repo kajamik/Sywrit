@@ -6,13 +6,13 @@
 
 <div class="container">
   <div class="publisher-home">
-    <div class="publisher-header" style="background-image: url({{asset(\Auth::user()->getBackground())}})">
+    <div class="publisher-header" style="background-image: url({{asset(Auth::user()->getBackground())}})">
       <div class="container">
-        <div class="publisher-logo">
-          <img src="{{asset(\Auth::user()->getAvatar())}}" alt="Logo">
-        </div>
-        <div class="info">
-          <span>{{\Auth::user()->nome}} {{\Auth::user()->cognome}}</span>
+        <div class="publisher-logo d-flex">
+          <img src="{{ asset(Auth::user()->getAvatar()) }}" alt="Logo">
+          <div class="ml-4 mt-3 info">
+            <span>{{ Auth::user()->nome }} {{ Auth::user()->cognome }}</span>
+          </div>
         </div>
       </div>
     </div>

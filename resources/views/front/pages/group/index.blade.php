@@ -1,6 +1,6 @@
 @extends('front.layout.app')
 
-@section('title', $query->nome.' -')
+@section('title', 'Redazione '. $query->nome.' -')
 
 @section('main')
 @include('front.components.group.top_bar')
@@ -33,9 +33,5 @@
     </div>
   </div>
 </div>
-<script>
-App.follow('#follow',{url:'{{ url("follow") }}',data:{'id':{{ $query->id }}}},false);
-App.insl('articles');
-</script>
 </div>
 @endsection

@@ -6,12 +6,6 @@
                   $sql->where('tags', 'like', '%'.$value.'%');
                 }
             })->get();
-
-            /*foreach($tags as $value){
-              $feeds->where('tags', 'like', '%'.$value.'%');
-            }
-
-    $feeds = $feeds->get();*/
 @endphp
 @if($feeds->count())
 <div class="feeds">
@@ -19,7 +13,7 @@
 <div class="row">
 @foreach($feeds as $value)
 <div class="row col-8">
-  <div class="col-sm-3">
+  <div class="col-lg-3 col-md-4 col-xs-4">
     <img src="{{ asset($value->getBackground()) }}" alt="" />
   </div>
   <div class="my-4 col-sm-8">

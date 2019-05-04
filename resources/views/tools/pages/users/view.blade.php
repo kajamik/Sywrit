@@ -17,23 +17,21 @@
     </div>
   </form>
 
+  <hr/>
+
   <div class="table_users">
-    <table tabindex="-1">
+    <table>
       <tr>
         <th>Nome</th>
         <th>Cognome</th>
-        <th>Avvisi</th>
-        <th>Profilo sospeso</th>
-        <th>Profilo disattivato</th>
+        <th>Account sospeso</th>
         <th>Azione</th>
       </tr>
       @foreach($query as $value)
       <tr>
-        <td>{{ $value->nome }}</td>
-        <td>{{ $value->cognome }}</td>
-        <td>{{ $value->avvisi }}</td>
-        <td>FALSO</td>
-        <td>FALSO</td>
+        <td>{{ $value->name }}</td>
+        <td>{{ $value->surname }}</td>
+        <td>@if($value->suspended) Si @else No @endif</td>
         <td><a href="{{ url('toolbox/users/'.$value->id.'/sheet') }}"<button class="btn btn-info btn-block" role="button">Scheda</button></td>
       </tr>
       @endforeach

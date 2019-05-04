@@ -1,6 +1,6 @@
 @extends('front.layout.app')
 
-@section('title', $topic->name. ' -')
+@section('title', $topic->name. ' - ')
 
 @section('main')
 <div class="container">
@@ -23,7 +23,11 @@
                   <h4 class="card-title">{{ $value->article_title }}</h4>
                   <div class="author">
                     Pubblicato da
-                      <a href="{{ url($value->user_slug) }}"><span>{{ $value->user_name }} {{ $value->user_surname }}</span></a>
+                    @if($value->id_editore)
+                    <a href="{{ url($value->publisher_slug) }}"><span>{{ $value->publisher_name }}</span></a>
+                    @else
+                    <a href="{{ url($value->user_slug) }}"><span>{{ $value->user_name }} {{ $value->user_surname }}</span></a>
+                    @endif
                   </div>
               </div>
             </a>

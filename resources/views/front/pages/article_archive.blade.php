@@ -1,6 +1,6 @@
 @extends('front.layout.app')
 
-@section('title', $query->titolo. ' -')
+@section('title', $query->titolo. ' - ')
 
 @php
   $autore = \App\Models\User::find($query->id_autore);
@@ -33,7 +33,7 @@
     <meta property="og:url" content="{{ Request::url() }}" />
     <meta property="og:image" content="{{ asset($query->getBackground()) }}" />
     <meta property="article:published_time" content="{{ $query->created_at }}" />
-    <meta property="article:author" content="{{ $autore->nome }} {{ $autore->cognome }}" />
+    <meta property="article:author" content="{{ $autore->name }} {{ $autore->surname }}" />
     <meta property="article:tag" content="{{ $query->tags }}" />
 @endsection
 
@@ -108,7 +108,7 @@ span.time {
         <div class="block-title">
           <h1 class="text-uppercase">{{ $query->titolo }}</h1>
         </div>
-        <p>Scritto da <a href="{{ url($autore->slug) }}">{{ $autore->nome }} {{ $autore->cognome }}</a></p>
+        <p>Scritto da <a href="{{ url($autore->slug) }}">{{ $autore->name }} {{ $autore->surname }}</a></p>
           <div class="date-info">
             <span class="date"><i class="far fa-calendar-alt"></i> {{ $date }}</span>
             <span class="time"><i class="far fa-clock"></i> {{ $time }}</span><br/>

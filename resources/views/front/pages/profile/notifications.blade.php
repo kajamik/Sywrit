@@ -1,6 +1,6 @@
 @extends('front.layout.app')
 
-@section('title', 'Notifiche -')
+@section('title', 'Notifiche - ')
 
 @section('main')
 
@@ -33,11 +33,11 @@
   <div class="publisher-home">
     <div class="publisher-header" style="background-image: url({{asset(\Auth::user()->getBackground())}})">
       <div class="container">
-        <div class="publisher-logo">
-          <img src="{{asset(\Auth::user()->getAvatar())}}" alt="Logo">
-        </div>
-        <div class="info">
-          <span>{{\Auth::user()->nome}} {{\Auth::user()->cognome}}</span>
+        <div class="publisher-logo d-flex">
+          <img src="{{ asset(Auth::user()->getAvatar()) }}" alt="Logo">
+          <div class="ml-4 mt-3 info">
+            <span>{{ Auth::user()->name }} {{ Auth::user()->surname }}</span>
+          </div>
         </div>
       </div>
     </div>
@@ -70,7 +70,7 @@
                   <time>{{ $value->created_at }}</time>
                 </div>
                 <div class="my-3 pl-3">
-                  Nuova richiesta di collaborazione dalla redazione <strong>{{ $value->getPublisherName->nome }}</strong>
+                  Nuova richiesta di collaborazione dalla redazione <strong>{{ $value->getPublisherName->name }}</strong>
                   <div class="actions">
                     <button id="acceptRequest_{{ $value->id }}" class="btn btn-primary" type="role">
                       Accetta
@@ -93,9 +93,9 @@
                 <h2><a href="{{ url('read/'.$articolo->slug) }}">{{ $articolo->titolo }}</a></h2>
                 <p>Pubblicato da
                   @if($value->type == '2')
-                  <span><a href="{{ url($value->getUserName->slug) }}">{{ $value->getUserName->nome }} {{ $value->getUserName->cognome }}</a></span>
+                  <span><a href="{{ url($value->getUserName->slug) }}">{{ $value->getUserName->name }} {{ $value->getUserName->surname }}</a></span>
                   @else
-                  <span><a href="{{ url($value->getPublisherName->slug) }}">{{ $value->getPublisherName->nome }}</a></span>
+                  <span><a href="{{ url($value->getPublisherName->slug) }}">{{ $value->getPublisherName->name }}</a></span>
                   @endif
                 </p>
               </div>

@@ -1,15 +1,15 @@
 <div class="card">
   <div class="card-header bg-dark">
-    <a href="#" class="text-light">{{ $query->getUserInfo->nome }} {{ $query->getUserInfo->cognome }}</a>
+    <a href="#" class="text-light">{{ Auth::user()->name }} {{ Auth::user()->surname }}</a>
     <div class="float-right text-light">
-      <span>{{ $query->created_at->diffForHumans() }}</span>
+      <span>{{ $post->created_at->diffForHumans() }}</span>
     </div>
   </div>
   <div class="card-body">
     <div class="d-flex">
-      <img style="height:4em" class="p-2" src="{{ asset($query->getUserInfo->getAvatar()) }}" />
+      <img style="height:4em" class="p-2" src="{{ asset(Auth::user()->getAvatar()) }}" />
         <div class="d-flex flex-grow-1">
-          {{ $query->text }}
+          {{ $post->text }}
         </div>
     </div>
   </div>

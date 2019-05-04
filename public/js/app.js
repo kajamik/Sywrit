@@ -221,3 +221,16 @@ function notify(title, text, url = '') {
     }
   }
 }
+
+App.info = function(){
+  $("*[data-script=info]").each(function() {
+    $(this).css('cursor','pointer');
+    $(this).on("click", function(){
+      if($(this).children().hasClass("info-box")){
+        $(this).children().remove();
+      } else {
+        $("<div class='info-box'>"+$(this).data('text')+"</div>").appendTo($(this));
+      }
+    });
+  });
+}

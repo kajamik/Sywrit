@@ -1,6 +1,6 @@
 @extends('front.layout.app')
 
-@section('title', $query->titolo.' -')
+@section('title', $query->titolo.' - ')
 
 @php
   $autore = \App\Models\User::find($query->id_autore);
@@ -27,8 +27,8 @@
               <label for="file-upload" class="form-control custom-upload">
                 <i class="fa fa-cloud-upload-alt"></i> Carica copertina
               </label>
-              <input id="file-upload" type="file" name="image">
-              <div id="image_preview" class="preview"></div>
+              <input id="file-upload" type="file" onchange="App.upload(this.nextElementSibling, false)" name="image">
+              <div id="image_preview" class="preview_body"></div>
             </div>
           </div>
 
@@ -36,6 +36,13 @@
             <div class="col-md-12">
               <textarea class="document" name="document__text">{{ $query->testo }}</textarea>
             </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="tags" class="col-md-4 col-form-label"><span class="fa fa-tag"></span> Etichette</label>
+              <div class="col-md-12">
+                <input type="text" class="form-control" name="tags" value="{!! str_replace(',', ' ', $query->tags) !!}" placeholder="&quot;globalwarming climatestrike&quot; risulterà come #globalwarming #climatestrike" />
+              </div>
           </div>
 
           <div class="form-group row">

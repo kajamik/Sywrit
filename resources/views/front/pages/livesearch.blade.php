@@ -1,14 +1,21 @@
   <ul>
     @if($query->count())
+      <h5>Utenti</h5>
       @foreach($query as $value)
-        @if(!empty($value->titolo))
-        <a href="{{ url('read/'.$value->slug) }}"><li>{{ str_limit($value->titolo, 45, '...') }}</li></a>
-        @else
-        <a href="{{ url($value->slug) }}"><li>{{ $value->nome }} {{ $value->cognome }}</li></a>
-        @endif
+        <a href="{{ url($value->slug) }}"><li>{{ $value->name }} {{ $value->surname }}</li></a>
       @endforeach
-    @else
-      <a href="{{ url('search/'.$key) }}"><li>{{ str_limit($key, 45, '...') }}</li></a>
+    @endif
+    @if($query2->count())
+      <h5>Articoli</h5>
+      @foreach($query2 as $value)
+        <a href="{{ url('read/'.$value->slug) }}"><li>{{ $value->titolo }}</li></a>
+      @endforeach
+    @endif
+    @if($query4->count())
+      <h5>Redazioni</h5>
+      @foreach($query4 as $value)
+        <a href="{{ url($value->slug) }}"><li>{{ $value->name }}</li></a>
+      @endforeach
     @endif
     <div class="py-2 pl-4">
       <a class="text-primary" href="{{ url('search/'.$key) }}">Mostra tutti i risultati</a>

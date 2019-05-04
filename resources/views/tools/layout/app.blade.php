@@ -12,14 +12,17 @@
   <link href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" rel="stylesheet" />
   <link href="{{ url('css/_dex.css?v=2.1.0') }}" rel="stylesheet" />
 
+  <script src="{{ asset('plugins/jquery/js/jquery-3.2.1.min.js') }}"></script>
+  <script src="{{ asset('js/app.js') }}"></script>
+
 </head>
 
 <body class="dark-edition">
   <div class="wrapper ">
-    <div class="sidebar" data-color="purple" data-background-color="black" data-image="./assets/img/sidebar-2.jpg">
+    <div class="sidebar" data-color="purple" data-background-color="black">
 
       <div class="logo">
-        <img src="{{ url('upload/logo_color.png') }}" alt="logo">
+        <img src="{{ url('upload/46x46/rgb_logo.png') }}" alt="logo">
       </div>
 
       <div class="sidebar-wrapper">
@@ -33,19 +36,19 @@
           <li class="nav-item @if(request()->is('toolbox/users*')) active @endif">
             <a class="nav-link" href="{{ url('toolbox/users') }}">
               <i class="fa fa-users"></i>
-              <p>Users</p>
+              <p>Utenti</p>
             </a>
           </li>
-          <li class="nav-item @if(request()->is('toolbox/pages*')) active @endif">
-            <a class="nav-link" href="{{ url('toolbox/pages') }}">
+          <li class="nav-item @if(request()->is('toolbox/publishers*')) active @endif">
+            <a class="nav-link" href="{{ url('toolbox/publishers') }}">
               <i class="fa fa-clipboard-list"></i>
-              <p>Publishers</p>
+              <p>Redazioni</p>
             </a>
           </li>
           <li class="nav-item @if(request()->is('toolbox/reports_activity*')) active @endif">
             <a class="nav-link" href="{{ url('toolbox/reports_activity') }}">
               <i class="fa fa-clipboard-list"></i>
-              <p>Reports Activity</p>
+              <p>Segnalazioni</p>
             </a>
           </li>
           <li class="nav-item @if(request()->is('toolbox/live_stream')) active @endif">
@@ -72,11 +75,11 @@
           </button>
           <div class="collapse navbar-collapse justify-content-end">
             <ul class="navbar-nav">
-              <li class="nav-item">
+              {{--<li class="nav-item">
                 <a class="nav-link" href="javascript:void(0)">
                   <i class="fa fa-bell"></i>
                 </a>
-              </li>
+              </li>--}}
               <li class="nav-item">
                 <a class="nav-link" href="{{ url('/') }}">
                   vai al sito

@@ -1,6 +1,6 @@
 @extends('front.layout.app')
 
-@section('title', 'Articoli Salvati -')
+@section('title', 'Articoli Salvati - ')
 
 @section('main')
 <style>
@@ -27,7 +27,7 @@
         <div class="publisher-logo d-flex">
           <img src="{{ asset(Auth::user()->getAvatar()) }}" alt="Logo">
           <div class="ml-4 mt-3 info">
-            <span>{{ Auth::user()->nome }} {{ Auth::user()->cognome }}</span>
+            <span>{{ Auth::user()->name }} {{ Auth::user()->surname }}</span>
           </div>
         </div>
       </div>
@@ -36,7 +36,7 @@
       <ul id='nav'>
         <li><a href="{{ url(Auth::user()->slug) }}">Profilo</a></li>
         <li><a href="{{ url(Auth::user()->slug.'/about') }}">Contatti</a></li>
-        <li><a href="{{ url(Auth::user()->slug.'/archive') }}">Archivio</a></li>
+        <li><a href="{{ url(Auth::user()->slug.'/archive') }}">Articoli Salvati</a></li>
       </ul>
       <hr/>
         <div class="publisher-content">

@@ -4,52 +4,27 @@
 
 @section('main')
 <div class="container">
-  <form action="" method="POST">
-    <div class="form-group">
-      <div class="col-md-6">
-        <input type="text" class="form-control" placeholder="Cerca per id, tipo report, ...">
-      </div>
-    </div>
-    <div class="form-group">
-      <div class="col-md-2">
-        <button class="btn btn-info" role="button">Filtra</button>
-      </form>
-    </div>
-  </form>
-
+  <hr/>
   <div class="table_users">
-    <table tabindex="-1">
+    <table>
       <tr>
-        <th>ID Report</th>
-        <th>Tipo report</th>
+        <th>Token</th>
+        <th>Report di</th>
         <th>Motivazione report</th>
         <th>Azione</th>
-        <th></th>
       </tr>
       @foreach($query as $value)
       <tr>
-        <td>{{ $value->id }}</td>
-        <td>{{ $value->getReportName() }}</td>
+        <td>{{ $value->report_token }}</td>
+        <td>{{ $value->getAutore->name }} {{ $value->getAutore->surname }}</td>
         <td>{{ $value->report_text }}</td>
-        <td><a id="sheet_{{ $value->id }}" href="#reports_activity"><button class="btn btn-info btn-block" role="button">Segna come letta</button></a></td>
-        <td><button class="btn btn-info" role="button">Archivia</button></td>
+        <td><a href="{{ url('toolbox/reports_activity/view?_token='.$value->report_token)}}"><button class="btn btn-info" role="button">Scheda</button></a></td>
       </tr>
-      <script type="text/javascript">
-      document.getElementById("sheet_{{ $value->id }}").addEventListener("click", function(){
-        App.getUserInterface({
-          "ui": {
-            "title": "Schedario #{{ $value->id }}",
-            "header": {"method": "POST"},
-            "content": [
-              {"type": ["h5"], "text": "Nome Report:"},
-              {"type": ["p"], "text": "{{ $value->id }}"},
-            ]
-          }
-        });
-      });
-      </script>
       @endforeach
     </table>
+    <div style="margin-top:50px;display:flex;justify-content:center;">
+      {{ $query->links() }}
+    </div>
   </div>
 </div>
 @endsection

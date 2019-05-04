@@ -12,7 +12,7 @@
   @if($value->type == '1') {{-- Collaborazione --}}
   <a class="dropdown-item" href="{{ url('notifications#'.$value->id) }}">
     <div class="container">
-      Nuova richiesta di collaborazione dalla redazione <strong>{{ $value->getPublisherName->nome }}</strong>
+      Nuova richiesta di collaborazione dalla redazione <strong>{{ $value->getPublisherName->name }}</strong>
     </div>
   </a>
   @endif

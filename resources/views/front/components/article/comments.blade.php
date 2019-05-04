@@ -4,6 +4,7 @@
 @endphp
   <div class="feedback my-5">
     @auth
+    @if(Auth::user() && !Auth::user()->suspended)
     <div class="d-flex">
       <img style="height:6em" class="p-2" src="{{ asset(Auth::user()->getAvatar()) }}" />
         <div class="d-flex flex-grow-1">
@@ -17,12 +18,20 @@
     </div>
     @else
     <div class="d-flex">
+      <img style="height:6em" class="p-2" src="{{ asset(Auth::user()->getAvatar()) }}" />
+        <div class="d-flex flex-grow-1 bg-light">
+          <p class="mt-3 offset-1">Questo account è stato sospeso da un operatore</p>
+        </div>
+    </div>
+    @endif
+    @else
+    <div class="d-flex">
       <img style="height:6em" class="p-2" src="{{ asset('upload/default.png') }}" />
         <div class="d-flex flex-grow-1 bg-light">
           <p class="mt-3 offset-1">Per commentare devi prima effettuare l'accesso</p>
         </div>
     </div>
-    @endif
+    @endauth
   </div>
 
   {{-- Commenti--}}
@@ -30,10 +39,15 @@
   <div id="comments-data" class="py-3 col-md-12">
 
     <script>
-    var instance = false;
-    var count = 0;
+    var q = 1;
+    var _qa = new Array();
 
+    $(function(){
       updateComments();
+      $("#loadComments").click(function(){
+        updateComments();
+      });
+    });
 
       $("#sendMsg").click(function(){
         updateComments();
@@ -42,15 +56,14 @@
         });
       });
 
-    function getState() {
-      App.query("get","{{ url('getStateComments') }}",{id: {{ $query->id }}, count: count},false,function(data) {
-          //updateComments();
-      });
-    }
-
-    function updateComments(query = 1) {
-      App.query("get","{{ url('load-comments') }}",{id: {{ $query->id }}, q: query },false,function(data){
-        $($("#comments-data")).append(data);
+    function updateComments() {
+      App.query("get","{{ url('load-comments') }}",{id: {{ $query->id }}, q: this.q },false,function(data){
+        if(data) {
+          $("#comments-data").append(data);
+          q++;
+        } else {
+          $("#loadComments").remove();
+        }
       });
     }
 
@@ -61,6 +74,6 @@
 
 @if($count > 6)
 <div class="offset-md-5">
-  <button onclick="updateComments()" class="btn btn-light pb-2">Carica altri commenti</button>
+  <button id="loadComments" class="btn btn-light pb-2">Carica altri commenti</button>
 </div>
 @endif

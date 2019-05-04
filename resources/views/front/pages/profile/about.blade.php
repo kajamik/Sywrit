@@ -1,6 +1,6 @@
 @extends('front.layout.app')
 
-@section('title', 'Contatti - '.$query->nome.' '.$query->cognome.' -')
+@section('title', 'Contatti - '.$query->name.' '.$query->surname.' - ')
 
 @section('main')
 <style>
@@ -27,7 +27,7 @@
         <div class="publisher-logo d-flex">
           <img src="{{ asset($query->getAvatar()) }}" alt="Logo">
           <div class="ml-4 mt-3 info">
-            <span class="verified">{{ $query->nome }} {{ $query->cognome }}</span>
+            <span>{{ $query->name }} {{ $query->surname }}</span>
           </div>
         </div>
       </div>
@@ -49,56 +49,13 @@
         </nav>
         <hr/>
         <div class="publisher-info">
-          @if(\Auth::user() && \Auth::user()->id != $query->id)
-          <div class="col-md-12">
-            @if(Auth::user()->haveGroup() && Auth::user()->hasFoundedGroup())
-            <div class="_ou">
-              <a href="#" onclick="link('{{route('group/action/invite')}}')">
-                <i class="fas fa-envelope"></i> <span>Assumi come collaboratore</span>
-              </a>
-            </div>
-            <script>
-            var array = {!! json_encode(Auth::user()->getPublishersInfo()) !!};
-            var properties = [];
-            Object.keys(array).forEach(i => {
-              properties.push({"type": ["option"], "value": array[i].id, "text": array[i].nome});
-            });
-
-              function link(route){
-                App.getUserInterface({
-                  "ui": {"title": "Invito collaborazione",
-                  "header": {"action": route, "method": "POST"},
-                  "data": { user_id: "{{ $query->id }}", selector: "#publisherSelector", _token: "{{ csrf_token() }}" },
-                  "content": [
-                  {"type": ["h6"], "text": "Seleziona la redazione il quale inviare la collaborazione"},
-                  {"type": [ {"select": properties} ], "class": "form-control", "name": "publisherSelector" },
-                  {"type": ["button","submit"], "class": "btn btn-info", "text": "Invia Richiesta"}
-                ],
-              "done": function(d){App.getUserInterface({"ui": {"title": "Info Redazione","content": [{"type": ["h5"], "text": d.message}]}});}}});}
-            </script>
-            @endif
-          </div>
-          {{--<div class="col-md-12">
-            <div id="follow" class="_ou">
-                @if(!$follow)
-                <i class="fas fa-bell"></i> <span>Segui</span>
-                @else
-                <i class="fas fa-bell-slash"></i> <span>Smetti di seguire</span>
-                @endif
-            </div>
-            <script>
-              App.follow('#follow',{url:'{{ url("follow?q=false") }}',data:{'id':{{ $query->id }}}}, false);
-              App.insl('articles');
-            </script>
-          </div>--}}
-        @endif
         {{--<div class="col-md-12">
           <div class="publisher-bar" data-pub-text="#followers">
               <span id="followers">{{ $query->followers_count }}</span>
               Followers
           </div>
         </div>--}}
-        @auth
+        @if(Auth::user() && Auth::user()->id != $query->id)
         <div class="col-md-12">
           <a id="report" href="#report">
             Segnala utente
@@ -134,9 +91,9 @@
           });
         });
         </script>
-        @endauth
+        <hr/>
+        @endif
       </div>
-      <hr/>
 
 <style>
 h2 {
@@ -176,7 +133,7 @@ address > a, address > a:hover {
                       <div class="card">
                         <img class="card-img-top" src="{{ asset($user->getAvatar()) }}" alt="Avatar">
                         <div class="card-body">
-                          <strong class="card-title">{{ $user->nome }} {{ $user->cognome }}</strong>
+                          <strong class="card-title">{{ $user->name }} {{ $user->surname }}</strong>
                         </div>
                       </div>
                     </a>

@@ -8,12 +8,6 @@
 #nav > li:not(:last-child)::after {
   content: '\00a0|';
 }
-._ou {
-  cursor: pointer;
-}
-#customMsg {
-  min-height: 200px;
-}
 </style>
 <div class="container">
   <div class="publisher-home">
@@ -22,17 +16,12 @@
         <div class="publisher-logo d-flex">
           <img src="{{ asset($query->getAvatar()) }}" alt="Logo">
           <div class="ml-4 mt-3 info">
-            <span class="verified">{{ $query->nome }} {{ $query->cognome }}</span>
+            <span>{{ $query->name }} {{ $query->surname }}</span>
           </div>
         </div>
       </div>
     </div>
       <div class="publisher-body">
-        {{--<div class="">
-          <div class="publisher-logo">
-            <img src="{{ asset($query->getAvatar()) }}" alt="Logo">
-          </div>
-        </div>--}}
         <nav>
           <ul id='nav'>
             <li><a href="{{ url($query->slug) }}">Profilo</a></li>
@@ -49,9 +38,9 @@
             <p>Editore individuale</p>
             @else
             <p>Editore presso
-              @for($i = 0; $i < count($group); $i++)
-                <a class="text-underline" href="{{ url($group[$i]->slug) }}"> {{ $group[$i]->nome }}</a>
-              @endfor
+                @foreach(Auth::user()->getPublishersInfo() as $value)
+                  <a class="text-underline" href="{{ url($value->slug) }}"> {{ $value->name }}</a>
+                @endforeach
             </p>
             @endif
           </div>
@@ -65,9 +54,9 @@
           </div>
           @if(\Auth::user() && \Auth::user()->id != $query->id)
           <div class="col-md-12">
-            @if(Auth::user()->haveGroup() && Auth::user()->hasFoundedGroup())
+            @if(Auth::user()->haveGroup() && Auth::user()->hasFoundedGroup() && !Auth::user()->suspended)
             <div class="_ou">
-              <a href="#" onclick="link('{{route('group/action/invite')}}')">
+              <a id="usr_invite" href="#">
                 <i class="fas fa-envelope"></i> <span>Assumi come collaboratore</span>
               </a>
             </div>
@@ -75,44 +64,26 @@
             var array = {!! json_encode(Auth::user()->getPublishersInfo()) !!};
             var properties = [];
             Object.keys(array).forEach(i => {
-              properties.push({"type": ["option"], "value": array[i].id, "text": array[i].nome});
+              properties.push({"type": ["option"], "value": array[i].id, "text": array[i].name});
             });
 
-              function link(route){
+              $("#usr_invite").click(function(){
                 App.getUserInterface({
                   "ui": {"title": "Invito collaborazione",
-                  "header": {"action": route, "method": "POST"},
+                  "header": {"action": "{{ route('group/action/invite') }}", "method": "POST"},
                   "data": { user_id: "{{ $query->id }}", selector: "#publisherSelector", _token: "{{ csrf_token() }}" },
                   "content": [
                   {"type": ["h6"], "text": "Seleziona la redazione il quale inviare la collaborazione"},
                   {"type": [ {"select": properties} ], "class": "form-control", "name": "publisherSelector" },
                   {"type": ["button","submit"], "class": "btn btn-info", "text": "Invia Richiesta"}
                 ],
-              "done": function(d){App.getUserInterface({"ui": {"title": "Info Redazione","content": [{"type": ["h5"], "text": d.message}]}});}}});}
+              "done": function(d){App.getUserInterface({"ui": {"title": "Info Redazione","content": [{"type": ["h5"], "text": d.message}]}});}}});
+            });
             </script>
             @endif
           </div>
-          {{--<div class="col-md-12">
-            <div id="follow" class="_ou">
-                @if(!$follow)
-                <i class="fas fa-bell"></i> <span>Segui</span>
-                @else
-                <i class="fas fa-bell-slash"></i> <span>Smetti di seguire</span>
-                @endif
-            </div>
-            <script>
-              App.follow('#follow',{url:'{{ url("follow?q=false") }}',data:{'id':{{ $query->id }}}}, false);
-              App.insl('articles');
-            </script>
-          </div>--}}
         @endif
-        {{--<div class="col-md-12">
-          <div class="publisher-bar" data-pub-text="#followers">
-              <span id="followers">{{ $query->followers_count }}</span>
-              Followers
-          </div>
-        </div>--}}
-        @auth
+        @if(Auth::user() && Auth::user()->id != $query->id && !Auth::user()->suspended)
         <div class="col-md-12">
           <a id="report" href="#report">
             Segnala utente
@@ -122,14 +93,14 @@
           $("#report").click(function(){
             App.getUserInterface({
             "ui": {
-              "header":{"action": "{{route('article/action/report')}}", "method": "GET"},
+              "header":{"action": "{{route('user/action/report')}}", "method": "GET"},
               "data":{"id": "{{$query->id}}", "selector": "#selOption:checked", "text": "#reasonText"},
               "title": 'Segnala utente',
               "content": [
-                {"type": ["input","radio"], "id": "selOption", "name": "option", "value": "0", "class": "col-md-1", "label": "Contenuto di natura sessuale", "required": true},
-                {"type": ["input","radio"], "id": "selOption", "name": "option", "value": "1", "class": "col-md-1", "label": "Contenuti violenti o che incitano all\'odio", "required": true},
-                {"type": ["input","radio"], "id": "selOption", "name": "option", "value": "2", "class": "col-md-1", "label": "Promuove il terrorismo o attività criminali", "required": true},
-                {"type": ["input","radio"], "id": "selOption", "name": "option", "value": "3", "class": "col-md-1", "label": "Violazione del diritto d\'autore", "required": true},
+                {"type": ["input","radio"], "id": "selOption", "name": "option", "value": "0", "class": "col-md-1", "label": "Furto d'identità", "required": true},
+                {"type": ["input","radio"], "id": "selOption", "name": "option", "value": "2", "class": "col-md-1", "label": "Privacy", "required": true, "data-script": "info", "data-text": "rr"},
+                {"type": ["input","radio"], "id": "selOption", "name": "option", "value": "1", "class": "col-md-1", "label": "Promuove contenuti inappropriati", "required": true},
+                {"type": ["input","radio"], "id": "selOption", "name": "option", "value": "2", "class": "col-md-1", "label": "Spam o truffa", "required": true},
                 {"type": ["textarea"], "id":"reasonText", "name": "reason", "value": "", "class": "form-control", "placeholder": "Motiva la segnalazione (opzionale)"},
                 {"type": ["button","submit"], "name": "radio", "class": "btn btn-danger", "text": "invia segnalazione"}
               ],
@@ -148,6 +119,13 @@
           });
         });
         </script>
-        @endauth
+        @endif
       </div>
+      @if($query->suspended)
+      <div class="col-md-12">
+        <div class="alert alert-dark">
+          <h3>Questo account è stato sospeso da un operatore per violazione delle <a href="{{ url('page/standards') }}" style="color:#007bff">norme della community</a>.</h3>
+        </div>
+      </div>
+      @endif
       <hr/>

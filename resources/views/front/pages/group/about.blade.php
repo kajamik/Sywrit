@@ -1,6 +1,6 @@
 @extends('front.layout.app')
 
-@section('title', 'Contatti - Redazione '. $query->nome.' -')
+@section('title',  $query->name.' - ')
 
 @section('main')
 <style>
@@ -14,6 +14,9 @@
 <div class="publisher-home">
         @include('front.components.group.top_bar')
         <div class="container my-5">
+          @if($query->biography)
+          <p>{!! $query->biography !!}</p>
+          @endif
           <h2>Informazioni Redazione</h2>
           <div class="col-lg-12">
             <div class="row">
@@ -26,10 +29,10 @@
                     <div class="card">
                       <img class="card-img-top" src="{{asset($user->getAvatar())}}" alt="Avatar">
                       <div class="card-body">
-                        <strong class="card-title">{{ $user->nome }} {{ $user->cognome }}</strong>
+                        <strong class="card-title">{{ $user->name }} {{ $user->surname }}</strong>
                         <em>Ruolo:
                           @if($query->direttore == $user->id)
-                            Capo Redazione
+                            Responsabile
                           @else
                             Editore
                           @endif

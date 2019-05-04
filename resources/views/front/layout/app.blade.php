@@ -2,12 +2,12 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" prefix="og: http://ogp.me/ns#">
 <head>
     <meta charset="utf-8" />
-    <title>@yield('title') {{ config('app.name') }}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <title>@yield('title'){{ config('app.name') }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
 
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#CC0000">
+    <meta name="theme-color" content="#BFB8EB" />
+
     @yield('seo')
 
     <script src="{{ asset('plugins/jquery/js/jquery-3.2.1.min.js') }}"></script>
@@ -54,21 +54,22 @@
   </header>
 
   <script>
-  (function(){
+  $(function(){
     App.update();
     $(window).on('resize', function(){
       App.update();
     });
-  })(jQuery);
+    App.info();
+  });
 
+  fetch_live_search = function(query_search = ''){
+    App.query("get","{{ route('live_search') }}",{q:query_search},false,function(data){
+      $(".data-list").html(data);
+    });
+  }
   </script>
 
   <main class="wrap">
-    @if(\Session::get('type') == 'main_top')
-    <div class="fixed-alert alert alert-danger">
-      <h2>{{\Session::get('message')}}</h2>
-    </div>
-    @endif
     <div class="py-3">
       @yield('main')
     </div>
@@ -76,7 +77,6 @@
 
   <footer id="footer">
     <ul class="footer-links">
-      <li><a href="{{ url('page/project') }}">Il nostro progetto</a></li>
       <li><a href="{{ url('page/about/privacy') }}">Privacy</a></li>
       <li><a href="{{ url('page/legal/terms') }}">Termini e condizioni</a></li>
     </ul>
@@ -84,24 +84,21 @@
     &copy; 2019 - {{ \Carbon\Carbon::now()->format('Y') }}. Tutti i diritti riservati</p>
   </footer>
 
-  <script>
-  fetch_live_search = function(query_search = ''){
-    App.query("get","{{ route('live_search') }}",{q:query_search},false,function(data){
-      $(".data-list").html(data);
-    });
-  }
-  </script>
   @auth
   {{--
     $.each(data.query, function(index, item){
       notify(item.titolo, "Pubblicato da " + item.user_name, "read/"+item.article_slug);
     });
     --}}
+
   <script type="text/javascript">
     var message_count = 0;
 
     $(function(){
       //notifications();
+      $("#notifications").click(function(){
+        fetch_live_notifications();
+      });
     });
 
     function notifications() {

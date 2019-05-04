@@ -18,23 +18,19 @@
   </form>
 
   <div class="table_users">
-    <table tabindex="-1">
+    <table>
       <tr>
         <th>ID Pagina</th>
         <th>Nome Pagina</th>
-        <th>Avvisi</th>
         <th>Pagina sospesa</th>
-        <th>Pagina disattivata</th>
         <th>Azione</th>
       </tr>
       @foreach($query as $value)
       <tr>
         <td>{{ $value->id }}</td>
-        <td>{{ $value->nome }}</td>
-        <td>{{ $value->avvisi }}</td>
-        <td>FALSO</td>
-        <td>FALSO</td>
-        <td><a href="{{ url('toolbox/pages/'.$value->id.'/sheet') }}"<button class="btn btn-info btn-block" role="button">Scheda</button></td>
+        <td>{{ $value->name }}</td>
+        <td>@if($value->suspended) Si @else No @endif</td>
+        <td><a href="{{ url('toolbox/publishers/'.$value->id.'/sheet') }}"<button class="btn btn-info btn-block" role="button">Scheda</button></td>
       </tr>
       @endforeach
     </table>

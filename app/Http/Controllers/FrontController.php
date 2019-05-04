@@ -30,35 +30,27 @@ use Twitter;
 
 class FrontController extends Controller
 {
-
-    public function listGroups($user)
-    {
-      if($user->getPublishersInfo()) {
-        $group = array();
-        foreach($user->getPublishersInfo() as $value) {
-          $group[] = $value;
-        }
-
-        return \View::share('group', $group);
-      }
-      return false;
-    }
-
+    
     public function index(Request $request)
     {
         $INDEX_LIMIT = 9;
         $current_page = ($request->page) ? $request->page : 1;
 
         $articoli = Articoli::join('utenti', 'articoli.id_autore', '=', 'utenti.id')
-                    ->addSelect('utenti.slug as user_slug', 'utenti.nome as user_name', 'utenti.cognome as user_surname',
-                                'articoli.titolo as article_title', 'articoli.slug as article_slug', 'articoli.testo as article_text', 'articoli.copertina as copertina', 'articoli.created_at as created_at')
+                    ->leftJoin('editori', function($join){
+                        $join->on('articoli.id_gruppo', '=', 'editori.id');
+                      })
+                    ->leftJoin('article_category', function($join){
+                        $join->on('articoli.topic_id', '=', 'article_category.id');
+                      })
+                    ->addSelect('utenti.slug as user_slug', 'utenti.name as user_name', 'utenti.surname as user_surname', 'editori.name as publisher_name', 'editori.slug as publisher_slug',
+                                'articoli.titolo as article_title', 'articoli.id_gruppo as id_editore', 'articoli.slug as article_slug', 'articoli.testo as article_text', 'articoli.copertina as copertina',
+                                'articoli.published_at as published_at', 'articoli.created_at as created_at', 'article_category.id as topic_id', 'article_category.name as topic_name')
                     ->where('status','1')
                     ->orderBy('published_at','desc')
                     ->skip($INDEX_LIMIT * ($current_page-1))
                     ->take($INDEX_LIMIT)
                     ->get();
-
-        $categorie = ArticleCategory::get();
 
           if($request->ajax()){
             if(count($articoli)){
@@ -66,37 +58,45 @@ class FrontController extends Controller
             }
           }
 
-      return view('front.pages.welcome',compact('articoli','categorie'));
+      return view('front.pages.welcome',compact('articoli'));
     }
 
     // PROFILE
-    public function getProfile($slug,Request $request)
+    public function getProfile($slug, Request $request)
     {
-      //$follow = '';
+
       $query = User::where('slug',$slug)->first();
+
       if(empty($query)){
         return $this->getPublisherIndex($slug, $request);
       }
-      /*if(\Auth::user() && !empty($query)){
-          $follow = in_array(\Auth::user()->id,explode(',',$query->followers));
-      }*/
-      $query2 = \App\Models\Articoli::where('status','1')->where('id_autore',$query->id);
-      $count = $query2->count();
-      $articoli = $query2->take(12)->orderBy('created_at','desc')->get();
+
+      $INDEX_LIMIT = 9;
+      $current_page = ($request->page) ? $request->page : 1;
+
+      $articoli = Articoli::leftJoin('article_category', function($join){
+                      $join->on('articoli.topic_id', '=', 'article_category.id');
+                    })
+                    ->addSelect('articoli.titolo as article_title', 'articoli.slug as article_slug', 'articoli.testo as article_text', 'articoli.copertina as copertina',
+                                'articoli.published_at as published_at', 'articoli.created_at as created_at', 'article_category.id as topic_id', 'article_category.name as topic_name')
+                    ->where('id_autore', $query->id)
+                    ->where('status','1')
+                    ->orderBy('published_at', 'desc');
+
+      $count = $articoli->count();
+
+      $articoli = $articoli->skip($INDEX_LIMIT * ($current_page-1))->take($INDEX_LIMIT)->get();
+
 
       $score = \DB::table('article_score')->where('article_id', $query->id);
-      $scoring = \DB::table('article_score')->where('user_id', Auth::user()->id)->where('article_id', $query->id)->count();
 
-      if($count){
         if($request->ajax()){
-          $articoli = $query2->skip(($request->page-1)*12)->take(12)->get();
-            return ['posts' => view('front.components.ajax.loadArticles')->with(compact('articoli'))->render()];
+          if($articoli->count()){
+            return ['posts' => view('front.components.profile.loadArticles')->with(compact('articoli'))->render()];
+          }
         }
-      }
 
-      $this->listGroups($query);
-
-      return view('front.pages.profile.index',compact('query','query2','count','articoli','score','scoring'));
+      return view('front.pages.profile.index',compact('query','articoli','count','score'));
     }
 
     public function getAbout($slug)
@@ -109,16 +109,6 @@ class FrontController extends Controller
       $query2 = \App\Models\Articoli::where('status','1')->where('id_autore',$query->id);
       $count = $query2->count();
 
-        /*$followers = collect(explode(',',$query->followers))->filter(function ($value, $key) {
-          return $value != "";
-        });
-
-        if(Auth::user() && !empty($query)){
-          $follow = $followers->some(\Auth::user()->id);
-        }*/
-
-        $this->listGroups($query);
-
       return view('front.pages.profile.about',compact('query','query2','count'));
     }
 
@@ -126,11 +116,26 @@ class FrontController extends Controller
     { // http://127,0.0.1:8000/{slug}/archive
       if($slug == Auth::user()->slug){
         $query = Articoli::whereNull('id_gruppo')->where('id_autore', Auth::user()->id)->where('status','0')->get();
-        $this->listGroups(Auth::user());
         return view('front.pages.profile.archive',compact('query'));
       }else{
-        return redirect($slug);
+        // Redazione
+        $query = Editori::where('slug', $slug)->firstOrFail();
+
+        if(!$query->suspended && Auth::user()->hasMemberOf($query->id)){
+          $query2 = Articoli::where('id_gruppo', $query->id)->where('status','0')->get();
+          return view('front.pages.group.archive',compact('query','query2'));
+        }else{
+          return redirect($slug);
+        }
       }
+    }
+
+    public function getAccountDelete()
+    {
+        $articoli = Articoli::whereNull('id_gruppo')->where('id_autore', Auth::user()->id);
+        $feedback = \DB::table('article_comments')->where('user_id', Auth::user()->id)
+                    ->union(\DB::table('answer_comments')->where('user_id', Auth::user()->id));
+        return view('front.pages.profile.delete', compact('articoli','feedback'));
     }
 
     /*****************/
@@ -141,29 +146,36 @@ class FrontController extends Controller
         return view('front.pages.group.create');
     }
 
-    public function getPublisherIndex($slug,Request $request)
+    public function getPublisherIndex($slug, Request $request)
     {
       $query = Editori::where('slug',$slug)->firstOrFail();
 
-      /*if( empty($query) || (!$query->accesso && (Auth::guest() || Auth::user()->id != $query->direttore)) )
-          abort(404);*/
+      $INDEX_LIMIT = 9;
+      $current_page = ($request->page) ? $request->page : 1;
 
-        $publisher = array();
-        //$followers = array();
-        //$follow = false;
+      $publisher = array();
+
+      $articoli = Articoli::join('utenti', 'articoli.id_autore', '=', 'utenti.id')
+                  ->leftJoin('article_category', function($join){
+                      $join->on('articoli.topic_id', '=', 'article_category.id');
+                    })
+                    ->addSelect('utenti.slug as user_slug', 'utenti.name as user_name', 'utenti.surname as user_surname',
+                                'articoli.titolo as article_title', 'articoli.slug as article_slug', 'articoli.testo as article_text', 'articoli.copertina as copertina',
+                                'articoli.published_at as published_at', 'articoli.created_at as created_at', 'article_category.id as topic_id', 'article_category.name as topic_name')
+                    ->where('articoli.id_gruppo', $query->id)
+                    ->where('status', '1')
+                    ->orderBy('published_at', 'desc')
+                    ->skip($INDEX_LIMIT * ($current_page-1))
+                    ->take($INDEX_LIMIT)
+                    ->get();
 
         if($request->ajax()){
-            $articoli = Articoli::where('id_gruppo',$query->id)->skip(($request->page-1)*12)->take(12)->get();
-            return ['posts' => view('front.components.ajax.loadArticles')->with(compact('articoli'))->render()];
+          if($articoli->count()){
+            return ['posts' => view('front.components.group.loadArticles')->with(compact('articoli'))->render()];
+          }
         }
 
-        /*$followers = explode(',',$query->followers);
-
-        if(\Auth::user() && !empty($query)){
-          $follow = in_array(\Auth::user()->id,$followers);
-        }*/
-
-      return view('front.pages.group.index',compact('query','publisher'));
+      return view('front.pages.group.index',compact('query','articoli'));
     }
 
     public function getPublisherAbout($slug)
@@ -173,29 +185,20 @@ class FrontController extends Controller
       if(empty($query))
         $query = Editori::where('slug',$slug)->first();
 
-      if(!$query->accesso && (Auth::guest() || Auth::user()->id != $query->direttore))
+      if($query->suspended && (Auth::guest() || Auth::user()->id != $query->direttore)) {
         abort(404);
+      }
 
-        /*$followers = collect(explode(',',$query->followers))->filter(function ($value, $key) {
-          return $value != "";
-        });*/
-
-        $components = collect(explode(',',$query->componenti))->filter(function ($value, $key) {
+        $components = collect(explode(',', $query->componenti))->filter(function ($value, $key) {
           return $value != "";
         });
-
-        /*if(Auth::user() && !empty($query)){
-          $follow = $followers->some(Auth::user()->id);
-        }*/
-
-      return view('front.pages.group.about',compact('query','components'));
+        return view('front.pages.group.about',compact('query','components'));
     }
 
     public function getPublisherArchive($slug)
     { // http://127,0.0.1:8000/{slug}/archive
       if($slug == Auth::user()->slug){
         $query = Articoli::whereNull('id_gruppo')->where('id_autore', Auth::user()->id)->where('status','0')->get();
-        $this->listGroups(Auth::user());
         return view('front.pages.profile.archive',compact('query'));
       }else{
         return redirect($slug);
@@ -206,13 +209,17 @@ class FrontController extends Controller
     {
       $query = Editori::where('slug',$slug)->first();
 
-      if($query->direttore != \Auth::user()->id)
+      if(!$query->suspended) {
+        if($query->direttore != \Auth::user()->id)
+          return redirect($slug);
+
+        if(!$tab)
+          return redirect($slug.'/settings/edit');
+
+        return view('front.pages.group.settings',compact('query','tab'));
+      } else {
         return redirect($slug);
-
-      if(!$tab)
-        return redirect($slug.'/settings/edit');
-
-      return view('front.pages.group.settings',compact('query','tab'));
+      }
     }
 
     /*****************/
@@ -226,7 +233,6 @@ class FrontController extends Controller
       } else {
         $categories = \DB::table('article_category')->where('slug', $request->_topic)->first();
       }
-      $this->listGroups(Auth::user());
       return view('front.pages.new_post',compact('categories'));
     }
 
@@ -249,20 +255,19 @@ class FrontController extends Controller
       }
 
       $tags = explode(',',$query->tags);
-      $date = Carbon::parse($query->created_at)->formatLocalized('%A %d %B %Y');
-      $time = Carbon::parse($query->created_at)->format('H:i');
+      $date = Carbon::parse($query->published_at)->formatLocalized('%A %d %B %Y');
+      $time = Carbon::parse($query->published_at)->format('H:i');
 
       $score = \DB::table('article_score')->where('article_id', $query->id);
-      $scoring = \DB::table('article_score')->where('user_id', Auth::user()->id)->where('article_id', $query->id)->count();
-      $hasRate = ($scoring > 0);
+      $hasRate = (Auth::user() && \DB::table('article_score')->where('user_id', Auth::user()->id)->where('article_id', $query->id)->count() > 0);
 
-      return view('front.pages.read',compact('query','date','time','tags','options','like','score','scoring','hasRate'));
+      return view('front.pages.read',compact('query','date','time','tags','options','like','score','hasRate'));
     }
 
     public function getArticleEdit($id)
     {
       $query = Articoli::find($id);
-      if((Auth::user()->id_gruppo > 0 && $query->id_gruppo == Auth::user()->id_gruppo) || (Auth::user()->id == $query->id_autore)){
+      if(Auth::user()->hasMemberOf($query->id_gruppo) || (Auth::user()->id == $query->id_autore)){
         return view('front.pages.edit_post',compact('query'));
       }else{
         return redirect('read/'.$query->slug);
@@ -302,8 +307,11 @@ class FrontController extends Controller
       $current_page = ($request->page) ? $request->page : 1;
 
       $articoli = Articoli::join('utenti', 'articoli.id_autore', '=', 'utenti.id')
-                  ->addSelect('utenti.slug as user_slug', 'utenti.nome as user_name', 'utenti.cognome as user_surname',
-                              'articoli.titolo as article_title', 'articoli.slug as article_slug', 'articoli.testo as article_text', 'articoli.copertina as copertina', 'articoli.created_at as created_at')
+                  ->leftJoin('editori', function($join){
+                    $join->on('articoli.id_gruppo', '=', 'editori.id');
+                  })
+                  ->addSelect('utenti.slug as user_slug', 'utenti.name as user_name', 'utenti.surname as user_surname', 'editori.name as publisher_name', 'editori.slug as publisher_slug',
+                              'articoli.titolo as article_title', 'articoli.id_gruppo as id_editore', 'articoli.slug as article_slug', 'articoli.testo as article_text', 'articoli.copertina as copertina', 'articoli.created_at as created_at')
                   ->where('topic_id', $topic->id)
                   ->where('status','1')
                   ->orderBy('published_at','desc')

@@ -3,8 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
+//use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use App\Notifications\ResetPassword as ResetPasswordNotification;
+use App\Notifications\VerifyEmail as VerifyEmailNotification;
 
 class User extends Authenticatable
 {
@@ -20,7 +22,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'id', 'nome', 'cognome', 'email', 'password', 'slug', 'avatar',
+        'id', 'name', 'surname', 'email', 'password', 'slug', 'avatar',
         'rank', 'points', 'followers_count', 'notifications_count',
     ];
 
@@ -32,6 +34,17 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    public function sendPasswordResetNotification($token)
+    {
+      // Your your own implementation.
+      $this->notify(new ResetPasswordNotification($token));
+    }
+
+    /*public function sendEmailVerificationNotification()
+    {
+      $this->notify(new VerifyEmailNotification);
+    }*/
 
     public function isOperator() {
       return ($this->permission > 1);
@@ -66,20 +79,27 @@ class User extends Authenticatable
     }
 
     public function haveGroup() {
-      return ($this->id_gruppo > 0);
+      $components = collect(explode(',', $this->id_gruppo))->filter(function ($value, $key) {
+        return $value != "";
+      });
+      return $components->isNotEmpty();
     }
 
     public function hasFoundedGroup() {
-
-      return 1;
+      if(\DB::table('editori')->where('direttore', $this->id)->count()) {
+        return true;
+      }
+      return false;
     }
 
     public function getPublishersInfo() {
       if($this->haveGroup()) {
         $collection = collect();
-        $groups = array();
-        foreach(explode(',', $this->id_gruppo) as $value) {
-          $query = \DB::table('editori')->select('id', 'nome', 'slug')->where('id', $value)->first();
+        $components = collect(explode(',', $this->id_gruppo))->filter(function ($value, $key) {
+          return $value != "";
+        });
+        foreach($components as $value) {
+          $query = \DB::table('editori')->where('id', $value)->select('id', 'name', 'slug', 'suspended')->first();
           $collection->push($query);
         }
         return $collection;
@@ -97,7 +117,7 @@ class User extends Authenticatable
       return false;
     }
 
-    public function getRankName() {
+    /*public function getRankName() {
       $name = '';
 
       if($this->rank < 20){
@@ -113,7 +133,7 @@ class User extends Authenticatable
       return $name;
     }
 
-    /*public function UnlinkOldImage($file) {
+    public function UnlinkOldImage($file) {
       if(File::exists($this->storage.'/'.$file)){
         File::delete($this->storage.'/'.$file);
       }

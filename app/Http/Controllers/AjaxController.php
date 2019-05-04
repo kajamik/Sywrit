@@ -29,43 +29,8 @@ class AjaxController extends Controller
     }
   }
 
-  /*public function follow(Request $request)
-  {
-    if($request->ajax()){
-      if($request->input('q') == 'false'){
-        $query = User::where('id',$request->id)->first();
-        if($query->id == Auth::user()->id){
-          return;
-        }
-      }else{
-        $query = Editori::where('id',$request->id)->first();
-      }
-
-      try{
-        $collection = collect(explode(',',$query->followers));
-        $count = $query->followers_count;
-        if($collection->some(Auth::user()->id)){
-          $collection->splice($collection->search(Auth::user()->id),1);
-          $query->followers_count -= 1;
-          $count--;
-        }else{
-          $collection->push(Auth::user()->id);
-          $query->followers_count += 1;
-          $count++;
-        }
-        $query->followers = $collection->implode(',');
-        $query->save();
-        return Response::json(['result' => $collection->some(Auth::user()->id), 'counter' => $count]);
-      }catch(ErrorException $error){
-        \Debugbar::info("follow: ".$error);
-      }
-    }
-  }*/
-
   public function rate(Request $request)
   {
-    if($request->ajax()){
-
       $article_id = $request->id;
 
       $score = ArticleScore::where('user_id', Auth::user()->id)->where('article_id', $article_id)->count();
@@ -119,156 +84,116 @@ class AjaxController extends Controller
       }catch(ErrorException $error){
         //
       }
-    }
   }
-
-  /*public function history(Request $request)
-  {
-    if($request->ajax()){
-      $query = ArticleHistory::where('article_id', $request->id)
-              ->select(\DB::raw('concat(substring_index(no_tags_text, " ", 25),"...") as no_tags_text'),'token','created_at')
-              ->get();
-
-      return Response::json($query);
-    }
-  }*/
 
   public function SearchLiveData(Request $request)
   {
-    if($request->ajax()){
+    $search = $request->q;
 
-        $search = $request->q;
+    if(!is_null($search)){
+      $query = User::where(\DB::raw("concat(name, ' ', surname)"), 'like', '%'.$search.'%')
+            ->limit(5)
+            ->get();
 
-      if(!is_null($search)){
-        $query = User::where(\DB::raw("concat(nome, ' ', cognome)"), 'like', '%'.$search.'%')
+      $query2 = Articoli::where('titolo', 'like', '%'. $search .'%')
               ->limit(5)
               ->get();
 
-        $query2 = Articoli::where('titolo', 'like', '%'. $search .'%')
+      $query3 = Articoli::where('tags', 'like', '%'. $search. '%')
                 ->limit(5)
                 ->get();
 
-        $query3 = Articoli::where('tags', 'like', '%'. $search. '%')
-                  ->limit(5)
-                  ->get();
+      $query4 = Editori::where('name', 'like', '%'. $search. '%')
+              ->limit(5)
+              ->get();
 
-        $query4 = Editori::where('nome', 'like', '%'. $search. '%')
-                ->limit(5)
-                ->get();
+      $query2 = $query2->merge($query3);
 
-          $query = $query->merge($query2)
-                          ->merge($query3)
-                          ->merge($query4);
-
-          return view('front.pages.livesearch')->with(['query' => $query, 'key' => $search]);
-        }
-      }
+      return view('front.pages.livesearch')->with(['query' => $query, 'query2' => $query2, 'query4' => $query4, 'key' => $search]);
+    }
   }
 
   public function getStateNotifications(Request $request)
   {
-    if($request->ajax()){
-      $count = $request->msg_count;
-      $noty = \DB::table('notifications')->where('target_id', Auth::user()->id)->where('marked','0');
+    $count = $request->msg_count;
+    $noty = \DB::table('notifications')->where('target_id', Auth::user()->id)->where('marked','0');
 
-      if($noty->count() > $count){
-        $queries = array();
-        foreach($noty->get() as $value){
-          array_push($queries, \DB::table('articoli')->join('utenti', 'articoli.id_autore', '=', 'utenti.id')->addSelect('articoli.titolo as titolo','articoli.slug as article_slug','utenti.nome as user_name','utenti.cognome as user_surname')->where('articoli.id', $value->content_id)->first());
-        }
-        return Response::json(['count' => $noty->count(), 'query' => $queries]);
+    if($noty->count() > $count){
+      $queries = array();
+      foreach($noty->get() as $value){
+        array_push($queries, \DB::table('articoli')->join('utenti', 'articoli.id_autore', '=', 'utenti.id')->addSelect('articoli.titolo as titolo','articoli.slug as article_slug','utenti.name as user_name','utenti.surname as user_surname')->where('articoli.id', $value->content_id)->first());
       }
+      return Response::json(['count' => $noty->count(), 'query' => $queries]);
     }
   }
 
   public function getNotifications(Request $request)
   {
-    if($request->ajax()){
-      $LIMIT = 3;
-      $query = Notifications::where('target_id',Auth::user()->id)->orderBy('created_at','desc')->get();
-      if(Auth::user()->notifications_count > 0){
-        $user = User::find(Auth::user()->id);
-        $user->notifications_count = '0';
-        $user->save();
-      }
-      return view('front.pages.livenotifications')->with(['query' => $query]);
+    $LIMIT = 3;
+    $query = Notifications::where('target_id',Auth::user()->id)->orderBy('created_at','desc')->get();
+    if(Auth::user()->notifications_count > 0){
+      $user = User::find(Auth::user()->id);
+      $user->notifications_count = '0';
+      $user->save();
     }
+    return view('front.pages.livenotifications')->with(['query' => $query]);
   }
 
   public function deleteAllNotifications(Request $request)
   {
-    if($request->ajax()) {
-      $notifiche = Notifications::where('target_id',Auth::user()->id);
-      $notifiche->delete();
-    }
+    $notifiche = Notifications::where('target_id',Auth::user()->id);
+    $notifiche->delete();
   }
 
   /*** Commenti ***/
 
-  public function getStateComments(Request $request)
-  {
-    if($request->ajax()) {
-      $state = true;
-      $query = ArticleComments::where('article_id',$request->id)->count();
-      if($request->count != $query){
-        $state = false;
-      }
-      return Response::json(['state' => $state]);
-    }
-  }
-
   public function loadComments(Request $request)
   {
-    if($request->ajax()) {
-      $PAGE = $request->q;
-      $LIMIT = 6;
-      if($PAGE == 1){
-        $comments = ArticleComments::take($LIMIT)->where('article_id', $request->id)->orderBy('created_at','desc')->get();
-      }else{
-        $comments = ArticleComments::skip($LIMIT * ($PAGE - 1))->take($LIMIT)->where('article_id', $request->id)->orderBy('created_at','desc')->get();
-      }
-      return view('front.components.ajax.loadComments')->with(['query' => $comments]);
-    }
+    $current_page = ($request->q) ? $request->q : 1;
+    $LIMIT = 6;
+
+    $comments = ArticleComments::where('article_id', $request->id)->orderBy('created_at','desc')->skip($LIMIT * ($current_page-1))->take($LIMIT)->get();
+
+    return view('front.components.ajax.loadComments')->with(['query' => $comments]);
   }
 
   public function postComments(Request $request)
   {
-    if($request->ajax()) {
-      $post = $request->post;
-      if(!empty($post)){
-        $query = new ArticleComments();
-        $query->user_id = Auth::user()->id;
-        $query->text = $post;
-        $query->article_id = $request->id;
-        $query->save();
+    $post = $request->post;
+    $query = Articoli::where('id', $request->id)->first();
+    if(!empty($post)){
+      $query2 = new ArticleComments();
+      $query2->user_id = Auth::user()->id;
+      $query2->text = $post;
+      $query2->article_id = $query->id;
+      $query2->save();
 
-        if($query->id_gruppo != NULL) {
-          $editore = \DB::table('editori')->where('id', $query->id_gruppo)->first();
-          $components = collect(explode(',',$editore->componenti))->filter(function ($value, $key) {
-            return $value != "";
-          });
+      if($query->id_gruppo != NULL) {
+        $editore = \DB::table('editori')->where('id', $query->id_gruppo)->first();
+        $components = collect(explode(',',$editore->componenti))->filter(function ($value, $key) {
+          return ($value != "" && $value != Auth::user()->id);
+        });
           foreach($components as $value) {
-            $noty = new Notifications();
-            $noty->sender_id = Auth::user()->id;
-            $noty->target_id = $value;
-            $noty->content_id = $query->id;
-            $noty->text = '';
-            $noty->type = '3';
-            $noty->marked = '0';
-            $noty->save();
-          }
-        } else {
-            $noty = new Notifications();
-            $noty->sender_id = Auth::user()->id;
-            $noty->target_id = $query->id_autore;
-            $noty->content_id = $query->id;
-            $noty->text = '';
-            $noty->type = '3';
-            $noty->marked = '0';
-            $noty->save();
+          $noty = new Notifications();
+          $noty->sender_id = Auth::user()->id;
+          $noty->target_id = $value;
+          $noty->content_id = $query->id;
+          $noty->text = '';
+          $noty->type = '3';
+          $noty->marked = '0';
+          $noty->save();
         }
-        return view('front.components.ajax.uploadComment')->with(['query' => $query]);
+      } else {
+          $noty = new Notifications();
+          $noty->sender_id = Auth::user()->id;
+          $noty->target_id = $query->id_autore;
+          $noty->content_id = $query->id;
+          $noty->text = '';
+          $noty->type = '3';
+          $noty->marked = '0';
+          $noty->save();
       }
+      return view('front.components.ajax.uploadComment')->with(['post' => $query2]);
     }
   }
 
@@ -276,30 +201,24 @@ class AjaxController extends Controller
 
   public function loadAnswers(Request $request)
   {
-    if($request->ajax()) {
-      $PAGE = $request->q;
-      $LIMIT = 6;
-      if($PAGE == 1){
-        $answers = AnswerComments::take($LIMIT)->where('comment_id', $request->id)->orderBy('created_at','desc')->get();
-      }else{
-        $answers = AnswerComments::skip($LIMIT * ($PAGE - 1))->take($LIMIT)->where('comment_id', $request->id)->orderBy('created_at','desc')->get();
-      }
-      return view('front.components.ajax.loadCommentAnswers')->with(['query' => $answers]);
-    }
+      /*$current_page = ($request->q) ? $request->q : 1;
+      $LIMIT = 6;*/
+
+    $answers = AnswerComments::where('comment_id', $request->id)->orderBy('created_at','asc')->get();//->skip($LIMIT * ($current_page-1))->take($LIMIT)->get();
+
+    return view('front.components.ajax.loadCommentAnswers')->with(['query' => $answers]);
   }
 
   public function postAnswers(Request $request)
   {
-    if($request->ajax()) {
-      $post = $request->post;
-      if(!empty($post)){
-        $query = new AnswerComments();
-        $query->user_id = Auth::user()->id;
-        $query->text = $post;
-        $query->comment_id = $request->id;
-        $query->save();
-        return view('front.components.ajax.uploadAnswers')->with(['query' => $query]);
-      }
+    $post = $request->post;
+    if(!empty($post)){
+      $query = new AnswerComments();
+      $query->user_id = Auth::user()->id;
+      $query->text = $post;
+      $query->comment_id = $request->id;
+      $query->save();
+      return view('front.components.ajax.uploadAnswers')->with(['post' => $query]);
     }
   }
 
@@ -312,6 +231,9 @@ class AjaxController extends Controller
       $collection = collect(explode(',', Auth::user()->id_gruppo));
 
       $query = User::find($request->user_id);
+      if($query->suspended) {
+        return Response::json(['message' => 'Questo account è stato sospeso da un operatore']);
+      }
       if(Auth::user()->hasFoundedGroup() && $collection->some($publisher_id)) {
         $editore = \DB::table('editori')->where('id', $publisher_id)->first();
         if(!collect(explode(',', $editore->componenti))->some($query->id)) {
@@ -357,33 +279,27 @@ class AjaxController extends Controller
           $user->id_gruppo = $collection->implode(',');
           $user->save();
         }
+        $query->delete();
       }
   }
 
   public function leaveGroup(Request $request)
   {
-      $query = Editori::where('id', Auth::user()->id_gruppo)->first();
-      $slug = $query->slug;
-
-      if($query->direttore != Auth::user()->id) {
-        try{
-          $collection = collect(explode(',', $query->componenti));
-          $collection->splice(Auth::user()->id);
-          $query->componenti = $collection->implode(',');
-          $query->save();
-          $user = User::find(Auth::user()->id);
-          $collection = collect(explode(',', $user->id_gruppo));
-          $collection->splice($query->id);
-          $user->id_gruppo = $collection->implode(',');
-          $user->save();
-          return Response::json(['message' => 'Hai abbandonato questa redazione']);
-        }catch(ErrorException $error){
-          //
-        }
+      $publisher = Editori::find($request->id);
+      if($publisher->direttore == Auth::user()->id && Auth::user()->hasMemberOf($publisher->id)) {
+        $query = User::find(Auth::user()->id);
+        $query->id_gruppo = collect(explode(',', $query->id_gruppo))->filter(function ($value, $key) use ($publisher) {
+          return $value != "" && $value != $publisher->id;
+        })->implode(',');
+        $query->save();
+        $publisher->componenti = collect(explode(',', $publisher->componenti))->filter(function ($value, $key) {
+          return $value != "" && $value != Auth::user()->id;
+        })->implode(',');
+        $publisher->save();
+        return Response::json(['success' => 'true']);
       } else {
-        return Response::json(['message' => 'Per lasciare questa redazione devi prima cedere la carica da capo redattore']);
+        return Response::json(['success' => 'false', 'message' => 'Per abbandonare questa redazione devi prima nominare un nuovo capo redattore']);
       }
-
-    }
+  }
 
 }

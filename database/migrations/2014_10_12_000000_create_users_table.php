@@ -18,6 +18,7 @@ class CreateUsersTable extends Migration
             $table->string('nome');
             $table->string('cognome');
             $table->string('email')->unique();
+            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('slug');
             $table->string('avatar')->nullable();
@@ -31,11 +32,12 @@ class CreateUsersTable extends Migration
             $table->float('points');
             //---
             $table->text('followers')->nullable();
-            $table->integer('followers_count');
-            $table->integer('notifications_count');
+            $table->integer('followers_count')->default(0);
+            $table->integer('notifications_count')->default(0);
             $table->text('id_gruppo')->nullable();
             $table->enum('permission', ['1','2','3','4']);
-            $table->enum('accesso', ['0','1']);
+            $table->enum('suspended', ['0','1']);
+            $table->enum('cron', ['0','1']);
             $table->rememberToken();
             $table->timestamps();
         });

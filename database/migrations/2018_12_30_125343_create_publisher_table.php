@@ -15,16 +15,16 @@ class CreatePublisherTable extends Migration
     {
         Schema::create('editori', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('nome')->unique();
+            $table->string('name')->unique();
             $table->text('componenti');
             $table->string('slug')->nullable();
-            $table->string('logo')->nullable();
-            $table->string('background')->nullable();
+            $table->string('avatar')->nullable();
+            $table->string('cover')->nullable();
+            $table->text('biography')->nullable();
             $table->text('followers')->nullable();
             $table->integer('followers_count');
-            $table->integer('direttore')->unique();
-            $table->integer('avvisi');
-            $table->enum('accesso', ['0','1']);
+            $table->integer('direttore');
+            $table->enum('suspended', ['0','1']);
             $table->timestamps();
         });
     }

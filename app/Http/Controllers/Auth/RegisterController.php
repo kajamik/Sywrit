@@ -79,8 +79,8 @@ class RegisterController extends Controller
       $img->save(public_path('storage/accounts/'.$img_name));
 
         $user = User::create([
-            'nome' => $data['name'],
-            'cognome' => $data['surname'],
+            'name' => $data['name'],
+            'surname' => $data['surname'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'avatar' => $img_name,

@@ -26,7 +26,9 @@ class CreateReportedArticles extends Migration
             5 = Spam
             /*****************/
             $table->enum('report', ['0','1','2','3']);
+            $table->text('report_text')->nullable();
             $table->string('report_token');
+            $table->enum('resolved', ['0','1']);
             $table->timestamps();
         });
     }

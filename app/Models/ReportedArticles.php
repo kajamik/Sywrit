@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ActivitiesReports extends Model
+class ReportedArticles extends Model
 {
   protected $table = 'reported_articles';
 
@@ -32,8 +32,11 @@ class ActivitiesReports extends Model
       default:
         $msg = '';
     }
-
     return $msg;
+  }
+
+  public function getAutore() {
+    return $this->belongsTo('App\Models\User','user_id','id');
   }
 
 }

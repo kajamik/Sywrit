@@ -1,10 +1,18 @@
 {
   "short_name": "Sywrit",
   "name": "Sywrit",
+  "display": "standalone",
+  "gcm_user_visible_only": true,
+  "background_color": "#BFB8EB",
   "icons": [
     {
-      "src": "upload/.png",
-      "sizes": "192x192",
+      "src": "upload/144x144/rgb_logo.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "upload/72x72/rgb_logo.png",
+      "sizes": "72x72",
       "type": "image/png"
     }
   ]

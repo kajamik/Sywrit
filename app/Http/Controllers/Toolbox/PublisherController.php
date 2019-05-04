@@ -8,31 +8,30 @@ use Illuminate\Support\Facades\Input;
 use Response;
 
 // Models
-use App\Models\User;
-use App\Models\ReportedUsers;
+use App\Models\Editori;
 use App\Models\ReportedArticles;
+use App\Models\ReportedComments;
+use App\Models\ReportedAComments;
 
-class UserController extends Controller
+class PublisherController extends Controller
 {
   public function index()
   {
-    $query = User::get();
-    return view('tools.pages.users.view', compact('query'));
+    $query = Editori::get();
+    return view('tools.pages.pages.view', compact('query'));
   }
 
-  public function getUserSheet($id)
+  public function getPageSheet($id)
   {
-    $query = User::find($id);
-    $user_reports = ReportedUsers::where('reported_users.reported_id', $query->id)->get();
+    $query = Editori::find($id);
     $reports_activity = ReportedArticles::where('user_id', $query->id)->get();
-
-    return view('tools.pages.users.sheet', compact('query','user_reports','reports_activity'));
+    return view('tools.pages.pages.sheet', compact('query','reports_activity'));
   }
 
-  public function getLockAccount(Request $request)
+  public function getLockPublisher(Request $request)
   {
     if($request->ajax()){
-      $query = User::find($request->id);
+      $query = Editori::find($request->id);
       if(!$query->suspended){
         $query->suspended = '1';
       } else {
@@ -43,5 +42,5 @@ class UserController extends Controller
       return Response::json(['suspended' => $query->suspended]);
     }
   }
-  
+
 }

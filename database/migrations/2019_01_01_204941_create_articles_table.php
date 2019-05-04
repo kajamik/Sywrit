@@ -15,17 +15,17 @@ class CreateArticlesTable extends Migration
     {
         Schema::create('articoli', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->integer('topic_id');
             $table->string('titolo');
             $table->string('tags')->nullable();
             $table->string('slug')->nullable();
             $table->text('testo');
             $table->string('copertina')->nullable();
-            $table->integer('id_gruppo')->nullable(); // id editoria
+            $table->integer('id_gruppo')->nullable(); // id editorie
             $table->integer('id_autore'); // id autore
             $table->integer('count_view');
-            $table->integer('rating_count');
-            $table->text('rated')->nullable();
-            $table->enum('status',['0','1']); // no e si
+            $table->enum('status', ['0','1']); // no e si
+            $table->enum('license', ['1','2']);
             $table->timestamp('published_at');
             $table->timestamps();
         });

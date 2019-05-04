@@ -16,7 +16,7 @@ return [
     |
     */
 
-    'driver' => env('MAIL_DRIVER', 'smtp'),
+    'driver' => env('MAIL_DRIVER', 'sendmail'),
 
     /*
     |--------------------------------------------------------------------------
@@ -29,7 +29,7 @@ return [
     |
     */
 
-    'host' => env('MAIL_HOST', 'smtp.mailgun.org'),
+    'host' => env('MAIL_HOST', 'sywrit.com'),
 
     /*
     |--------------------------------------------------------------------------
@@ -42,7 +42,7 @@ return [
     |
     */
 
-    'port' => env('MAIL_PORT', 587),
+    'port' => env('MAIL_PORT', '465'),
 
     /*
     |--------------------------------------------------------------------------
@@ -55,9 +55,13 @@ return [
     |
     */
 
+    /*'from' => [
+        'address' => env('MAIL_FROM_ADDRESS', 'no-reply@sywrit.com'),
+        'name' => env('MAIL_FROM_NAME', 'Sywrit No-Reply'),
+    ],*/
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
-        'name' => env('MAIL_FROM_NAME', 'Example'),
+        'address' => 'no-reply@sywrit.com',
+        'name' => 'Ripristino password',
     ],
 
     /*
@@ -85,7 +89,6 @@ return [
     */
 
     'username' => env('MAIL_USERNAME'),
-
     'password' => env('MAIL_PASSWORD'),
 
     /*

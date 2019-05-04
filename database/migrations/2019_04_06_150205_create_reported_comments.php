@@ -16,7 +16,7 @@ class CreateReportedComments extends Migration
         Schema::create('reported_comments', function (Blueprint $table) {
           $table->bigIncrements('id');
           $table->integer('user_id');
-          $table->integer('post_id');
+          $table->integer('comment_id');
           /*****************
             0 = Contenuto di natura sessuale
             1 = Contenuto violento o che incita all'odio
@@ -25,7 +25,9 @@ class CreateReportedComments extends Migration
             4 = Spam
           /*****************/
           $table->enum('report', ['0','1','2','3','4']);
+          $table->text('report_text')->nullable();
           $table->string('report_token');
+          $table->enum('resolved', ['0','1']);
           $table->timestamps();
         });
     }

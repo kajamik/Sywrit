@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateAnswerComments extends Migration
+class CreateAccountDeletionRequest extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,10 @@ class CreateAnswerComments extends Migration
      */
     public function up()
     {
-        Schema::create('answer_comments', function (Blueprint $table) {
+        Schema::create('account_deletion_request', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->integer('user_id');
-            $table->integer('comment_id');
-            $table->text('text');
+            $table->datetime('expired_at');
             $table->timestamps();
         });
     }
@@ -29,6 +28,6 @@ class CreateAnswerComments extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('answer_comments');
+        Schema::dropIfExists('account_deletion_request');
     }
 }

@@ -15,19 +15,19 @@ class Editori extends Model
     }
 
     public function getBackground() {
-      $file = $this->storage.'/'.$this->background;
+      $file = $this->storage.'/'.$this->cover;
 
-      if($this->background && file_exists($file)){
+      if($this->cover && file_exists($file)){
         return $file;
       }else{
         return 'upload/bg.jpg';
       }
     }
 
-    public function getLogo() {
-      $file = $this->storage.'/'.$this->logo;
+    public function getAvatar() {
+      $file = $this->storage.'/'.$this->avatar;
 
-      if($this->logo && file_exists($file)){
+      if($this->avatar && file_exists($file)){
         return $file;
       }else{
         return 'upload/default.png';

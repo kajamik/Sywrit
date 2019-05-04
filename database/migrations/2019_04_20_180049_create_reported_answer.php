@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateReportedUsers extends Migration
+class CreateReportedAnswer extends Migration
 {
     /**
      * Run the migrations.
@@ -13,18 +13,18 @@ class CreateReportedUsers extends Migration
      */
     public function up()
     {
-        Schema::create('reported_users', function (Blueprint $table) {
+        Schema::create('reported_answer', function (Blueprint $table) {
           $table->bigIncrements('id');
           $table->integer('user_id');
+          $table->integer('answer_id');
           /*****************
-          0 = Profilo falso
-          1 = Contenuto violento o che incita all'odio
-          2 = Promuove il terrorismo o attività criminali
-          3 = Notizia Falsa ( Fake News )
-          4 = Violazione del diritto d'autore
-          5 = Spam
+            0 = Contenuto di natura sessuale
+            1 = Contenuto violento o che incita all'odio
+            2 = Contenuto discriminatorio
+            3 = Promuove il terrorismo o attività criminali
+            4 = Spam
           /*****************/
-          $table->enum('report', ['0','1','2','3','4','5']);
+          $table->enum('report', ['0','1','2','3','4']);
           $table->text('report_text')->nullable();
           $table->string('report_token');
           $table->enum('resolved', ['0','1']);
@@ -39,6 +39,6 @@ class CreateReportedUsers extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('reported_users');
+        Schema::dropIfExists('reported_answer');
     }
 }

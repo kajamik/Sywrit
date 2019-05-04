@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ActivitiesReports extends Model
+class ReportedComments extends Model
 {
   protected $table = 'reported_comments';
 
@@ -18,16 +18,22 @@ class ActivitiesReports extends Model
         $msg = 'Contenuto violento o che incitano all\'odio';
         break;
       case 2:
-        $msg = 'Promuove il terrorismo o attività criminali';
+        $msg = 'Molestie o bullismo';
         break;
       case 3:
+        $msg = 'Promuove il terrorismo o attività criminali';
+        break;
+      case 4:
         $msg = 'Spam';
         break;
       default:
         $msg = '';
     }
-
     return $msg;
+  }
+
+  public function getAutore() {
+    return $this->belongsTo('App\Models\User','user_id','id');
   }
 
 }

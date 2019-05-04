@@ -18,6 +18,7 @@ class CreateArticleHistory extends Migration
             $table->integer('user_id');
             $table->integer('article_id');
             $table->text('text');
+            $table->text('no_tags_text');
             $table->timestamps();
         });
     }

@@ -27,13 +27,4 @@ class Articoli extends Model
     public function getAutore() {
       return $this->belongsTo('App\Models\User','id_autore','id');
     }
-
-    public function getRate() {
-      $query = \DB::table('articoli')->where('id_autore', \Auth::user()->id);
-      $rate = 0;
-      foreach($query as $value) {
-        $rate += $query->rating;
-      }
-      return $rate/$query->count();
-    }
 }

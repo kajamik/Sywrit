@@ -19,10 +19,10 @@ class CreateNotificationsTable extends Migration
           $table->integer('target_id');
           $table->integer('content_id')->nullable();
           $table->text('text');
-          // 1 - Collaborazione
-          /* Nuovo articolo
-              2 - Utente
-              3 - Pagina
+          /*
+              1 - Collaborazione
+              2 - Rating
+              3 - Commento
           */
           $table->enum('type', ['1','2','3']);
           $table->enum('marked', ['0','1']); // notifica letta

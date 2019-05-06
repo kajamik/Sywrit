@@ -19,11 +19,13 @@ class ResetPassword extends ResetPasswordNotification
     public function toMail($notifiable)
     {
       return (new MailMessage)
-      ->subject(Lang::getFromJson('Ripristino password - '. config('app.name')))
-      ->line(Lang::getFromJson('Hai ricevuto questa email perché abbiamo ricevuto una richiesta di reimpostazione della password per il tuo account.'))
-      ->action(Lang::getFromJson('Ripristino password'), url(config('app.url').route('password.reset', ['token' => $this->token], false)))
-      ->line(Lang::getFromJson('L\'url di ripristino scadrà tra :count minuti.', ['count' => config('auth.passwords.users.expire')]))
-      ->line(Lang::getFromJson('Se non hai richiesto la reimpostazione della password, ti preghiamo di ignorare la email.'));
+              ->from('no-reply@sywrit.com', 'Sywrit NO-REPLY')
+              ->subject(Lang::getFromJson('Ripristino password - '. config('app.name')))
+              ->greeting('Salve '. $this->username. ',')
+              ->line(Lang::getFromJson('Hai ricevuto questa email perché abbiamo ricevuto una richiesta di reimpostazione della password per il tuo account.'))
+              ->action(Lang::getFromJson('Ripristino password'), url(config('app.url').route('password.reset', ['token' => $this->token], false)))
+              ->line(Lang::getFromJson('L\'url di ripristino scadrà tra :count minuti.', ['count' => config('auth.passwords.users.expire')]))
+              ->line(Lang::getFromJson('Se non hai richiesto la reimpostazione della password, ti preghiamo di ignorare la email.'));
     }
 
 }

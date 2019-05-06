@@ -73,7 +73,7 @@ class AjaxController extends Controller
               $noty = new Notifications();
               $noty->sender_id = Auth::user()->id;
               $noty->target_id = $article->id_autore;
-              $noty->content_id = $query->id;
+              $noty->content_id = $article->id;
               $noty->text = $rating_value;
               $noty->type = '2';
               $noty->marked = '0';
@@ -139,12 +139,20 @@ class AjaxController extends Controller
     return view('front.pages.livenotifications')->with(['query' => $query]);
   }
 
-  public function deleteAllNotifications(Request $request)
+  public function deleteAllNotifications()
   {
-    $notifiche = Notifications::where('target_id',Auth::user()->id);
-    $notifiche->delete();
+    PublisherRequest::where('target_id', Auth::user()->id)->delete();
+    Notifications::where('target_id', Auth::user()->id)->delete();
   }
 
+  public function deleteNotification(Request $request)
+  {
+    $query = Notifications::where('id', $request->id)->first();
+    if($query->type == '1') {
+      PublisherRequest::where('id', $query->content_id)->delete();
+    }
+    $query->delete();
+  }
   /*** Commenti ***/
 
   public function loadComments(Request $request)

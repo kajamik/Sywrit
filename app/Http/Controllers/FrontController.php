@@ -30,7 +30,7 @@ use Twitter;
 
 class FrontController extends Controller
 {
-    
+
     public function index(Request $request)
     {
         $INDEX_LIMIT = 9;
@@ -330,7 +330,7 @@ class FrontController extends Controller
 
     public function getNotifications()
     {
-      $query = Notifications::where('target_id',Auth::user()->id)->orderBy('created_at','desc')->get();
+      $query = Notifications::where('target_id',Auth::user()->id)->orderBy('created_at','desc')->paginate(6);
       return view('front.pages.profile.notifications', compact('query'));
     }
 

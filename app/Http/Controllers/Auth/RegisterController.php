@@ -7,8 +7,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
-
 use Illuminate\Support\Str;
+// Notification
+use App\Notifications\UserWelcome as UserWelcomeNotification;
+//
 use Image;
 
 class RegisterController extends Controller
@@ -93,6 +95,9 @@ class RegisterController extends Controller
 
         $user->slug = $user->id.'-'.str_slug($data['name'].$data['surname'], '');
         $user->save();
+
+        // invio l'email di benvenuto all'utente
+        $user->notify(new UserWelcomeNotification($user->name));
 
         return $user;
     }

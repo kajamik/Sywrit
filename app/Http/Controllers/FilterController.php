@@ -76,7 +76,8 @@ class FilterController extends Controller
       }else{
         $fileName = rand().'.jpg';
         //crop(480,500,0,0)
-        $image = Image::make($a)->crop($request->width[0],$request->height[0],$request->x[0],$request->y[0])->resize(160, 160)->encode('jpg');
+        //crop($request->width[0],$request->height[0],$request->x[0],$request->y[0])
+        $image = Image::make($a)->resize(160, 160)->encode('jpg');
         Storage::disk('accounts')->put($fileName, $image);
       }
       $query->avatar = $fileName;
@@ -150,7 +151,18 @@ class FilterController extends Controller
     if($query->direttore == Auth::user()->id){
       if(!$query->suspended){
         // elimino tutti gli articoli scritti dalla redazione
-        Articoli::where('id_gruppo', $query->id)->delete();
+        $articoli = Articoli::where('id_gruppo', $query->id);
+        foreach($articoli->get() as $value) {
+
+        }
+        $articoli->delete();
+
+        $pub_request = PublisherRequest::where('publisher_id', $query->id);
+        foreach($pub_request->get() as $value) {
+          Notifications::where('type', '1')->where('content_id', $value->id)->delete();
+        }
+        $pub_request->delete();
+
         $components = collect(explode(',', $query->componenti));
         // elimino tutti i membri dal gruppo
         foreach($components as $value){
@@ -275,7 +287,8 @@ class FilterController extends Controller
           Storage::disk('groups')->delete($query->avatar);
         }
         $fileName = rand().'.jpg';
-        $image = Image::make($a)->crop($request->width[0],$request->height[0],$request->x[0],$request->y[0])->resize(160, 160)->encode('jpg');
+        //crop($request->width[0],$request->height[0],$request->x[0],$request->y[0])->resize(160, 160)
+        $image = Image::make($a)->encode('jpg');
         Storage::disk('groups')->put($fileName, $image);
         $query->avatar = $fileName;
       }
@@ -334,7 +347,11 @@ class FilterController extends Controller
             Storage::disk('groups')->delete($query->avatar);
           }
           $fileName = rand().'.jpg';
-          $image = Image::make($a)->crop($request->width[0],$request->height[0],$request->x[0],$request->y[0])->resize(160, 160)->encode('jpg');
+          /*if(resize){
+            $('#image_'+$(b).attr('id')).rcrop();
+          }*/
+          //crop($request->width[0],$request->height[0],$request->x[0],$request->y[0])
+          $image = Image::make($a)->resize(160, 160)->encode('jpg');
           Storage::disk('groups')->put($fileName, $image);
           $query->avatar = $fileName;
         }
@@ -405,7 +422,8 @@ class FilterController extends Controller
       if($a = $request->image) {
         $resize = '__492x340'.Str::random(64).'.jpg';
         $normal_image = '__'.Str::random(64).'.jpg';
-        $image = Image::make($a)->crop($request->width[0],$request->height[0],$request->x[0],$request->y[0])->resize(492, 340)->encode('jpg');
+        //crop($request->width[0],$request->height[0],$request->x[0],$request->y[0])
+        $image = Image::make($a)->resize(492, 340)->encode('jpg');
         Storage::disk('articles')->put($resize, $image);
         $image = Image::make($a)->encode('jpg');
         Storage::disk('articles')->put($normal_image, $image);
@@ -465,7 +483,7 @@ class FilterController extends Controller
         if($a = $request->image){
           $resize = '__492x340'.Str::random(64).'.jpg';
           $normal_image = '__'.Str::random(64).'.jpg';
-          $image = Image::make($a)->crop($request->width[0],$request->height[0],$request->x[0],$request->y[0])->resize(492, 340)->encode('jpg');
+          $image = Image::make($a)->resize(492, 340)->encode('jpg');
           Storage::disk('articles')->put($resize, $image);
           $image = Image::make($a)->encode('jpg');
           Storage::disk('articles')->put($normal_image, $image);
@@ -480,6 +498,8 @@ class FilterController extends Controller
     {
       $query = Articoli::find($request->_rq_token);
       if(!$query->suspended && (Auth::user()->hasMemberOf($query->id_gruppo) || Auth::user()->id == $query->id_autore)) {
+        // elimino le notifiche relative all'articolo
+        Notifications::where('type', '3')->where('content_id', $query->id)->delete();
         $query->delete();
       }
       return redirect('/');

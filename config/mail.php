@@ -61,7 +61,7 @@ return [
     ],*/
     'from' => [
         'address' => 'no-reply@sywrit.com',
-        'name' => 'Ripristino password',
+        'name' => 'Ripristino Password',
     ],
 
     /*

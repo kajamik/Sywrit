@@ -9,28 +9,33 @@
   content: '\00a0|';
 }
 </style>
-<div class="container">
   <div class="publisher-home">
     <div class="publisher-header" style="background-image: url({{ asset($query->getBackground() )}});border-radius:4px 4px 0 0;">
       <div class="container">
-        <div class="publisher-logo d-flex">
-          <img src="{{ asset($query->getAvatar()) }}" alt="Logo">
-          <div class="ml-4 mt-3 info">
-            <span>{{ $query->name }} {{ $query->surname }}</span>
+        <div class="publisher-logo">
+          <div class="row">
+            <div class="d-inline">
+              <img src="{{ asset($query->getAvatar()) }}" alt="Logo">
+            </div>
+            <div class="col-lg-10 col-sm-col-xs-12">
+              <div class="mt-2 info">
+                <span>{{ $query->name }} {{ $query->surname }}</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
+    <nav class="publisher-nav">
+      <ul id='nav'>
+        <li><a href="{{ url($query->slug) }}">Profilo</a></li>
+        <li><a href="{{ url($query->slug.'/about') }}">Contatti</a></li>
+        @if(\Auth::user() && \Auth::user()->id == $query->id)
+        <li><a href="{{ url($query->slug.'/archive') }}">Articoli Salvati</a></li>
+        @endif
+      </ul>
+    </nav>
       <div class="publisher-body">
-        <nav>
-          <ul id='nav'>
-            <li><a href="{{ url($query->slug) }}">Profilo</a></li>
-            <li><a href="{{ url($query->slug.'/about') }}">Contatti</a></li>
-            @if(\Auth::user() && \Auth::user()->id == $query->id)
-            <li><a href="{{ url($query->slug.'/archive') }}">Articoli Salvati</a></li>
-            @endif
-          </ul>
-        </nav>
         <hr/>
         <div class="publisher-info">
           <div class="col-md-12">
@@ -38,7 +43,7 @@
             <p>Editore individuale</p>
             @else
             <p>Editore presso
-                @foreach(Auth::user()->getPublishersInfo() as $value)
+                @foreach($query->getPublishersInfo() as $value)
                   <a class="text-underline" href="{{ url($value->slug) }}"> {{ $value->name }}</a>
                 @endforeach
             </p>

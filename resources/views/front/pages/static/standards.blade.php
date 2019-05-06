@@ -3,7 +3,6 @@
 @section('title', 'Community Standards - ')
 
 @section('main')
-<div class="container">
   <div class="publisher-home">
     <div class="publisher-body" style="">
       <h1>Sywrit Community Standards</h1>
@@ -58,5 +57,4 @@
   </div>
 
   </div>
-</div>
 @endsection

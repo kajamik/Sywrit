@@ -1,4 +1,5 @@
 var App = {};
+
 App.query = function(method,url,data,cache,f = null){
     $.ajax({
         method: method,
@@ -8,6 +9,7 @@ App.query = function(method,url,data,cache,f = null){
         success: f
       });
 }
+
 App.follow = function(element,data,cache){
   $(element).click(function(){
     var attribute = $(".publisher-bar").attr("data-pub-text");
@@ -24,6 +26,7 @@ App.follow = function(element,data,cache){
       });
     });
 }
+
 App.insl = function(id){
   var page = 1;
   document.addEventListener('scroll', function (event) {
@@ -36,17 +39,14 @@ App.insl = function(id){
   });
 }
 
-App.loadData = function(a,f){
+App.loadData = function(a, f){
   App.query('get',f+1,null,false,function(data){
     $(a).append(data.posts);
   });
 }
 
-App.upload = function(b, resize = true){
+App.upload = function(b){
   $(b).html("<div class='preview_body'><div class='image-wrapper' id='preview-wrapper'><img id='image_"+$(b).attr('id')+"' src="+URL.createObjectURL(event.target.files[0])+"></div></div>");
-  if(resize){
-    $('#image_'+$(b).attr('id')).rcrop();
-  }
 }
 
 function search_item(s, v){
@@ -55,30 +55,6 @@ function search_item(s, v){
       return s[i];
   }
   return null;
-}
-
-function setNode(e, params, element){
-  var parent = document.getElementById(e.id);
-  var child = document.createElement(element);
-  var a = new Array();
-  for(var i in params){
-    if(typeof params[i] == "object"){
-      a[i] = new Array(Object.keys(params[i]).length);
-      for(var p in params[i]){
-        a[i][p] = params[i][p];
-        child.setAttribute([p], a[i][p]);
-      }
-    }else{
-      a[i] = params[i];
-      if(i == "text"){
-        var text = document.createTextNode(a[i]);
-        child.appendChild(text);
-      }
-    }
-  }
-  parent.appendChild(child);
-
-  return a;
 }
 
 App.getUserInterface = function(t){

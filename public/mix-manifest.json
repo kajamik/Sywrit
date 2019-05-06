@@ -1,4 +1,7 @@
 {
     "/js/app.min.js": "/js/app.min.js",
-    "/css/app.min.css": "/css/app.min.css"
+    "/js/toolbox/_dex.min.js": "/js/toolbox/_dex.min.js",
+    "/css/app.min.css": "/css/app.min.css",
+    "/css/print.min.css": "/css/print.min.css",
+    "/css/toolbox/_dex.min.css": "/css/toolbox/_dex.min.css"
 }

@@ -9,36 +9,48 @@
   <div class="nav">
         <ul class="user-navbar container">
           <li>
-            <div class="ty-search">
-              <div class="d-flex">
-                <input id="search_query" type="text" placeholder="Cerca" onkeyup="fetch_live_search(this.value);" />
-                <div class="set d-flex">
-                  <button id="search">
-                    <span class="fa fa-search"></span>
-                  </button>
+            <form action="{{ url('search/') }}" method="get">
+              <div class="ty-search">
+                <div class="d-flex">
+                  <input id="search_query" name="q" type="text" placeholder="Cerca" onkeyup="fetch_live_search(this.value);" />
+                  <div class="set d-flex">
+                    <button id="search" type="submit">
+                      <span class="fa fa-search"></span>
+                    </button>
+                  </div>
                 </div>
+                <div class="data-list"></div>
               </div>
-              <div class="data-list"></div>
-            </div>
+            </form>
+            <script>
+            $("form").submit(function(){
+              if($.trim($("form input[name=q]").val()).length > 0) {
+                window.location = "{{ url('search') }}/" + $("form input[name=q]").val();
+              }
+              return false;
+            });
+            </script>
           </li>
-          <li class="dropdown">
-            <a href="#" data-toggle="dropdown" role="button" aria-expanded="false" href="#">
-              <span class="fa-1x fa fa-th"></span>
-            </a>
-            <div class="dropdown-menu" role="menu">
-              @foreach($categorie as $value)
-              <a class="dropdown-item" href="{{ url('topic/'.$value->slug) }}" title="Categorie">
-                {{ $value->name }}
-              </a>
-              @endforeach
-            </div>
-          </li>
-          @if(Auth::user())
+          @auth
           <li>
             <a href="{{url('write')}}">
               <i class="fa fa-newspaper" aria-hidden="true" title="Nuovo articolo"></i>
             </a>
           </li>
+          @endauth
+          <li class="dropdown">
+            <a href="#" data-toggle="dropdown" role="button" aria-expanded="false" href="#" title="Categorie">
+              <span class="fa-1x fa fa-th"></span>
+            </a>
+            <div class="dropdown-menu ml-5" role="menu">
+              @foreach($categorie as $value)
+              <a class="dropdown-item" href="{{ url('topic/'.$value->slug) }}">
+                {{ $value->name }}
+              </a>
+              @endforeach
+            </div>
+          </li>
+          @auth
           <li class="dropdown">
             <a id="notification" href="#" data-toggle="dropdown" role="button" aria-expanded="false" href="#" onclick="fetch_live_notifications();" title="Notifiche">
               <i class="fa fa-bell" aria-hidden="true" title="Notifiche"></i>
@@ -85,7 +97,7 @@
           @else
             <li><a href="{{ route('login') }}">Accedi</a></li>
             <li><a href="{{ route('register') }}">Iscriviti</a></li>
-        @endif
+          @endauth
         </li>
        </ul>
      </div>

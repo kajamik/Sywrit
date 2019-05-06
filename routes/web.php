@@ -67,15 +67,16 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('post/delete', ['uses' => 'FilterController@ArticleDelete', 'as' => 'article/action/delete']);
     Route::get('post/report', ['uses' => 'FilterController@ArticleReport', 'as' => 'article/action/report']);
     // Other
-    Route::get('getStateNotifications', 'AjaxController@getStateNotifications');
     Route::get('send-comment', 'AjaxController@postComments');
     Route::get('send-answers', 'AjaxController@postAnswers');
     Route::get('comment/report', ['uses' => 'FilterController@CommentReport', 'as' => 'comment/action/report']);
     Route::get('acomment/report', ['uses' => 'FilterController@ACommentReport', 'as' => 'acomment/action/report']);
     Route::get('rate', ['uses' => 'AjaxController@rate', 'as' => 'rate']);
     Route::get('notifications_delete', 'AjaxController@deleteAllNotifications');
+    Route::get('notification_delete', 'AjaxController@deleteNotification');
     Route::get('request_accepted', 'AjaxController@acceptGroupRequest');
   });
+  Route::get('getStateNotifications', 'AjaxController@getStateNotifications');
   Route::get('load-comments', 'AjaxController@loadComments');
   Route::get('load-answers', 'AjaxController@loadAnswers');
 });

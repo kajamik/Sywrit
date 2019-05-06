@@ -9,7 +9,6 @@
 @endphp
 
 @section('main')
-<div class="container">
     <div class="publisher-body">
       <a href="{{url('read/'.$query->slug)}}">Annulla modifiche</a>
       <form method="post" action="" enctype="multipart/form-data">
@@ -57,7 +56,6 @@
       </div>
     </div>
   </div>
-</div>
 
 <link rel="stylesheet" href="{{ asset('plugins/dist/summernote.css') }}" />
 <script src="{{ asset('plugins/dist/summernote.min.js') }}"></script>

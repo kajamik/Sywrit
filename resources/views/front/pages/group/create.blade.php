@@ -3,7 +3,6 @@
 @section('title', 'Nuova redazione - ')
 
 @section('main')
-<div class="container">
   <div class="publisher-home">
     <div class="publisher-body">
       <div class="offset-md-1">
@@ -79,5 +78,4 @@
       </form>
     </div>
   </div>
-</div>
 @endsection

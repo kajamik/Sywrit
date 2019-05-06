@@ -7,18 +7,20 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 
-class ResetPassword2 extends Notification
+class UserWelcome extends Notification
 {
     use Queueable;
+
+    private $username;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($username)
     {
-        //
+        $this->username = $username;
     }
 
     /**
@@ -41,9 +43,11 @@ class ResetPassword2 extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
+                ->from('no-reply@sywrit.com', 'Sywrit NO-REPLY')
+                ->subject('Benvenuto su '. config('app.name'))
+                ->greeting('Salve '. $this->username. ',')
+                ->line('grazie per esserti registrato sulla nostra piattaforma. Adesso puoi iniziare a scrivere e pubblicare I tuoi contenuti, valutare e commentare articoli, creare o entrare nelle redazioni.')
+                ->line('Ci auguriamo che la tua esperienza all\'interno della community sia sempre positiva.');
     }
 
     /**

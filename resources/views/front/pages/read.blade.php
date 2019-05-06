@@ -54,7 +54,6 @@ span.time {
   color: #fff;
 }
 </style>
-<div class="container">
   <div class="publisher-home">
     <div class="publisher-body">
         @auth
@@ -113,55 +112,59 @@ span.time {
         @if($query->created_at != $query->updated_at)
         <span>Modificato {{ $query->updated_at->diffForHumans() }}</span>
         @endif
-        <div class="socials d-flex">
-          @if($score->count() > 0)
-          <div class="mt-1 mr-2">
-            <span id="rcount">{{ number_format($score->sum('score') / $score->count(), 2) }} / 5</span>
-          </div>
-          @endif
-          @if(Auth::user() && Auth::user()->id != $query->id_autore && !Auth::user()->suspended)
-          <div id="ui-rating-box" >
-          @if(!$hasRate)
-            <select id="ui-rating-select" name="rating" autocomplete="off">
-              <option value=""></option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-            </select>
-          @endif
-          </div>
-          @endif
-          @if(($hasRate || Auth::user() && Auth::user()->id == $query->id_autore) && $score->count())
-          <!-- da sistemare -->
-          <div class="rating d-flex">
-            @for($i = 0; $i < 5; $i++)
-              @if( $score->sum('score') / $score->count() > $i)
-                @if( floor($score->sum('score') / $score->count()) > $i)
-                <span class="circle full"></span>
-                @else
-                <span class="circle half"></span>
-                @endif
-              @else
-                <span class="circle"></span>
+        <div class="row pt-5">
+          <div class="col-lg-10 col-sm-12 col-xs-12">
+            <div class="row">
+              @if($score->count() > 0)
+              <span id="rcount" class="pr-3">{{ number_format($score->sum('score') / $score->count(), 2) }} / 5</span>
               @endif
-            @endfor
+              @if(Auth::user() && Auth::user()->id != $query->id_autore && !Auth::user()->suspended)
+              <div id="ui-rating-box">
+              @if(!$hasRate)
+                <select id="ui-rating-select" name="rating" autocomplete="off">
+                  <option value=""></option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+              @else
+              <div class="rating">
+                @for($i = 0; $i < 5; $i++)
+                  @if( $score->sum('score') / $score->count() > $i)
+                    @if( floor($score->sum('score') / $score->count()) > $i)
+                    <span class="circle full"></span>
+                    @else
+                    <span class="circle half"></span>
+                    @endif
+                  @else
+                    <span class="circle"></span>
+                  @endif
+                @endfor
+              </div>
+              @endif
+              </div>
+              @endif
+            </div>
+        </div>
+        <div class="socials">
+          <div class="col-lg-12 col-sm-12 col-xs-12">
+            <a id="share_on_facebook" href="https://www.facebook.com/share.php?u={{Request::url()}}" target="_blank">
+              <span class="fa-2x fab fa-facebook-square"></span>
+            </a>
+            <a id="share_on_linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url={{Request::url()}}" target="_blank">
+              <span class="fa-2x fab fa-linkedin"></span>
+            </a>
+            @if(Auth::user() && $query->id_autore != Auth::user()->id && !Auth::user()->suspended)
+            <a id="report" href="#report" title="Segnala articolo">
+              <span class="fa-2x fas fa-exclamation-triangle"></span>
+            </a>
           </div>
-          @endif
-          <a id="share_on_facebook" href="https://www.facebook.com/share.php?u={{Request::url()}}" target="_blank">
-            <span class="fa-2x fab fa-facebook-square"></span>
-          </a>
-          <a id="share_on_linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url={{Request::url()}}" target="_blank">
-            <span class="fa-2x fab fa-linkedin"></span>
-          </a>
-          @if(Auth::user() && $query->id_autore != Auth::user()->id && !Auth::user()->suspended)
-          <a id="report" href="#report" title="Segnala articolo">
-            <span class="fa-2x fas fa-exclamation-triangle"></span>
-          </a>
           @endif
         </div>
       </div>
+    </div>
     </article>
     {{-- Se gli articolo esistono allora li visualizza --}}
     @include('front.components.article.feeds')
@@ -204,7 +207,7 @@ span.time {
     });
   });
   </script>
-  <script src="{{ asset('js/_xs_r.js') }}"></script>
+  <script src="{{ asset('js/_xs_r.min.js') }}"></script>
   <script>
   $('#ui-rating-select').barrating('show', {
     theme: 'bars-square',
@@ -247,5 +250,4 @@ span.time {
   });
   </script>--}}
   </div>
-</div>
 @endsection

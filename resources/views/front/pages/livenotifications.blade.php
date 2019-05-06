@@ -10,9 +10,20 @@
     }
   @endphp
   @if($value->type == '1') {{-- Collaborazione --}}
+  @php
+    $publisher_request = \DB::table('publisher_request')->find($value->content_id);
+    $publisher = \DB::table('editori')->find($publisher_request->publisher_id);
+  @endphp
   <a class="dropdown-item" href="{{ url('notifications#'.$value->id) }}">
     <div class="container">
-      Nuova richiesta di collaborazione dalla redazione <strong>{{ $value->getPublisherName->name }}</strong>
+      Nuova richiesta di collaborazione dalla redazione <strong>{{ $publisher->name }}</strong>
+    </div>
+  </a>
+  @endif
+  @if($value->type == '2') {{-- Valutazione Articolo --}}
+  <a class="dropdown-item" href="{{ url('notifications#'.$value->id) }}">
+    <div class="container">
+      Il tuo articolo <strong>{{ $articolo->titolo }}</strong> ha ricevuto una valutazione.
     </div>
   </a>
   @endif

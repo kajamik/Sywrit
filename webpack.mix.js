@@ -15,7 +15,18 @@ mix.styles([
   'public/plugins/bootstrap/css/bootstrap.min.css',
   'public/css/app.css',
 ] ,'public/css/app.min.css')
+// print
+.styles([
+  'public/css/print.css',
+], 'public/css/print.min.css')
+// admin
+.styles([
+  'public/css/toolbox/_dex.css',
+], 'public/css/toolbox/_dex.min.css')
 .js([
-  'public/js/bootstrap/bootstrap.min.js',
   'public/js/app.js',
-],'public/js/app.min.js');
+],'public/js/app.min.js')
+.js([
+  'public/js/core/bootstrap-material-design.min.js',
+  'public/js/toolbox/_dex.js',
+], 'public/js/toolbox/_dex.min.js');

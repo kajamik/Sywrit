@@ -12,17 +12,11 @@
 
     <script src="{{ asset('plugins/jquery/js/jquery-3.2.1.min.js') }}"></script>
     <script src="{{ asset('js/bootstrap/bootstrap.min.js') }}"></script>
-    <script src="{{ asset('js/app.js') }}"></script>
-    <script src="{{ asset('js/image.js') }}"></script>
-
-    <link href="{{ asset('plugins/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" />
+    <script src="{{ asset('js/app.min.js') }}"></script>
     <link href="{{ asset('plugins/fontawesome/fontawesome.css') }}" rel="stylesheet" />
-    <link href="{{ asset('css/app.css') }}" media="all" rel="stylesheet" />
-    <link href="{{ asset('css/print.css') }}" media="print" rel="stylesheet" />
-    <link href="{{ asset('css/image.css') }}" media="screen" rel="stylesheet" />
 
-    <link href="{{ asset('lib/noty.css') }}" rel="stylesheet">
-    <script src="{{ asset('lib/noty.js') }}" type="text/javascript"></script>
+    <link href="{{ asset('css/app.min.css') }}" rel="stylesheet"/>
+    <link href="{{ asset('css/print.min.css')}}" media="print" rel="stylesheet"/>
 
     <link rel="shortcut icon" type="image/x-icon" href="{{ asset('upload/rgb_icon.ico') }}" />
     <link rel="icon" href="{{ url('upload/57x57/rgb_logo.png') }}">
@@ -35,16 +29,6 @@
     <link rel="canonical" href="{{ Request::url() }}" />
 
     @yield('styles')
-
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-131300748-1"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'UA-131300748-1');
-</script>
 
 </head>
 <body id="__ui">
@@ -70,16 +54,16 @@
   </script>
 
   <main class="wrap">
-    <div class="py-3">
+    <div class="container fix-container">
       @yield('main')
     </div>
   </main>
 
   <footer id="footer">
-    <ul class="footer-links">
-      <li><a href="{{ url('page/about/privacy') }}">Privacy</a></li>
-      <li><a href="{{ url('page/legal/terms') }}">Termini e condizioni</a></li>
-    </ul>
+    <div class="footer-links d-inline">
+      <a href="{{ url('page/about/privacy') }}">Privacy</a>
+      <a href="{{ url('page/legal/terms') }}">Termini e condizioni</a>
+    </div>
     <p>Sito creato da <a href="{{ url('1-pietropaolocarpentras') }}">Pietro Paolo Carpentras</a>.
     &copy; 2019 - {{ \Carbon\Carbon::now()->format('Y') }}. Tutti i diritti riservati</p>
   </footer>
@@ -95,7 +79,7 @@
     var message_count = 0;
 
     $(function(){
-      //notifications();
+      notifications();
       $("#notifications").click(function(){
         fetch_live_notifications();
       });

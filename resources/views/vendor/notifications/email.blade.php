@@ -43,7 +43,7 @@
 @if (!empty($salutation))
 {{ $salutation }}
 @else
-@lang('Saluti'),<br>{{ config('app.name') }}
+@lang('Saluti'),<br>Lo staff di {{ config('app.name') }}
 @endif
 
 {{-- Subcopy --}}
@@ -59,4 +59,5 @@
 )
 @endslot
 @endisset
+
 @endcomponent

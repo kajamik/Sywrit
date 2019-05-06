@@ -19,26 +19,29 @@
 <hr/>
 <div class="feeds">
   <h3>Articoli simili</h3>
-  @foreach($feeds as $value)
-  <div class="py-2">
+  <div class="col-lg-12 col-md-12 col-sm-12">
     <div class="row">
-      <div class="col-lg-2 col-md-4 col-sm-4">
-        <img class="card-img-top" src="{{ asset($value->getBackground()) }}" alt="Copertina Articolo" />
-      </div>
-      <div class="my-2 col-md-8 col-sm-8">
-        <a href="{{ $value->slug }}">
-          <h4 class="text-uppercase">{{ $value->titolo }}</h4>
-          <p>Pubblicato da
-            @if(!empty($value->id_gruppo))
-            <a href="{{ url($value->getRedazione->slug) }}"><span><span>{{ $value->getRedazione->name }}</span></a>
-            @else
-            <a href="{{ url($value->getAutore->slug) }}"><span><span>{{ $value->getAutore->name }} {{ $value->getAutore->surname }}</span></a>
-            @endif
-          </p>
-        </a>
-      </div>
+      @foreach($feeds as $value)
+      <div class="col-lg-3 col-sm-12 col-xs-12">
+      <a href="{{ url('read/'.$value->slug)}}">
+        <div class="card-header"></div>
+        <div class="card border-0">
+          <img class="card-img-top" src="{{asset($value->getBackground())}}" alt="Copertina Articolo">
+
+            <h4 class="card-title">{{ $value->titolo }}</h4>
+            <div class="author">
+              Pubblicato da
+              @if(!empty($value->id_gruppo))
+              <a href="{{ url($value->getRedazione->slug) }}"><span><span>{{ $value->getRedazione->name }}</span></a>
+              @else
+              <a href="{{ url($value->getAutore->slug) }}"><span><span>{{ $value->getAutore->name }} {{ $value->getAutore->surname }}</span></a>
+              @endif
+            </div>
+        </div>
+      </a>
+    </div>
+    @endforeach
     </div>
   </div>
-  @endforeach
 </div>
 @endif

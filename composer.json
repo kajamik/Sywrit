@@ -18,7 +18,8 @@
         "laravel/tinker": "^1.0",
         "needim/noty": "^3.1",
         "pusher/pusher-php-server": "^3.4",
-        "spatie/laravel-analytics": "^3.7"
+        "spatie/laravel-analytics": "^3.7",
+        "spatie/laravel-cookie-consent": "^2.8"
     },
     "require-dev": {
         "beyondcode/laravel-dump-server": "^1.0",

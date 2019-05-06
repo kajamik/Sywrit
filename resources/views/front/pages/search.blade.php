@@ -3,7 +3,6 @@
 @section('title', $slug.' - ')
 
 @section('main')
-<div class="container">
   <div class="publisher-home">
     <div class="publisher-body">
       <h3>Sono stati trovati {{ $query->count()+$query2->count() }} risultati con la parola '{{$slug}}'</h3>
@@ -60,5 +59,4 @@
       </div>
     </div>
   </div>
-</div>
 @endsection

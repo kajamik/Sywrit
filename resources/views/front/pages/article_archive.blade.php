@@ -70,7 +70,6 @@ span.time {
   color: #fff;
 }
 </style>
-<div class="container">
   <div class="publisher-home">
     <div class="publisher-body">
       <a href="{{ url('read/'.$query->slug) }}" class="text-underline">{{ trans('< Indietro') }}</a>
@@ -154,5 +153,4 @@ span.time {
     <hr/>
   </div>
   </div>
-</div>
 @endsection

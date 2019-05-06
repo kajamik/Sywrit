@@ -4,11 +4,6 @@
 
 @section('main')
 <style type="text/css">
-#header {z-index:999}
-#_pr_sel_, #_pr_sel_ * {
-  font-family: 'Font Awesome\ 5 Free';
-  font-weight: 900;
-}
 .document {
   padding: 15px;
   width: 100%;
@@ -16,13 +11,11 @@
   border-radius: 4px;
 }
 </style>
-<div class="container">
   <div class="publisher-home">
     <div class="publisher-body">
   <form method="post" action="" enctype="multipart/form-data">
     @csrf
 
-  <div class="mt-5">
     <div class="form-group row">
       <label for="title" class="col-md-4 col-form-label required">Titolo Articolo</label>
         <div class="col-md-12">
@@ -50,16 +43,6 @@
         </select>
       </div>
     </div>
-
-    {{--<div class="form-group row">
-      <label for="_pr_sel_" class="col-md-4 col-form-label">Stato</label>
-      <div class="col-md-12">
-        <select id="_pr_sel_" name="_pr" class="form-control">
-          <option value="1">&#xf0ac; Pubblico</option>
-          <option value="2">&#xf023; Privato</option>
-        </select>
-      </div>
-    </div>--}}
 
     <div class="form-group row">
       <div class="col-md-12">
@@ -101,7 +84,7 @@
     <div class="form-group row">
       <label for="_l_sel_" class="col-md-4 col-form-label">Tipo di licenza <span class="fa fa-info-circle" data-script="info" data-text="Esistono due tipi di licenza:<br/><br/>Sywrit Standard: Consente di impostare una licenza proprietaria sul tuo articolo;<br/><br/>Creative Commons BY SA: Permette agli altri di distribuire, modificare e sviluppare anche commercialmente l'opera, licenziandola con gli stessi termini dell'opera originale, riconoscendo sempre l'autore;"></span></label>
         <div class="col-md-12">
-          <select id="_l_sel_" class="form-control" name="_l_sel_" required>
+          <select id="_l_sel_" class="form-control" name="_l_sel_">
             <option value="1">Sywrit Standard</option>
             <option value="2">Creative Commons</option>
           </select>
@@ -129,12 +112,11 @@
   </form>
 </div>
 </div>
-</div>
 <link rel="stylesheet" href="{{ asset('plugins/dist/summernote.css') }}" />
 <script src="{{ asset('plugins/dist/summernote.min.js') }}"></script>
 <script>
 $(".document").summernote({
-  height: 250,
+  height: 165,
   toolbar: [
     ['style'],['style', ['bold', 'italic', 'underline']],['color', ['color']],['para', ['ul', 'ol', 'paragraph']]
     ,['link'],['picture'],['help']

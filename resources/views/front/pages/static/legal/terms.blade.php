@@ -3,7 +3,6 @@
 @section('title', 'Termini e condizioni - ')
 
 @section('main')
-<div class="container">
   <div class="publisher-home">
     <div class="publisher-body">
       <h1>Termini e condizioni</h1>
@@ -46,5 +45,4 @@
 
     </div>
   </div>
-</div>
 @endsection

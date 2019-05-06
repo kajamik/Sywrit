@@ -20,24 +20,31 @@
   min-height: 200px;
 }
 </style>
-<div class="container">
   <div class="publisher-home">
     <div class="publisher-header" style="background-image: url({{asset(Auth::user()->getBackground())}})">
       <div class="container">
-        <div class="publisher-logo d-flex">
-          <img src="{{ asset(Auth::user()->getAvatar()) }}" alt="Logo">
-          <div class="ml-4 mt-3 info">
-            <span>{{ Auth::user()->name }} {{ Auth::user()->surname }}</span>
+        <div class="publisher-logo">
+          <div class="row">
+            <div class="d-inline">
+              <img src="{{ asset(Auth::user()->getAvatar()) }}" alt="Logo">
+            </div>
+            <div class="col-lg-10 col-sm-col-xs-12">
+              <div class="mt-2 info">
+                <span>{{ Auth::user()->name }} {{ Auth::user()->surname }}</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="publisher-body">
+    <nav class="publisher-nav">
       <ul id='nav'>
         <li><a href="{{ url(Auth::user()->slug) }}">Profilo</a></li>
         <li><a href="{{ url(Auth::user()->slug.'/about') }}">Contatti</a></li>
         <li><a href="{{ url(Auth::user()->slug.'/archive') }}">Articoli Salvati</a></li>
       </ul>
+    </nav>
+    <div class="publisher-body">
       <hr/>
         <div class="publisher-content">
           <h1>Archivio</h1>
@@ -65,7 +72,6 @@
           </div>
         </div>
   </div>
-</div>
 </div>
 <script>
   App.insl('articles');

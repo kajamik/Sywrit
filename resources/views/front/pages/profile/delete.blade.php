@@ -3,7 +3,6 @@
 @section('title', 'Eliminazione Account - ')
 
 @section('main')
-<div class="container">
   <div class="publisher-home">
     <div class="publisher-body">
       <h1>Eliminazione Account</h1>
@@ -41,5 +40,4 @@
 
     </div>
   </div>
-</div>
 @endsection

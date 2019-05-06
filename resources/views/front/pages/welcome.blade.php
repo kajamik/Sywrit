@@ -2,36 +2,34 @@
 
 @section('main')
 
-<div id="_home" class="container">
-
   <div class="publisher-home">
     <div class="publisher-body">
       <div class="block-hero"></div>
-    {{--<div class="row">
-      <div class="col-lg-4 col-sm-4 col-xs-12">
-      <div class="card border-0 text-center">
-        <div class="card-header">
-          <span class="far fa-star"></span>
-          Sponsorizzazione
+        {{--<div class="row">
+          <div class="col-lg-4 col-sm-4 col-xs-12">
+          <div class="card border-0 text-center">
+            <div class="card-header">
+              <span class="far fa-star"></span>
+              Sponsorizzazione
+            </div>
+            <a href="#">
+              <div class="card-body" style="padding:0">
+                <img style="width:100%;" src="{{ asset('upload/google-ads.png') }}" alt="" />
+              </div>
+              <div class="card-footer text-muted">
+                <button class="btn btn-link">Ottieni maggiori informazioni</button>
+              </div>
+            </a>
+          </div>
         </div>
-        <a href="#">
-          <div class="card-body" style="padding:0">
-            <img style="width:100%;" src="{{ asset('upload/google-ads.png') }}" alt="" />
-          </div>
-          <div class="card-footer text-muted">
-            <button class="btn btn-link">Ottieni maggiori informazioni</button>
-          </div>
-        </a>
-      </div>
-    </div>
-    </div>--}}
+        </div>--}}
 
       <div class="row">
-        <div class="col-lg-12 col-md-12 col-sm-12" >
+        <div class="col-lg-12 col-md-12 col-sm-12">
           @if($articoli->count())
           <div class="row" id="news">
             @foreach($articoli as $value)
-            <div class="col-lg-3 col-sm-6 col-xs-12">
+            <div class="col-lg-3 col-sm-12 col-xs-12">
             <a href="{{ url('read/'.$value->article_slug)}}">
               <div class="card-header">{{ \Carbon\Carbon::parse($value->published_at)->diffForHumans() }}</div>
               <div class="card border-0">
@@ -54,7 +52,7 @@
           @endforeach
         </div>
         @else
-        <div class="col-lg-4 col-sm-8 col-xs-12">
+        <div class="col-lg-4 col-sm-12 col-xs-12">
           <a href="{{ url('write')}}">
             <div class="card">
               <div class="card-header">Crea un nuovo articolo</div>
@@ -113,5 +111,4 @@
     </div>
 </div>
 
-</div>
 @endsection

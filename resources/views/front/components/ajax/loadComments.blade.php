@@ -25,6 +25,10 @@
             <a id="report_comment_d{{ $value->id }}" class="dropdown-item" href="#report">{{ trans('Segnala commento') }}</a>
           </div>
         </div>
+        <hr/>
+        <div class="col-md-12">
+          <button id="reply_{{ $value->id }}" class="btn btn-link">Rispondi</button>
+        </div>
         <script>
         $("#report_comment_d{{ $value->id }}").click(function(){
           App.getUserInterface({
@@ -58,12 +62,6 @@
       </script>
         @endif
     </div>
-    <hr/>
-    @if(Auth::user() && !Auth::user()->suspended)
-    <div class="col-md-12">
-      <button id="reply_{{ $value->id }}" class="btn btn-link">Rispondi</button>
-    </div>
-    @endif
   </div>
 
   {{-- Risposte--}}
@@ -83,7 +81,7 @@
     });
   }
   </script>
-  @if(Auth::user() && !Auth::user()->suspended)
+  @if(Auth::user() && Auth::user()->id != $value->user_id && !Auth::user()->suspended)
   <script>
     $("#reply_{{ $value->id }}").click(function() {
       if($(".replycomment").length) {

@@ -1,9 +1,10 @@
 @extends('front.layout.app')
 
-@section('title', 'Account sospeso -')
+@section('title', 'Account sospeso - ')
+
+@section('description', config('app.name'). ': la nuova piattaforma multi-genere di scrittura online.')
 
 @section('main')
-<div class="container">
   <div class="pubblisher-home">
     <div class="publisher-body">
       <h2>Ops, qualcosa è andato storto.</h2>
@@ -12,5 +13,4 @@
       </div>
     </div>
   </div>
-</div>
 @endsection

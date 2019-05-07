@@ -2,6 +2,8 @@
 
 @section('title', 'Cookie Policy - ')
 
+@section('description', config('app.name'). ': la nuova piattaforma multi-genere di scrittura online.')
+
 @section('main')
   <div class="publisher-home">
     <div class="publisher-body">

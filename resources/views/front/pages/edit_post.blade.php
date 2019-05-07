@@ -61,7 +61,7 @@
 <script src="{{ asset('plugins/dist/summernote.min.js') }}"></script>
 <script>
 $(".document").summernote({
-  height: 250,
+  height: 165,
   toolbar: [
     ['style'],['style', ['bold', 'italic', 'underline']],['color', ['color']],['para', ['ul', 'ol', 'paragraph']]
     ,['link'],['picture'],['help']

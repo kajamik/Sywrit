@@ -1,3 +1,13 @@
+@section('description', 'Accedi alla pagina della redazione {{ $query->name }}')
+
+@section('seo')
+
+    <meta property="og:title" content="{{ $query->name }} - {{ config('app.name') }}" />
+    <meta property="og:description" content="Accedi alla pagina della redazione {{ $query->name }}" />
+    <meta property="og:type" content="profile" />
+    <meta property="og:url" content="{{ Request::url() }}" />
+    <meta property="og:image" content="{{ asset($query->getAvatar()) }}" />
+@endsection
 <style>
 #nav > li {
   display: inline-block;
@@ -12,7 +22,6 @@
   cursor: pointer;
 }
 </style>
-<div class="container">
   <div class="publisher-home">
     <div class="publisher-header" style="background-image: url({{ asset($query->getBackground()) }});border-radius:4px 4px 0 0;">
       <div class="container">
@@ -80,8 +89,10 @@
         @endif
       </ul>
     </nav>
+    <hr/>
     <div class="publisher-body">
       <div class="publisher-info">
+        @yield('group::bio')
         <div class="col-md-12">
           <span class="fa fa-newspaper"></span> {{ $query->articoli->count() }}
         </div>

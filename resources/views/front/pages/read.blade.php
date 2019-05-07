@@ -9,6 +9,8 @@
   }
 @endphp
 
+@section('description', str_limit(strip_tags($query->testo), 40, "..."))
+
 @section('seo')
 
     <meta property="og:title" content="{!! $query->titolo !!} - {{ config('app.name') }}" />
@@ -116,11 +118,25 @@ span.time {
           <div class="col-lg-10 col-sm-12 col-xs-12">
             <div class="row">
               @if($score->count() > 0)
-              <span id="rcount" class="pr-3">{{ number_format($score->sum('score') / $score->count(), 2) }} / 5</span>
+                <span id="rcount" class="pr-3">{{ number_format($score->sum('score') / $score->count(), 2) }} / 5</span>
+                @if($hasRate || Auth::user() && Auth::user()->id == $query->id_autore || !Auth::user())
+                <div class="rating">
+                  @for($i = 0; $i < 5; $i++)
+                    @if( $score->sum('score') / $score->count() > $i)
+                      @if( floor($score->sum('score') / $score->count()) > $i)
+                      <span class="circle full"></span>
+                      @else
+                      <span class="circle half"></span>
+                      @endif
+                    @else
+                      <span class="circle"></span>
+                    @endif
+                  @endfor
+                </div>
+                @endif
               @endif
-              @if(Auth::user() && Auth::user()->id != $query->id_autore && !Auth::user()->suspended)
+              @if(Auth::user() && !$hasRate && Auth::user()->id != $query->id_autore)
               <div id="ui-rating-box">
-              @if(!$hasRate)
                 <select id="ui-rating-select" name="rating" autocomplete="off">
                   <option value=""></option>
                   <option value="1">1</option>
@@ -129,21 +145,6 @@ span.time {
                   <option value="4">4</option>
                   <option value="5">5</option>
                 </select>
-              @else
-              <div class="rating">
-                @for($i = 0; $i < 5; $i++)
-                  @if( $score->sum('score') / $score->count() > $i)
-                    @if( floor($score->sum('score') / $score->count()) > $i)
-                    <span class="circle full"></span>
-                    @else
-                    <span class="circle half"></span>
-                    @endif
-                  @else
-                    <span class="circle"></span>
-                  @endif
-                @endfor
-              </div>
-              @endif
               </div>
               @endif
             </div>

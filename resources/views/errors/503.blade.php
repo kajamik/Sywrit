@@ -1,6 +1,8 @@
 @extends('front.layout.app')
 
-@section('title', 'Sito non disponibile -')
+@section('title', 'Sito non disponibile - ')
+
+@section('description', config('app.name'). ': la nuova piattaforma multi-genere di scrittura online.')
 
 @section('main')
 @php
@@ -18,7 +20,6 @@
   padding: 26px;
 }
 </style>
-<div class="container">
   <div class="publisher-home">
     <div class="publisher-body">
       <h1>Ops... qualcosa è andato storto</h1>
@@ -30,6 +31,5 @@
         </blockquote>
         </article>
       </div>
-    </div>
 </div>
 @endsection

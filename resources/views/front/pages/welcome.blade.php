@@ -1,5 +1,7 @@
 @extends('front.layout.app')
 
+@section('description', config('app.name'). ': la nuova piattaforma multi-genere di scrittura online.')
+
 @section('main')
 
   <div class="publisher-home">
@@ -24,27 +26,34 @@
         </div>
         </div>--}}
 
+        <hr style="background-color:#fefeff;"/>
       <div class="row">
         <div class="col-lg-12 col-md-12 col-sm-12">
+
           @if($articoli->count())
           <div class="row" id="news">
             @foreach($articoli as $value)
             <div class="col-lg-3 col-sm-12 col-xs-12">
             <a href="{{ url('read/'.$value->article_slug)}}">
               <div class="card-header">{{ \Carbon\Carbon::parse($value->published_at)->diffForHumans() }}</div>
-              <div class="card border-0">
-                <img class="card-img-top" src="{{asset($value->getBackground())}}" alt="Copertina Articolo">
+              <div class="card">
+                <img class="card-img-top" src="{{ asset($value->getBackground()) }}" alt="Copertina Articolo">
                 @if($value->topic_id)
                 <span>{{ $value->topic_name }}</span>
                 @endif
-                  <h4 class="card-title">{{ $value->article_title }}</h4>
-                  <div class="author">
-                    Pubblicato da
-                    @if($value->id_editore)
-                    <a href="{{ url($value->publisher_slug) }}"><span>{{ $value->publisher_name }}</span></a>
-                    @else
-                    <a href="{{ url($value->user_slug) }}"><span>{{ $value->user_name }} {{ $value->user_surname }}</span></a>
-                    @endif
+                  <div class="card-body">
+                    <h4 class="card-title">{{ $value->article_title }}</h4>
+                    <p>
+                      @if($value->bot_message == '1')
+                        Messaggio generato dal sistema
+                      @else
+                        Pubblicato da
+                        @if($value->id_editore)
+                        <a href="{{ url($value->publisher_slug) }}"><span>{{ $value->publisher_name }}</span></a>
+                        @else
+                        <a href="{{ url($value->user_slug) }}"><span>{{ $value->user_name }} {{ $value->user_surname }}</span></a>
+                        @endif
+                      @endif
                   </div>
               </div>
             </a>
@@ -80,29 +89,7 @@
             </a>
           </div>
         </div>
-        <div class="border-left col-lg-12 col-sm-12 col-xs-12">
-          <h2>Articoli del mese</h2>
-          <hr/>
-          <ul class="list-group mb-3">
-            @foreach($top as $n => $value)
-            <div class="border-bottom pb-3">
-                <div class="d-flex w-100">
-                  <medium>{{ $n+1 }}</medium>
-                  <a href="{{ url('read/'.$value->article_slug) }}">
-                    <h5 class="mb-1">{{ $value->article_title}}</h5>
-                  </a>
-                  <small>{{ $value->created_at->diffForHumans() }}</small>
-                </div>
-                Di
-                <a href="{{ url($value->user_slug) }}">
-                  <medium>{{ $value->user_name }} {{ $value->user_surname }}</medium>
-                </a>
-              </div>
-              @endforeach
-
-          </div>
-        </div>--}}
-      </div>
+      </div>--}}
 
       <script>
         App.insl('news');

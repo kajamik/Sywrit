@@ -15,20 +15,15 @@ function link(e, route){
     html: {
       "id": "__form__",
       "action": route,
-      "method": "POST"
+      "method": "post"
     }
   }, "form");
-
   setNode(el.html, {
     html: {
-      "id": "_rq",
-      "name": "_rq_token",
-      "value": "{{$query->id}}"
+      "name": "id",
+      "value": "{{ $query->id }}"
     }
   }, "input");
-
-  $("<div/>").html('{{ csrf_field() }}').appendTo($("#"+el.html.id));
-
-  $("#"+el.html.id).submit();
+$("<div/>").html('{{ csrf_field() }}').appendTo($("#"+el.html.id)); $("#"+el.html.id).submit();
 }
 </script>

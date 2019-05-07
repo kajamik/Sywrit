@@ -1,3 +1,14 @@
+@section('description', 'Accedi alla pagina profilo di {{ $query->name }} {{ $query->surname }}')
+
+@section('seo')
+
+    <meta property="og:title" content="{{ $query->name }} {{ $query->surname }} - {{ config('app.name') }}" />
+    <meta property="og:description" content="Accedi alla pagina profilo di {{ $query->name }} {{ $query->surname }}" />
+    <meta property="og:type" content="profile" />
+    <meta property="og:url" content="{{ Request::url() }}" />
+    <meta property="og:image" content="{{ asset($query->getAvatar()) }}" />
+@endsection
+
 <style>
 #nav > li {
   display: inline-block;
@@ -35,9 +46,10 @@
         @endif
       </ul>
     </nav>
+    <hr/>
       <div class="publisher-body">
-        <hr/>
         <div class="publisher-info">
+          @yield('profile::bio')
           <div class="col-md-12">
             @if(!$query->id_gruppo)
             <p>Editore individuale</p>
@@ -75,10 +87,10 @@
               $("#usr_invite").click(function(){
                 App.getUserInterface({
                   "ui": {"title": "Invito collaborazione",
-                  "header": {"action": "{{ route('group/action/invite') }}", "method": "POST"},
-                  "data": { user_id: "{{ $query->id }}", selector: "#publisherSelector", _token: "{{ csrf_token() }}" },
+                  "header": {"action": "{{ url('group/action/invite') }}", "method": "GET"},
+                  "data": { user_id: "{{ $query->id }}", selector: "#publisherSelector" },
                   "content": [
-                  {"type": ["h6"], "text": "Seleziona la redazione il quale inviare la collaborazione"},
+                  {"type": ["h6"], "text": "Seleziona la redazione"},
                   {"type": [ {"select": properties} ], "class": "form-control", "name": "publisherSelector" },
                   {"type": ["button","submit"], "class": "btn btn-info", "text": "Invia Richiesta"}
                 ],
@@ -98,7 +110,7 @@
           $("#report").click(function(){
             App.getUserInterface({
             "ui": {
-              "header":{"action": "{{route('user/action/report')}}", "method": "GET"},
+              "header":{"action": "{{ route('user/action/report') }}", "method": "GET"},
               "data":{"id": "{{$query->id}}", "selector": "#selOption:checked", "text": "#reasonText"},
               "title": 'Segnala utente',
               "content": [

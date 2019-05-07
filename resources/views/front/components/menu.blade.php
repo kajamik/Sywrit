@@ -31,6 +31,70 @@
             });
             </script>
           </li>
+          <li>
+            <a id="support" href="#support">
+              <i class="fa fa-question-circle" aria-hidden="true" title="Contatta il supporto"></i>
+            </a>
+          </li>
+          @auth
+          <script>
+          $("#support").click(function(){
+            App.getUserInterface({
+            "ui": {
+              "header":{"action": "{{ url('action/support') }}", "method": "GET"},
+              "data":{"text": "#text", "selector": "#selector"},
+              "title": 'Contatta il supporto',
+              "content": [
+                {"type": [{"select": [{"type": ["option"], "value": "1", "text": "Supporto"},{"type": ["option"], "value": "2", "text": "Feedback"},]}], "id": "selector", "name": "selector", "class": "form-control"},
+                {"type": ["textarea"], "id":"text", "name": "message", "value": "", "class": "form-control", "placeholder": "Scrivi un messaggio", "required": true },
+                {"type": ["button","submit"], "id": "message", "class": "btn btn-info", "text": "Invia messaggio"}
+              ],
+              "done": function(){
+                App.getUserInterface({
+                  "ui": {
+                    "title": "Segnalazione",
+                    "content": [
+                      {"type": ["h5"], "text": "Grazie per la segnalazione."}
+                    ]
+                  }
+                });
+              }
+
+            } // -- End Interface --
+          });
+          });
+          </script>
+          @else
+          <script>
+          $("#support").click(function(){
+            App.getUserInterface({
+            "ui": {
+              "header":{"action": "{{ url('action/support') }}", "method": "GET"},
+              "data":{ "text": "#text", "email": "#email", "selector": "#selector"},
+              "title": 'Contatta il supporto',
+              "content": [
+                {"type": ["input","email"], "id": "email", "name": "email", "class": "form-control", "placeholder": "Indirizzo e-mail", "required": true},
+                {"type": [{"select": [{"type": ["option"], "value": "1", "text": "Supporto"},{"type": ["option"], "value": "2", "text": "Feedback"},]}], "id": "selector", "name": "selector", "class": "form-control"},
+                {"type": ["textarea"], "id": "text", "name": "message", "value": "", "class": "form-control", "placeholder": "Scrivi un messaggio", "required": true },
+                {"type": ["button","submit"], "id": "message", "class": "btn btn-info", "text": "Invia messaggio"}
+              ],
+              "done": function(){
+                App.getUserInterface({
+                  "ui": {
+                    "title": "Segnalazione",
+                    "content": [
+                      {"type": ["h5"], "text": "Grazie per la segnalazione."}
+                    ]
+                  }
+                });
+              }
+
+            } // -- End Interface --
+          });
+        });
+          </script>
+          </script>
+          @endauth
           @auth
           <li>
             <a href="{{url('write')}}">

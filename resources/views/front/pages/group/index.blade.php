@@ -2,6 +2,16 @@
 
 @section('title', $query->name.' - ')
 
+@section('group::bio')
+  @if(!empty($query->biography))
+  <h2>Descrizione</h2>
+  <div class="col-lg-12">
+    <p>{!! $query->biography !!}</p>
+  </div>
+  <hr/>
+  @endif
+@endsection
+
 @section('main')
 @include('front.components.group.top_bar')
 <div class="publisher-content">

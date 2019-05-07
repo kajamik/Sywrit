@@ -21,7 +21,7 @@
         </div>
       </div>
     </div>
-    <div class="publisher-body">
+    <div class="publisher-body pt-3">
       <div class="container">
         <form method="post" action="{{route('settings')}}" enctype="multipart/form-data">
           @csrf

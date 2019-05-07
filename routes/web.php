@@ -22,6 +22,13 @@ Route::group(['prefix' => 'toolbox', 'middleware' => 'operator'], function() {
     Route::get('view', 'ReportsActivityController@getView');
     Route::get('lock_report', 'ReportsActivityController@getLockReport');
   });
+  Route::group(['prefix' => 'bot_message', 'namespace' => 'Toolbox'], function(){
+    Route::get('/', 'BotMessageController@index');
+    Route::get('view', 'BotMessageController@getMessage');
+    Route::get('create', 'BotMessageController@getCreateMessage');
+    Route::post('create', 'BotMessageController@postCreateMessage');
+    Route::post('delete', 'BotMessageController@postDeleteMessage');
+  });
 });
 /*******************/
 
@@ -52,7 +59,7 @@ Route::get('read/{slug}', 'FrontController@getArticle')->middleware('published')
 Route::group(['middleware' => 'auth'], function(){
   Route::group(['middleware' => 'isSuspended'], function(){
     // Group Actions
-    Route::post('group/invite', ['uses' => 'AjaxController@inviteGroup', 'as' => 'group/action/invite']);
+    Route::get('group/action/invite', 'AjaxController@inviteGroup');
     Route::get('group/action/leave', 'AjaxController@leaveGroup');
     Route::post('group/{id}/delete', 'FilterController@deleteGroup');
     Route::post('user/promote', ['uses' => 'FilterController@promoteUser', 'as' => 'group/user/promote']);
@@ -97,6 +104,8 @@ Route::group(['middleware' => ['auth', 'isSuspended']], function(){
   Route::get('account_delete', 'FrontController@getAccountDelete');
   Route::post('account_delete', 'FilterController@postAccountDelete');
 });
+
+Route::get('action/support', 'AjaxController@getSupportRequest');
 
 // Topic
 Route::get('topic/{slug}', 'FrontController@getTopic');

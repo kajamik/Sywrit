@@ -2,15 +2,14 @@
 
 @section('title', 'Termini e condizioni - ')
 
+@section('description', config('app.name'). ': la nuova piattaforma multi-genere di scrittura online.')
+
 @section('main')
   <div class="publisher-home">
     <div class="publisher-body">
       <h1>Termini e condizioni</h1>
       <p>Si prega di leggere attentamente questi Termini e Condizioni ("Termini", "Termini e condizioni") prima di utilizzare il sito https://www.sywrit.com (il "Servizio") gestito da Sywrit ("noi", "noi" o "nostro"). L'accesso e l'utilizzo del Servizio sono subordinati all'accettazione e al rispetto delle presenti Condizioni. Le presenti Condizioni si applicano a tutti i visitatori, utenti e altri che accedono o utilizzano il Servizio. Consultare gli <a href="{{ url('page/standards')}}" target="_blank" style="color:#007bff;">Standard della Community</a> per informazioni approfondite sull’ utilizzo del servizio. </p>
       <p>Accedendo o utilizzando il Servizio accetti di essere vincolato da questi Termini. Se non si è d'accordo con qualsiasi parte dei termini, non si può accedere al servizio.</p>
-
-
-      <div class="contact">
 
         <h2>Normativa sui dati</h2>
         <p>Per le normative sul trattamento dei dati consultare la sezione relativa alla <a href="{{ url('page/about/privacy')}}" target="_blank" style="color:#007bff;">Privacy Policy</a>.</p>
@@ -41,7 +40,7 @@
         <h2>Contattaci</h2>
         <p>Per qualsiasi domanda rigurardo I Termini, non esitare a contattarci</p>
 
-      </div>
+        <p>Ultima modifica: 7 maggio 2019</p>
 
     </div>
   </div>

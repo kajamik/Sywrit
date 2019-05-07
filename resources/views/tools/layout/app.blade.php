@@ -10,7 +10,7 @@
 
   <link href="{{ asset('plugins/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" />
   <link href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" rel="stylesheet" />
-  <link href="{{ url('css/_dex.css?v=2.1.0') }}" rel="stylesheet" />
+  <link href="{{ url('css/toolbox/_dex.min.css?v=2.1.0') }}" rel="stylesheet" />
 
   <script src="{{ asset('plugins/jquery/js/jquery-3.2.1.min.js') }}"></script>
   <script src="{{ asset('js/app.js') }}"></script>
@@ -49,6 +49,12 @@
             <a class="nav-link" href="{{ url('toolbox/reports_activity') }}">
               <i class="fa fa-clipboard-list"></i>
               <p>Segnalazioni</p>
+            </a>
+          </li>
+          <li class="nav-item @if(request()->is('toolbox/bot_message')) active @endif">
+            <a class="nav-link" href="{{ url('toolbox/bot_message') }}">
+              <i class="fa fa-robot"></i>
+              <p>Bot Message</p>
             </a>
           </li>
           <li class="nav-item @if(request()->is('toolbox/live_stream')) active @endif">

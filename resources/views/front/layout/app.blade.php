@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" prefix="og: http://ogp.me/ns#">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" xmlns:og="http://opengraphprotocol.org/schema/">
 <head>
     <meta charset="utf-8" />
     <title>@yield('title'){{ config('app.name') }}</title>
@@ -7,6 +7,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}" />
 
     <meta name="theme-color" content="#BFB8EB" />
+
+    <meta name="description" content="@yield('description')" />
 
     @yield('seo')
 
@@ -27,8 +29,17 @@
 
     <link rel="manifest" href="{{ url('manifest.json') }}">
     <link rel="canonical" href="{{ Request::url() }}" />
+    
+    @if(Cookie::get('cookie_consent'))
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-131300748-2"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
 
-    @yield('styles')
+      gtag('config', 'UA-131300748-2');
+    </script>
+    @endif
 
 </head>
 <body id="__ui">
@@ -54,6 +65,7 @@
   </script>
 
   <main class="wrap">
+    @include('cookieConsent::index')
     <div class="container fix-container">
       @yield('main')
     </div>
@@ -64,7 +76,7 @@
       <a href="{{ url('page/about/privacy') }}">Privacy</a>
       <a href="{{ url('page/legal/terms') }}">Termini e condizioni</a>
     </div>
-    <p>Sito creato da <a href="{{ url('1-pietropaolocarpentras') }}">Pietro Paolo Carpentras</a>.
+    <p>Sito creato da Pietro Paolo Carpentras.
     &copy; 2019 - {{ \Carbon\Carbon::now()->format('Y') }}. Tutti i diritti riservati</p>
   </footer>
 
@@ -79,7 +91,7 @@
     var message_count = 0;
 
     $(function(){
-      notifications();
+    //  notifications();
       $("#notifications").click(function(){
         fetch_live_notifications();
       });

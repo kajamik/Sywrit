@@ -14,9 +14,6 @@
 <div class="publisher-home">
         @include('front.components.group.top_bar')
         <div class="container my-5">
-          @if($query->biography)
-          <p>{!! $query->biography !!}</p>
-          @endif
           <h2>Informazioni Redazione</h2>
           <div class="col-lg-12">
             <div class="row">

@@ -14,29 +14,23 @@
     $publisher_request = \DB::table('publisher_request')->find($value->content_id);
     $publisher = \DB::table('editori')->find($publisher_request->publisher_id);
   @endphp
-  <a class="dropdown-item" href="{{ url('notifications#'.$value->id) }}">
-    <div class="container">
+    <div class="container p-2">
       Nuova richiesta di collaborazione dalla redazione <strong>{{ $publisher->name }}</strong>
     </div>
-  </a>
   @endif
   @if($value->type == '2') {{-- Valutazione Articolo --}}
-  <a class="dropdown-item" href="{{ url('notifications#'.$value->id) }}">
-    <div class="container">
+    <div class="container p-2">
       Il tuo articolo <strong>{{ $articolo->titolo }}</strong> ha ricevuto una valutazione.
     </div>
-  </a>
   @endif
   @if($value->type == '2') {{-- Valutazione Articolo --}}
-  <a class="dropdown-item" href="{{ url('notifications#'.$value->id) }}">
-    <div class="container">
+    <div class="container p-2">
       Il tuo articolo <strong>{{ $articolo->titolo }}</strong> ha ricevuto una valutazione.
     </div>
-  </a>
   @endif
 @endforeach
 @else
-  <div class="container">
+  <div class="container p-2">
     Nessuna notifica da visualizzare
   </div>
 @endif

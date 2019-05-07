@@ -49,6 +49,30 @@ App.upload = function(b){
   $(b).html("<div class='preview_body'><div class='image-wrapper' id='preview-wrapper'><img id='image_"+$(b).attr('id')+"' src="+URL.createObjectURL(event.target.files[0])+"></div></div>");
 }
 
+function setNode(e, params, element){
+  var parent = document.getElementById(e.id);
+  var child = document.createElement(element);
+  var a = new Array();
+  for(var i in params){
+    if(typeof params[i] == "object"){
+      a[i] = new Array(Object.keys(params[i]).length);
+      for(var p in params[i]){
+        a[i][p] = params[i][p];
+        child.setAttribute([p], a[i][p]);
+      }
+    }else{
+      a[i] = params[i];
+      if(i == "text"){
+        var text = document.createTextNode(a[i]);
+        child.appendChild(text);
+      }
+    }
+  }
+  parent.appendChild(child);
+
+  return a;
+}
+
 function search_item(s, v){
   for(var i in s){
     if(i == v)
@@ -107,7 +131,7 @@ App.getUserInterface = function(t){
         var select = content[i].type[0].select;
         var selClass = $("<div class='form-group'><select id='"+content[i].name+"' class='"+content[i].class+"' name='"+content[i].name+"'></select></div>").appendTo( ($("div").hasClass("__ui__g_form_control")) ? $(".__ui__g_form_control") : $(".__ui__g_body") );
         for(var b in select) {
-          $("#publisherSelector").append("<option value='"+select[b].value+"'>"+select[b].text+"</option>");
+          $(".__ui__g_form_control select").append("<option value='"+select[b].value+"'>"+select[b].text+"</option>");
         }
       } else {
         content[i].label = (content[i].label) ? "<label>"+content[i].label+"</label>" : '';
@@ -133,8 +157,9 @@ App.getUserInterface = function(t){
   $("form").on('submit', function(e){
     e.preventDefault();
     //Process
-    data.selector = $(data.selector).val();
-    data.text = $(data.text).val();
+    for(var i in data) {
+      data[i] = $(data[i]).val();
+    }
     App.query(header.method, header.action, data, false, done);
   });
 }

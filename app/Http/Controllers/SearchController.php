@@ -25,27 +25,31 @@ class SearchController extends Controller
                           $join->on('articoli.id_gruppo', '=', 'editori.id');
                         })
                       ->addSelect('utenti.slug as user_slug', 'utenti.name as user_name', 'utenti.surname as user_surname', 'editori.name as publisher_name', 'editori.slug as publisher_slug',
-                                  'articoli.titolo as article_title', 'articoli.id_gruppo as id_editore', 'articoli.slug as article_slug', 'articoli.copertina as copertina', 'articoli.created_at as created_at')
-                      ->orderBy('published_at','desc')
-                      ->get();
+                                  'articoli.bot_message as bot_message', 'articoli.titolo as article_title', 'articoli.id_gruppo as id_editore', 'articoli.slug as article_slug', 'articoli.copertina as copertina',
+                                  'articoli.published_at as published_at', 'articoli.created_at as created_at')
+                      ->orderBy('published_at','desc')->get();
 
     $query3 = Editori::where('name', 'like', '%'. $slug. '%')->get();
 
-    $query = $query->merge($query3);
+    $query = $query->merge($query2)
+                  ->merge($query3);
 
     return view('front.pages.search', compact('slug','query','query2','query3'));
   }
 
-  public function getResultsByTagName(Request $request, $slug)
+  public function getResultsByTagName($slug)
   {
-    $query = Articoli:://skip(( 12 * ($request->page-1) ))->take(12)
-                        where('tags', 'like', '%'. $slug .'%')
-                        ->join('utenti', 'articoli.id_autore', '=', 'utenti.id')
-                        ->addSelect('utenti.slug as user_slug', 'utenti.name as user_name', 'utenti.surname as user_surname',
-                                    'articoli.titolo as article_title', 'articoli.slug as article_slug', 'articoli.copertina as copertina', 'articoli.created_at as created_at')
-                        ->orderBy('published_at','desc')
-                        ->get();
+    $query = Articoli::where('tags', 'like', '%'. $slug .'%')
+                      ->leftJoin('utenti', 'articoli.id_autore', '=', 'utenti.id')
+                      ->leftJoin('editori', function($join){
+                          $join->on('articoli.id_gruppo', '=', 'editori.id');
+                        })
+                        ->addSelect('utenti.slug as user_slug', 'utenti.name as user_name', 'utenti.surname as user_surname', 'editori.name as publisher_name', 'editori.slug as publisher_slug',
+                                    'articoli.bot_message as bot_message', 'articoli.titolo as article_title', 'articoli.id_gruppo as id_editore', 'articoli.slug as article_slug', 'articoli.copertina as copertina',
+                                    'articoli.published_at as published_at', 'articoli.created_at as created_at')
+                      ->orderBy('published_at','desc')
+                      ->paginate(6);
 
-    return view('front.pages.search', compact('slug','query'));
+    return view('front.pages.tag_search', compact('slug','query'));
   }
 }

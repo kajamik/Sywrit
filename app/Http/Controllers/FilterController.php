@@ -23,6 +23,7 @@ use App\Models\ReportedArticles;
 use App\Models\ReportedUsers;
 use App\Models\ReportedComments;
 use App\Models\ReportedAComments;
+use App\Models\ArticleScore;
 
 use Validator;
 use Carbon\Carbon;
@@ -443,6 +444,7 @@ class FilterController extends Controller
       }
       $query->id_autore = \Auth::user()->id;
       $query->count_view = '0';
+      $query->focus = '0';
       $query->save();
 
       // Slug
@@ -455,13 +457,13 @@ class FilterController extends Controller
 
     public function ArticlePublish(Request $request)
     {
-      $query = Articoli::find($request->_rq_token);
-      if(!$query->suspended && (Auth::user()->id == $query->id_autore || Auth::user()->hasMemberOf($query->id_gruppo))) {
-        $query->status = '1';
-        $query->published_at = Carbon::now();
-        $query->save();
-      }
-      return redirect('read/'.$query->slug);
+        $query = Articoli::find($request->id);
+        if(!$query->suspended && (Auth::user()->id == $query->id_autore || Auth::user()->hasMemberOf($query->id_gruppo))) {
+          $query->status = '1';
+          $query->published_at = Carbon::now();
+          $query->save();
+        }
+        return redirect('read/'.$query->slug);
     }
 
     public function postArticleEdit($id, Request $request)
@@ -496,12 +498,13 @@ class FilterController extends Controller
 
     public function ArticleDelete(Request $request)
     {
-      $query = Articoli::find($request->_rq_token);
-      if(!$query->suspended && (Auth::user()->hasMemberOf($query->id_gruppo) || Auth::user()->id == $query->id_autore)) {
-        // elimino le notifiche relative all'articolo
-        Notifications::where('type', '3')->where('content_id', $query->id)->delete();
-        $query->delete();
-      }
-      return redirect('/');
+        $query = Articoli::find($request->id);
+        if(!$query->suspended && (Auth::user()->hasMemberOf($query->id_gruppo) || Auth::user()->id == $query->id_autore)) {
+          // elimino le notifiche relative all'articolo
+          ArticleScore::where('article_id', $query->id)->delete();
+          Notifications::where('type', '3')->where('content_id', $query->id)->delete();
+          $query->delete();
+        }
+        return redirect('/');
     }
 }

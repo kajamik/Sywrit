@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 // Models
+use App\Models\BotMessage;
 use App\Models\User;
 use App\Models\Articoli;
 use App\Models\ArticleHistory;
@@ -36,7 +37,10 @@ class FrontController extends Controller
         $INDEX_LIMIT = 9;
         $current_page = ($request->page) ? $request->page : 1;
 
-        $articoli = Articoli::join('utenti', 'articoli.id_autore', '=', 'utenti.id')
+        $articoli = Articoli::
+                    leftJoin('utenti', function($join){
+                      $join->on('articoli.id_autore', '=', 'utenti.id');
+                    })
                     ->leftJoin('editori', function($join){
                         $join->on('articoli.id_gruppo', '=', 'editori.id');
                       })
@@ -45,9 +49,10 @@ class FrontController extends Controller
                       })
                     ->addSelect('utenti.slug as user_slug', 'utenti.name as user_name', 'utenti.surname as user_surname', 'editori.name as publisher_name', 'editori.slug as publisher_slug',
                                 'articoli.titolo as article_title', 'articoli.id_gruppo as id_editore', 'articoli.slug as article_slug', 'articoli.testo as article_text', 'articoli.copertina as copertina',
-                                'articoli.published_at as published_at', 'articoli.created_at as created_at', 'article_category.id as topic_id', 'article_category.name as topic_name')
+                                'articoli.bot_message as bot_message', 'articoli.published_at as published_at', 'articoli.created_at as created_at', 'article_category.id as topic_id', 'article_category.name as topic_name')
                     ->where('status','1')
-                    ->orderBy('published_at','desc')
+                    ->orderBy('bot_message', 'desc')
+                    ->orderBy('published_at', 'desc')
                     ->skip($INDEX_LIMIT * ($current_page-1))
                     ->take($INDEX_LIMIT)
                     ->get();
@@ -240,28 +245,30 @@ class FrontController extends Controller
     {
       $query = Articoli::where('slug', $slug)->first();
 
-      $like = false;
-      $options = false;
+      if($query->bot_message != '1') {
 
-      if( Auth::user() ){
-        $collection = collect(explode(',', Auth::user()->id_gruppo));
-        $collection = collect(explode(',', $query->likes));
+        $options = false;
 
-        if($collection->some(\Auth::user()->id)){
-          $like = true;
+        if( Auth::user() ){
+          $collection = collect(explode(',', Auth::user()->id_gruppo));
+
+          $options = true;
         }
 
-        $options = true;
+        $tags = explode(',',$query->tags);
+        $date = Carbon::parse($query->published_at)->formatLocalized('%A %d %B %Y');
+        $time = Carbon::parse($query->published_at)->format('H:i');
+
+        $score = \DB::table('article_score')->where('article_id', $query->id);
+        $hasRate = (Auth::user() && \DB::table('article_score')->where('user_id', Auth::user()->id)->where('article_id', $query->id)->count() > 0);
+
+        return view('front.pages.read',compact('query','date','time','tags','options','score','hasRate'));
+      } else {
+        $tags = explode(',',$query->tags);
+        $date = Carbon::parse($query->published_at)->formatLocalized('%A %d %B %Y');
+        $time = Carbon::parse($query->published_at)->format('H:i');
+        return view('front.pages.read_bot_message', compact('query','date','time','tags'));
       }
-
-      $tags = explode(',',$query->tags);
-      $date = Carbon::parse($query->published_at)->formatLocalized('%A %d %B %Y');
-      $time = Carbon::parse($query->published_at)->format('H:i');
-
-      $score = \DB::table('article_score')->where('article_id', $query->id);
-      $hasRate = (Auth::user() && \DB::table('article_score')->where('user_id', Auth::user()->id)->where('article_id', $query->id)->count() > 0);
-
-      return view('front.pages.read',compact('query','date','time','tags','options','like','score','hasRate'));
     }
 
     public function getArticleEdit($id)

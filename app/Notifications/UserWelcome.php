@@ -11,7 +11,7 @@ class UserWelcome extends Notification
 {
     use Queueable;
 
-    private $username;
+    public $username;
 
     /**
      * Create a new notification instance.
@@ -45,7 +45,7 @@ class UserWelcome extends Notification
         return (new MailMessage)
                 ->from('no-reply@sywrit.com', 'Sywrit NO-REPLY')
                 ->subject('Benvenuto su '. config('app.name'))
-                ->greeting('Salve '. $this->username. ',')
+                ->line('Salve '. $this->username. ',')
                 ->line('grazie per esserti registrato sulla nostra piattaforma. Adesso puoi iniziare a scrivere e pubblicare I tuoi contenuti, valutare e commentare articoli, creare o entrare nelle redazioni.')
                 ->line('Ci auguriamo che la tua esperienza all\'interno della community sia sempre positiva.');
     }

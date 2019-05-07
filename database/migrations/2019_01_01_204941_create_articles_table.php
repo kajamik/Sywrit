@@ -22,10 +22,11 @@ class CreateArticlesTable extends Migration
             $table->text('testo');
             $table->string('copertina')->nullable();
             $table->integer('id_gruppo')->nullable(); // id editorie
-            $table->integer('id_autore'); // id autore
+            $table->integer('id_autore')->nullable(); // id autore
             $table->integer('count_view');
             $table->enum('status', ['0','1']); // no e si
             $table->enum('license', ['1','2']);
+            $table->enum('bot_message', ['0','1']);
             $table->timestamp('published_at');
             $table->timestamps();
         });

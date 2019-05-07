@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\SupportEmail;
 
 use Response;
 use Auth;
@@ -176,30 +178,32 @@ class AjaxController extends Controller
       $query2->article_id = $query->id;
       $query2->save();
 
-      if($query->id_gruppo != NULL) {
-        $editore = \DB::table('editori')->where('id', $query->id_gruppo)->first();
-        $components = collect(explode(',',$editore->componenti))->filter(function ($value, $key) {
-          return ($value != "" && $value != Auth::user()->id);
-        });
-          foreach($components as $value) {
-          $noty = new Notifications();
-          $noty->sender_id = Auth::user()->id;
-          $noty->target_id = $value;
-          $noty->content_id = $query->id;
-          $noty->text = '';
-          $noty->type = '3';
-          $noty->marked = '0';
-          $noty->save();
+      if($query->id_autore != Auth::user()->id) {
+        if($query->id_gruppo != NULL) {
+          $editore = \DB::table('editori')->where('id', $query->id_gruppo)->first();
+          $components = collect(explode(',',$editore->componenti))->filter(function ($value, $key) {
+            return ($value != "" && $value != Auth::user()->id);
+          });
+            foreach($components as $value) {
+            $noty = new Notifications();
+            $noty->sender_id = Auth::user()->id;
+            $noty->target_id = $value;
+            $noty->content_id = $query->id;
+            $noty->text = '';
+            $noty->type = '3';
+            $noty->marked = '0';
+            $noty->save();
+          }
+        } else {
+            $noty = new Notifications();
+            $noty->sender_id = Auth::user()->id;
+            $noty->target_id = $query->id_autore;
+            $noty->content_id = $query->id;
+            $noty->text = '';
+            $noty->type = '3';
+            $noty->marked = '0';
+            $noty->save();
         }
-      } else {
-          $noty = new Notifications();
-          $noty->sender_id = Auth::user()->id;
-          $noty->target_id = $query->id_autore;
-          $noty->content_id = $query->id;
-          $noty->text = '';
-          $noty->type = '3';
-          $noty->marked = '0';
-          $noty->save();
       }
       return view('front.components.ajax.uploadComment')->with(['post' => $query2]);
     }
@@ -235,35 +239,37 @@ class AjaxController extends Controller
 
     public function inviteGroup(Request $request)
     {
-      $publisher_id = $request->selector;
-      $collection = collect(explode(',', Auth::user()->id_gruppo));
+      if($request->ajax()) {
+        $publisher_id = $request->selector;
+        $collection = collect(explode(',', Auth::user()->id_gruppo));
 
-      $query = User::find($request->user_id);
-      if($query->suspended) {
-        return Response::json(['message' => 'Questo account è stato sospeso da un operatore']);
-      }
-      if(Auth::user()->hasFoundedGroup() && $collection->some($publisher_id)) {
-        $editore = \DB::table('editori')->where('id', $publisher_id)->first();
-        if(!collect(explode(',', $editore->componenti))->some($query->id)) {
-          $message = new PublisherRequest();
-          $message->user_id = Auth::user()->id;
-          $message->target_id = $query->id;
-          $message->publisher_id = $publisher_id;
-          $message->token = Str::random(32);
-          $message->expired_at = null;
-          $message->save();
-          $noty = new Notifications();
-          $noty->sender_id = Auth::user()->id;
-          $noty->target_id = $query->id;
-          $noty->content_id = $message->id;
-          $noty->type = '1'; // group request
-          $noty->marked = '0';
-          $noty->save();
-          $query->notifications_count++;
-          $query->save();
-          return Response::json(['message' => 'Richiesta di collaborazione inviata!!']);
-        } else {
-          return Response::json(['message' => 'Questo utente fa già parte di questa redazione']);
+        $query = User::find($request->user_id);
+        if($query->suspended) {
+          return Response::json(['message' => 'Questo account è stato sospeso da un operatore']);
+        }
+        if(Auth::user()->hasFoundedGroup() && $collection->some($publisher_id)) {
+          $editore = \DB::table('editori')->where('id', $publisher_id)->first();
+          if(!collect(explode(',', $editore->componenti))->some($query->id)) {
+            $message = new PublisherRequest();
+            $message->user_id = Auth::user()->id;
+            $message->target_id = $query->id;
+            $message->publisher_id = $publisher_id;
+            $message->token = Str::random(32);
+            $message->expired_at = null;
+            $message->save();
+            $noty = new Notifications();
+            $noty->sender_id = Auth::user()->id;
+            $noty->target_id = $query->id;
+            $noty->content_id = $message->id;
+            $noty->type = '1'; // group request
+            $noty->marked = '0';
+            $noty->save();
+            $query->notifications_count++;
+            $query->save();
+            return Response::json(['message' => 'Richiesta di collaborazione inviata']);
+          } else {
+            return Response::json(['message' => 'Questo utente fa già parte di questa redazione']);
+          }
         }
       }
     }
@@ -308,6 +314,33 @@ class AjaxController extends Controller
       } else {
         return Response::json(['success' => 'false', 'message' => 'Per abbandonare questa redazione devi prima nominare un nuovo capo redattore']);
       }
+  }
+
+  public function getSupportRequest(Request $request)
+  {
+    $obj = new \stdClass();
+    $obj->from = "no-reply@sywrit.com";
+    $obj->to = "support@sywrit.com";
+
+    if(Auth::user()) {
+      $obj->username = Auth::user()->name.' '.Auth::user()->surname;
+      $obj->email = Auth::user()->email;
+    } else {
+      $obj->username = "Ospite";
+      $obj->email = $request->email;
+    }
+
+    if($request->selector == '1') {
+      $obj->subject = 'Richiesta supporto';
+    } elseif($request->selector == '2') {
+      $obj->subject = 'Feeback';
+    }
+
+    $obj->message = $request->text;
+
+    Mail::send(new SupportEmail($obj));
+
+    return Response::json(['message' => 'Grazie per averci contattato.']);
   }
 
 }

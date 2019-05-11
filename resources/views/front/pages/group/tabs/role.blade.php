@@ -43,8 +43,8 @@
             document.getElementById("prom_{{$user->id}}").addEventListener('click',function(){App.getUserInterface({
               "ui": {
                 "title": 'Avviso',
-                "header": {"action": "{{ route('group/user/promote') }}","method": "POST"},
-                "data": {"id": "{{ $user->id }}", "publisher_id": "{{ $query->id }}", "_token": "{{ csrf_token() }}"},
+                "header": {"action": "{{ url('group/user/promote') }}","method": "get"},
+                "data": {"id": "{{ $user->id }}", "publisher_id": "{{ $query->id }}"},
                 "content": [
                     {"type": ["h5"], "label": "Vuoi nominare {{ $user->name }} {{ $user->surname }} nuovo responsabile di questa redazione?"},
                     {"type": ["button","submit"], "class": "btn btn-info btn-block", "text": "Conferma"}
@@ -59,8 +59,8 @@
               App.getUserInterface({
               "ui": {
                 "title": 'Avviso',
-                "header": {"action": "{{ route('group/user/fired') }}","method": "POST"},
-                "data": {"id": "{{ $user->id }}", "publisher_id": "{{ $query->id }}", "_token": "{{ csrf_token() }}"},
+                "header": {"action": "{{ url('group/user/fired') }}", "method": "get"},
+                "data": {"id": "{{ $user->id }}", "publisher_id": "{{ $query->id }}"},
                 "content": [
                     {"type": ["h5"], "label": "Vuoi espellere {{ $user->name }} {{ $user->surname }} dalla redazione?"},
                     {"type": ["button","submit"], "class": "btn btn-info btn-block", "text": "Conferma"}

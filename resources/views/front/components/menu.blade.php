@@ -142,6 +142,7 @@
             </a>
             <div class="dropdown-menu" role="menu">
               <a class="dropdown-item" href="{{ url(Auth::user()->slug) }}"><i class="fa fa-user"></i> Il mio profilo</a>
+              <a class="dropdown-item" href="{{ url(Auth::user()->slug.'/archive') }}"><i class="fa fa-file-archive"></i> Articoli Salvati</a>
               <a class="dropdown-item" href="{{ url('settings') }}"><i class="fa fa-cog"></i> Impostazioni</a>
               <hr/>
               @if(Auth::user()->haveGroup())

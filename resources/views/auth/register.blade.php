@@ -1,7 +1,5 @@
 @extends('front.layout.app')
 
-@section('description', config('app.name'). ': la nuova piattaforma multi-genere di scrittura online.')
-
 @section('main')
 <div class="container">
     <div class="row justify-content-center">

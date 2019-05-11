@@ -1,18 +1,5 @@
 @extends('front.layout.app')
 
-@section('title', $topic->name. ' - ')
-
-@section('description', 'Articoli della sezione {{ $topic->name }}')
-
-@section('seo')
-
-    <meta property="og:title" content="{{ $topic->name }} - {{ config('app.name') }}" />
-    <meta property="og:description" content="Articoli della sezione {{ $topic->name }}" />
-    <meta property="og:type" content="topic" />
-    <meta property="og:url" content="{{ Request::url() }}" />
-    <meta property="og:image" content="{{ asset('upload/topics/'.$topic->slug.'.jpg') }}" />
-@endsection
-
 @section('main')
   <div class="publisher-home">
     <div class="publisher-body">

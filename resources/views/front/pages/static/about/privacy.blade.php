@@ -1,8 +1,8 @@
 @extends('front.layout.app')
 
-@section('title', 'Privacy Policy - ')
-
-@section('description', config('app.name'). ': la nuova piattaforma multi-genere di scrittura online.')
+@php
+   SEOMeta::setTitle('Privacy Policy - Sywrit', false);
+ @endphp
 
 @section('main')
   <div class="publisher-home">

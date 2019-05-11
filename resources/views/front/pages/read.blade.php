@@ -1,27 +1,11 @@
 @extends('front.layout.app')
 
-@section('title', $query->titolo. ' - ')
-
 @php
   $autore = \App\Models\User::find($query->id_autore);
   if($query->id_gruppo > 0) {
     $editore = \App\Models\Editori::find($query->id_gruppo);
   }
 @endphp
-
-@section('description', str_limit(strip_tags($query->testo), 40, "..."))
-
-@section('seo')
-
-    <meta property="og:title" content="{!! $query->titolo !!} - {{ config('app.name') }}" />
-    <meta property="og:description" content="{!! str_limit(strip_tags($query->testo), 40, '...') !!}" />
-    <meta property="og:type" content="article" />
-    <meta property="og:url" content="{{ Request::url() }}" />
-    <meta property="og:image" content="{{ asset($query->getBackground()) }}" />
-    <meta property="article:published_time" content="{{ $query->created_at }}" />
-    <meta property="article:author" content="{{ $autore->name }} {{ $autore->surname }}" />
-    <meta property="article:tag" content="{{ $query->tags }}" />
-@endsection
 
 @section('main')
 <style>
@@ -60,14 +44,8 @@ span.time {
     <div class="publisher-body">
         @auth
         <div class="publisher-info">
-          @if($query->id_gruppo > 0)
-            @if(Auth::user()->hasMemberOf($query->id_gruppo))
-              @include('front.components.article.group_tools')
-            @endif
-          @else
-            @if($query->id_autore == Auth::user()->id)
-              @include('front.components.article.my_tools')
-            @endif
+          @if($query->id_gruppo > 0 && Auth::user()->hasMemberOf($query->id_gruppo) || $query->id_autore == Auth::user()->id)
+            @include('front.components.article.options')
           @endif
         </div>
         @endauth
@@ -79,14 +57,10 @@ span.time {
         <p>Pubblicato da <a href="{{ url($editore->slug) }}">{{ $editore->name }}</a></p>
         @endif
         <p>Scritto da <a href="{{ url($autore->slug) }}">{{ $autore->name }} {{ $autore->surname }}</a></p>
-        @if($query->status)
-          <div class="date-info">
-            <span class="date"><i class="far fa-calendar-alt"></i> {{ $date }}</span>
-            <span class="time"><i class="far fa-clock"></i> {{ $time }}</span><br/>
-          </div>
-        @else
-          <span>Articolo ancora da pubblicare</span>
-        @endif
+        <div class="date-info">
+          <span class="date"><i class="far fa-calendar-alt"></i> {{ $date }}</span>
+          <span class="time"><i class="far fa-clock"></i> {{ $time }}</span><br/>
+        </div>
         <hr/>
         <div class="block-body">
           {!! $query->testo !!}

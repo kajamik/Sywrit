@@ -1,18 +1,5 @@
 @extends('front.layout.app')
 
-@section('title', 'Contatti - '.$query->name.' '.$query->surname.' - ')
-
-@section('description', 'Accedi alla pagina profilo di {{ $query->name }} {{ $query->surname }}')
-
-@section('seo')
-
-    <meta property="og:title" content="{{ $query->name }} {{ $query->surname }} - {{ config('app.name') }}" />
-    <meta property="og:description" content="Accedi alla pagina profilo di {{ $query->name }} {{ $query->surname }}" />
-    <meta property="og:type" content="profile" />
-    <meta property="og:url" content="{{ Request::url() }}" />
-    <meta property="og:image" content="{{ asset($query->getAvatar()) }}" />
-@endsection
-
 @section('main')
 <style>
 #nav > li {

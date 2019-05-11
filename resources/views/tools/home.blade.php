@@ -24,13 +24,13 @@
             <div class="col-9">
               <h3 class="card-category">Articoli creati</h3>
             </div>
-            <h3 class="card-category">{{ $articles }}</h3>
+            <h3 class="card-category">{{ $archs+$articles }}</h3>
           </div>
           <div class="row">
             <div class="col-9">
               <h3 class="card-category">Articoli pubblicati</h3>
             </div>
-            <h3 class="card-category">{{ $published_articles }}</h3>
+            <h3 class="card-category">{{ $articles }}</h3>
           </div>
           <div class="row">
             <div class="col-9">
@@ -52,13 +52,13 @@
             <div class="col-9">
               <h3 class="card-category">Commenti creati</h3>
             </div>
-            <h3 class="card-category">0</h3>
+            <h3 class="card-category">{{ $comments }}</h3>
           </div>
           <div class="row">
             <div class="col-9">
               <h3 class="card-category">Risposte inviate</h3>
             </div>
-            <h3 class="card-category">0</h3>
+            <h3 class="card-category">{{ $answers }}</h3>
           </div>
         </div>
         </div>
@@ -74,13 +74,13 @@
               <div class="col-9">
                 <h3 class="card-category">Utenti creati</h3>
               </div>
-              <h3 class="card-category">0</h3>
+              <h3 class="card-category">{{ $users }}</h3>
             </div>
             <div class="row">
               <div class="col-9">
                 <h3 class="card-category">Articoli pubblicati</h3>
               </div>
-              <h3 class="card-category">0</h3>
+              <h3 class="card-category">{{ $articles }}</h3>
             </div>
           </div>
           </div>
@@ -96,13 +96,13 @@
               <div class="col-9">
                 <h3 class="card-category">Redazioni create</h3>
               </div>
-              <h3 class="card-category">0</h3>
+              <h3 class="card-category">{{ $publishers }}</h3>
             </div>
             <div class="row">
               <div class="col-9">
                 <h3 class="card-category">Articoli pubblicati</h3>
               </div>
-              <h3 class="card-category">0</h3>
+              <h3 class="card-category">{{ $articles }}</h3>
             </div>
           </div>
           </div>

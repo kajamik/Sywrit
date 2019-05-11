@@ -53,7 +53,10 @@ Route::group(['prefix' => '/'], function() {
   /*Route::get('{slug}/join/{token}', 'EditoriaController@getInvite');*/
 });
 
-Route::get('read/{slug}', 'FrontController@getArticle')->middleware('published');
+Route::group(['prefix' => 'read'], function() {
+  Route::get('{slug}', 'FrontController@getArticle');
+  Route::get('archive/{slug}', 'FrontController@getSavedArticle');
+});
 
 // Article Actions
 Route::group(['middleware' => 'auth'], function(){
@@ -62,8 +65,8 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('group/action/invite', 'AjaxController@inviteGroup');
     Route::get('group/action/leave', 'AjaxController@leaveGroup');
     Route::post('group/{id}/delete', 'FilterController@deleteGroup');
-    Route::post('user/promote', ['uses' => 'FilterController@promoteUser', 'as' => 'group/user/promote']);
-    Route::post('user/fired', ['uses' => 'FilterController@firedUser', 'as' => 'group/user/fired']);
+    Route::get('group/user/promote', 'FilterController@promoteUser');
+    Route::get('group/user/fired', 'FilterController@firedUser');
     // User action
     Route::get('user/report', ['uses' => 'FilterController@UserReport', 'as' => 'user/action/report']);
     ///////
@@ -117,9 +120,6 @@ Route::get('{slug}/archive', 'FrontController@getPrivateArchive')->middleware('a
 // CREATE GROUP
 Route::get('publisher/create', 'FrontController@getNewPublisher')->middleware('auth','isSuspended');
 Route::post('publisher/create', 'FilterController@postNewPublisher')->middleware('auth','isSuspended');
-
-// Article Archive
-//Route::get('archive/article/read', 'FrontController@getArticleArchive')->middleware('isSuspended');
 
 // Pages
 Route::get('page/{slug}', 'FrontController@getPages');

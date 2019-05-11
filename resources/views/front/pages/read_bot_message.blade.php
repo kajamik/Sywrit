@@ -1,7 +1,5 @@
 @extends('front.layout.app')
 
-@section('title', $query->titolo. ' - ')
-
 @php
   $autore = \App\Models\User::find($query->id_autore);
   if($query->id_gruppo > 0) {
@@ -9,18 +7,16 @@
   }
 @endphp
 
-@section('description', str_limit(strip_tags($query->testo), 40, "..."))
-
-@section('seo')
+{{--@section('seo')
 
     <meta property="og:title" content="{!! $query->titolo !!} - {{ config('app.name') }}" />
-    <meta property="og:description" content="{!! str_limit(strip_tags($query->testo), 40, '...') !!}" />
+    <meta property="og:description" content="{!! str_limit(strip_tags($query->testo), 100, '...') !!}" />
     <meta property="og:type" content="s" />
     <meta property="og:url" content="{{ Request::url() }}" />
     <meta property="og:image" content="{{ asset($query->getBackground()) }}" />
     <meta property="article:published_time" content="{{ $query->created_at }}" />
     <meta property="article:tag" content="{{ $query->tags }}" />
-@endsection
+@endsection--}}
 
 @section('main')
 <style>

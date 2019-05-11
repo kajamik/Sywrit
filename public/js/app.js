@@ -158,7 +158,7 @@ App.getUserInterface = function(t){
     e.preventDefault();
     //Process
     for(var i in data) {
-      data[i] = $(data[i]).val();
+      Number(data[i]) ? data[i] = data[i] : data[i] = $(data[i]).val();
     }
     App.query(header.method, header.action, data, false, done);
   });

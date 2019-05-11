@@ -1,7 +1,5 @@
 @extends('front.layout.app')
 
-@section('title', 'Eliminazione Account - ')
-
 @section('main')
   <div class="publisher-home">
     <div class="publisher-body">

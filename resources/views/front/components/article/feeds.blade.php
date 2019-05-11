@@ -1,7 +1,6 @@
 @php
   $feeds = \App\Models\Articoli::take(2)->inRandomOrder()
             ->where('id', '!=', $query->id)
-            ->where('status', '1')
             ->where(function ($sql) use ($tags){
                 foreach($tags as $value){
                   $sql->where('tags', 'like', '%'. $value .'%');

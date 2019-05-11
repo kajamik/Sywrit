@@ -6,7 +6,7 @@
       $value->save();
     }
     if(!empty($value->content_id)){
-      $articolo = \App\Models\Articoli::where('id',$value->content_id)->first();
+      $articolo = \App\Models\Articoli::where('id', $value->content_id)->first();
     }
   @endphp
   @if($value->type == '1') {{-- Collaborazione --}}

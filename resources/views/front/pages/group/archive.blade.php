@@ -1,7 +1,5 @@
 @extends('front.layout.app')
 
-@section('title', 'Articoli Salvati - ')
-
 @section('main')
 <style>
 #nav > li {
@@ -29,7 +27,7 @@
               <div class="row" id="articles">
                 @foreach($query2->take(12) as $articolo)
                 <div class="col-lg-4 col-sm-8 col-xs-12">
-                  <a href="{{ url('read/'. $articolo->slug) }}">
+                  <a href="{{ url('read/archive/'. $articolo->slug) }}">
                     <div class="card">
                       <img class="card-img-top" src="{{asset($articolo->getBackground())}}" alt="Copertina">
                       <div class="card-body">

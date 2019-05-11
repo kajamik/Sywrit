@@ -1,9 +1,5 @@
 @extends('front.layout.app')
 
-@section('title', 'Nuovo articolo - ')
-
-@section('description', config('app.name'). ': la nuova piattaforma multi-genere di scrittura online.')
-
 @section('main')
 <style type="text/css">
 .document {

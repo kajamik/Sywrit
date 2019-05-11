@@ -1,7 +1,5 @@
 @extends('front.layout.app')
 
-@section('title', 'Notifiche - ')
-
 @section('main')
 
 <style type="text/css">

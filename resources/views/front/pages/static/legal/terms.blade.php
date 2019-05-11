@@ -1,9 +1,9 @@
 @extends('front.layout.app')
 
-@section('title', 'Termini e condizioni - ')
-
-@section('description', config('app.name'). ': la nuova piattaforma multi-genere di scrittura online.')
-
+ @php
+    SEOMeta::setTitle('Termini e condizioni - Sywrit', false);
+  @endphp
+  
 @section('main')
   <div class="publisher-home">
     <div class="publisher-body">

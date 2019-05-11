@@ -1,9 +1,5 @@
 @extends('front.layout.app')
 
-@section('title', $slug.' - ')
-
-@section('description', config('app.name'). ': la nuova piattaforma multi-genere di scrittura online.')
-
 @section('main')
   <div class="publisher-home">
     <div class="publisher-body">
@@ -15,7 +11,7 @@
             @isset($value->article_title)
             <div class="col-lg-3 col-sm-12 col-xs-12">
             <a href="{{ url('read/'.$value->article_slug)}}">
-              <div class="card-header">{{ \Carbon\Carbon::parse($value->published_at)->diffForHumans() }}</div>
+              <div class="card-header">{{ \Carbon\Carbon::parse($value->created_at)->diffForHumans() }}</div>
               <div class="card">
                 <img class="card-img-top" src="{{ asset($value->getBackground()) }}" alt="Copertina Articolo">
                 @if($value->topic_id)
@@ -44,6 +40,11 @@
                 <div class="card">
                   <img class="card-img-top" src="{{ asset($value->getAvatar()) }}" alt="Card image cap">
                   <div class="card-body">
+                    @if(!empty($value->direttore))
+                    <span>Redazione</span>
+                    @else
+                    <span>Utente</span>
+                    @endif
                     <a href="{{url($value->slug)}}">
                       <h4>{{ $value->name }} {{ $value->surname }}</h4>
                     </a>

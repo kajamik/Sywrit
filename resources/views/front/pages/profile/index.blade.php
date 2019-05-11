@@ -1,7 +1,5 @@
 @extends('front.layout.app')
 
-@section('title', $query->name.' '.$query->surname.' - ')
-
 @section('profile::bio')
   @if(!empty($query->biography))
   <h2>Biografia</h2>

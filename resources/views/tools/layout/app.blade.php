@@ -13,7 +13,9 @@
   <link href="{{ url('css/toolbox/_dex.min.css?v=2.1.0') }}" rel="stylesheet" />
 
   <script src="{{ asset('plugins/jquery/js/jquery-3.2.1.min.js') }}"></script>
-  <script src="{{ asset('js/app.js') }}"></script>
+  <script src="{{ asset('js/app.min.js') }}"></script>
+
+  <link rel="manifest" href="{{ url('manifest.json') }}">
 
 </head>
 
@@ -123,7 +125,7 @@
   <script async defer src="https://buttons.github.io/buttons.js"></script>
   <script src="{{ url('plugins/bootstrap/js/bootstrap-notify.js') }}"></script>
   <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
-  <script src="{{ url('js/_dex.js?v=2.1.0') }}"></script>
+  <script src="{{ url('js/toolbox/_dex.min.js?v=2.1.0') }}"></script>
   <script>
     $(document).ready(function() {
       $().ready(function() {

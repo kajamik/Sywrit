@@ -2,15 +2,12 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" xmlns:og="http://opengraphprotocol.org/schema/">
 <head>
     <meta charset="utf-8" />
-    <title>@yield('title'){{ config('app.name') }}</title>
+    <title>{!! SEOMeta::getTitle() !!}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
-
+    <meta name="description" content="{!! SEOMeta::getDescription() !!}" />
     <meta name="theme-color" content="#BFB8EB" />
-
-    <meta name="description" content="@yield('description')" />
-
-    @yield('seo')
 
     <script src="{{ asset('plugins/jquery/js/jquery-3.2.1.min.js') }}"></script>
     <script src="{{ asset('js/bootstrap/bootstrap.min.js') }}"></script>
@@ -28,8 +25,10 @@
     <link rel="apple-touch-icon" href="{{ url('upload/57x57/rgb_logo.png') }}">
 
     <link rel="manifest" href="{{ url('manifest.json') }}">
-    <link rel="canonical" href="{{ Request::url() }}" />
-    
+    <link rel="canonical" href="{!! SEOMeta::getCanonical() !!}" />
+
+    {!! OpenGraph::generate() !!}
+
     @if(Cookie::get('cookie_consent'))
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-131300748-2"></script>
     <script>
@@ -91,7 +90,7 @@
     var message_count = 0;
 
     $(function(){
-    //  notifications();
+     notifications();
       $("#notifications").click(function(){
         fetch_live_notifications();
       });

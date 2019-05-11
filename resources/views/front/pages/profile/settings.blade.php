@@ -1,7 +1,5 @@
 @extends('front.layout.app')
 
-@section('title', 'Impostazioni Profilo - ')
-
 @section('main')
 
   <div class="publisher-home">

@@ -1,9 +1,5 @@
 @extends('front.layout.app')
 
-@section('description', config('app.name'). ': la nuova piattaforma multi-genere di scrittura online.')
-
-@section('title', 'Nuova redazione - ')
-
 @section('main')
   <div class="publisher-home">
     <div class="publisher-body">

@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use \Illuminate\Http\Request;
 
+// SEO
+use SEOMeta;
+
 class LoginController extends Controller
 {
     /*
@@ -35,6 +38,20 @@ class LoginController extends Controller
      */
     public function __construct()
     {
+        SEOMeta::setTitle('Accedi - Sywrit');
+
         $this->middleware('guest')->except('logout');
+    }
+
+    protected function authenticated(Request $request, $user)
+    {
+      $del = \App\Models\AccountDeletionRequest::where('user_id', $user->id);
+      if($del->count()) {
+        $del = $del->first();
+        $user = \App\Models\User::find($user->id);
+        $user->cron = '0';
+        $user->save();
+        $del->delete();
+      }
     }
 }

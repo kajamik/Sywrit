@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
 
+use SEOMeta;
+
 class ForgotPasswordController extends Controller
 {
     /*
@@ -27,6 +29,8 @@ class ForgotPasswordController extends Controller
      */
     public function __construct()
     {
+        SEOMeta::setTitle('Ripristino Password - Sywrit');
+
         $this->middleware('guest');
     }
 }

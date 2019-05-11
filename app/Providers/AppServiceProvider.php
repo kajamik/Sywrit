@@ -19,18 +19,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //\Debugbar::disable();
+        \Debugbar::disable();
 
         \Carbon\Carbon::setUTF8(true);
-        setLocale(LC_TIME, config('app.locale'));
+        setlocale(LC_TIME, 'it', 'it_IT', 'italian');
+        \Carbon\Carbon::setLocale('it');
         \Schema::defaultStringLength(191);
         Validator::resolver(function($translator, $data, $rules, $messages) {
           return new HashValidator($translator, $data, $rules, $messages);
         });
-
-        View::composer(
-            'profile', 'App\Http\View\Composers\ProfileComposer'
-        );
     }
 
     /**

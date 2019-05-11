@@ -13,10 +13,14 @@ class Articoli extends Model
     public function getBackground() {
       $file = $this->storage.'/'.$this->copertina;
 
-      if($this->copertina && file_exists($file)){
-        return $file;
-      }else{
-        return 'upload/no-image.jpg';
+      if($this->bot_message != '1') {
+        if($this->copertina && file_exists($file)){
+            return $file;
+        } else {
+          return 'upload/no-image.jpg';
+        }
+      } else {
+        return 'upload/_bot.jpg';
       }
     }
 
@@ -26,5 +30,9 @@ class Articoli extends Model
 
     public function getAutore() {
       return $this->belongsTo('App\Models\User','id_autore','id');
+    }
+
+    public function getTopic() {
+      return $this->belongsTo('App\Models\ArticleCategory','topic_id','id');
     }
 }

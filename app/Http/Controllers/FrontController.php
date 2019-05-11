@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 // Models
 use App\Models\BotMessage;
 use App\Models\User;
+use App\Models\SavedArticles;
 use App\Models\Articoli;
 use App\Models\ArticleHistory;
 use App\Models\ArticleCategory;
@@ -34,6 +35,14 @@ class FrontController extends Controller
 
     public function index(Request $request)
     {
+      // SEO ///////////////////////////////////////////////////
+
+        SEOMeta::setTitle('Sywrit', false)
+                  ->setDescription(config('app.name').': la nuova piattaforma multi-genere di scrittura online.')
+                  ->setCanonical(\Request::url());
+
+      //-------------------------------------------------------//
+
         $INDEX_LIMIT = 9;
         $current_page = ($request->page) ? $request->page : 1;
 
@@ -49,10 +58,9 @@ class FrontController extends Controller
                       })
                     ->addSelect('utenti.slug as user_slug', 'utenti.name as user_name', 'utenti.surname as user_surname', 'editori.name as publisher_name', 'editori.slug as publisher_slug',
                                 'articoli.titolo as article_title', 'articoli.id_gruppo as id_editore', 'articoli.slug as article_slug', 'articoli.testo as article_text', 'articoli.copertina as copertina',
-                                'articoli.bot_message as bot_message', 'articoli.published_at as published_at', 'articoli.created_at as created_at', 'article_category.id as topic_id', 'article_category.name as topic_name')
-                    ->where('status','1')
+                                'articoli.bot_message as bot_message', 'articoli.created_at as created_at', 'article_category.id as topic_id', 'article_category.name as topic_name')
                     ->orderBy('bot_message', 'desc')
-                    ->orderBy('published_at', 'desc')
+                    ->orderBy('created_at', 'desc')
                     ->skip($INDEX_LIMIT * ($current_page-1))
                     ->take($INDEX_LIMIT)
                     ->get();
@@ -69,12 +77,25 @@ class FrontController extends Controller
     // PROFILE
     public function getProfile($slug, Request $request)
     {
-
       $query = User::where('slug',$slug)->first();
 
       if(empty($query)){
         return $this->getPublisherIndex($slug, $request);
       }
+
+      // SEO ///////////////////////////////////////////////////
+
+        SEOMeta::setTitle($query->name.' '.$query->surname.' - Sywrit', false)
+                  ->setDescription('Accedi alla pagina profilo di '.$query->name.' '.$query->surname)
+                  ->setCanonical(\Request::url());
+
+        OpenGraph::setTitle($query->name.' '.$query->surname.' - Sywrit', false)
+                  ->setDescription('Accedi alla pagina profilo di '.$query->name.' '.$query->surname)
+                  ->setType('profile')
+                  ->setUrl(\Request::url())
+                  ->addImage(asset($query->getAvatar()));
+
+      //-------------------------------------------------------//
 
       $INDEX_LIMIT = 9;
       $current_page = ($request->page) ? $request->page : 1;
@@ -83,10 +104,9 @@ class FrontController extends Controller
                       $join->on('articoli.topic_id', '=', 'article_category.id');
                     })
                     ->addSelect('articoli.titolo as article_title', 'articoli.slug as article_slug', 'articoli.testo as article_text', 'articoli.copertina as copertina',
-                                'articoli.published_at as published_at', 'articoli.created_at as created_at', 'article_category.id as topic_id', 'article_category.name as topic_name')
+                                'articoli.created_at as created_at', 'article_category.id as topic_id', 'article_category.name as topic_name')
                     ->where('id_autore', $query->id)
-                    ->where('status','1')
-                    ->orderBy('published_at', 'desc');
+                    ->orderBy('created_at', 'desc');
 
       $count = $articoli->count();
 
@@ -106,12 +126,27 @@ class FrontController extends Controller
 
     public function getAbout($slug)
     {
-      $query = User::where('slug',$slug)->first();
+      $query = User::where('slug', $slug)->first();
 
-      if(empty($query))
+      if(empty($query)) {
         return $this->getPublisherAbout($slug);
+      }
 
-      $query2 = \App\Models\Articoli::where('status','1')->where('id_autore',$query->id);
+      // SEO ///////////////////////////////////////////////////
+
+        SEOMeta::setTitle($query->name.' '.$query->surname.' - Sywrit', false)
+                  ->setDescription('Accedi alla pagina profilo di '.$query->name.' '.$query->surname)
+                  ->setCanonical(\Request::url());
+
+        OpenGraph::setTitle($query->name.' '.$query->surname.' - Sywrit', false)
+                  ->setDescription('Accedi alla pagina profilo di '.$query->name.' '.$query->surname)
+                  ->setType('profile')
+                  ->setUrl(\Request::url())
+                  ->addImage(asset($query->getAvatar()));
+
+      //-------------------------------------------------------//
+
+      $query2 = \App\Models\Articoli::where('id_autore',$query->id);
       $count = $query2->count();
 
       return view('front.pages.profile.about',compact('query','query2','count'));
@@ -119,24 +154,26 @@ class FrontController extends Controller
 
     public function getPrivateArchive($slug)
     { // http://127,0.0.1:8000/{slug}/archive
-      if($slug == Auth::user()->slug){
-        $query = Articoli::whereNull('id_gruppo')->where('id_autore', Auth::user()->id)->where('status','0')->get();
-        return view('front.pages.profile.archive',compact('query'));
-      }else{
-        // Redazione
-        $query = Editori::where('slug', $slug)->firstOrFail();
 
-        if(!$query->suspended && Auth::user()->hasMemberOf($query->id)){
-          $query2 = Articoli::where('id_gruppo', $query->id)->where('status','0')->get();
-          return view('front.pages.group.archive',compact('query','query2'));
-        }else{
-          return redirect($slug);
-        }
+      if($slug == Auth::user()->slug) {
+        $query = SavedArticles::whereNull('id_gruppo')->where('id_autore', Auth::user()->id)->get();
+        SEOMeta::setTitle('Articoli Salvati - Sywrit', false)
+                  ->setCanonical(\Request::url());
+        return view('front.pages.profile.archive',compact('query'));
+      } else {
+        return $this->getPublisherArchive($slug);
       }
     }
 
     public function getAccountDelete()
     {
+      // SEO ///////////////////////////////////////////////////
+
+        SEOMeta::setTitle('Cancellazione Account - Sywrit', false)
+                  ->setCanonical(\Request::url());
+
+      //-------------------------------------------------------//
+
         $articoli = Articoli::whereNull('id_gruppo')->where('id_autore', Auth::user()->id);
         $feedback = \DB::table('article_comments')->where('user_id', Auth::user()->id)
                     ->union(\DB::table('answer_comments')->where('user_id', Auth::user()->id));
@@ -148,12 +185,33 @@ class FrontController extends Controller
     // GROUP
     public function getNewPublisher()
     {
+      // SEO ///////////////////////////////////////////////////
+
+        SEOMeta::setTitle('Nuova Redazione - Sywrit', false)
+                  ->setCanonical(\Request::url());
+
+      //-------------------------------------------------------//
+
         return view('front.pages.group.create');
     }
 
     public function getPublisherIndex($slug, Request $request)
     {
       $query = Editori::where('slug',$slug)->firstOrFail();
+
+      // SEO ///////////////////////////////////////////////////
+
+        SEOMeta::setTitle($query->name.' - Sywrit', false)
+                  ->setDescription('Accedi alla pagina della redazione '.$query->name)
+                  ->setCanonical(\Request::url());
+
+        OpenGraph::setTitle($query->name.' - Sywrit', false)
+                  ->setDescription('Accedi alla pagina della redazione '.$query->name)
+                  ->setType('publisher')
+                  ->setUrl(\Request::url())
+                  ->addImage(asset($query->getAvatar()));
+
+      //-------------------------------------------------------//
 
       $INDEX_LIMIT = 9;
       $current_page = ($request->page) ? $request->page : 1;
@@ -166,10 +224,9 @@ class FrontController extends Controller
                     })
                     ->addSelect('utenti.slug as user_slug', 'utenti.name as user_name', 'utenti.surname as user_surname',
                                 'articoli.titolo as article_title', 'articoli.slug as article_slug', 'articoli.testo as article_text', 'articoli.copertina as copertina',
-                                'articoli.published_at as published_at', 'articoli.created_at as created_at', 'article_category.id as topic_id', 'article_category.name as topic_name')
+                                'articoli.created_at as created_at', 'article_category.id as topic_id', 'article_category.name as topic_name')
                     ->where('articoli.id_gruppo', $query->id)
-                    ->where('status', '1')
-                    ->orderBy('published_at', 'desc')
+                    ->orderBy('created_at', 'desc')
                     ->skip($INDEX_LIMIT * ($current_page-1))
                     ->take($INDEX_LIMIT)
                     ->get();
@@ -185,10 +242,21 @@ class FrontController extends Controller
 
     public function getPublisherAbout($slug)
     {
-      $query = User::where('slug',$slug)->first();
+      $query = Editori::where('slug',$slug)->first();
 
-      if(empty($query))
-        $query = Editori::where('slug',$slug)->first();
+      // SEO ///////////////////////////////////////////////////
+
+        SEOMeta::setTitle($query->name.' - Sywrit', false)
+                  ->setDescription('Accedi alla pagina della redazione '.$query->name)
+                  ->setCanonical(\Request::url());
+
+        OpenGraph::setTitle($query->name.' - Sywrit', false)
+                  ->setDescription('Accedi alla pagina della redazione '.$query->name)
+                  ->setType('publisher')
+                  ->setUrl(\Request::url())
+                  ->addImage(asset($query->getAvatar()));
+
+      //-------------------------------------------------------//
 
       if($query->suspended && (Auth::guest() || Auth::user()->id != $query->direttore)) {
         abort(404);
@@ -201,13 +269,18 @@ class FrontController extends Controller
     }
 
     public function getPublisherArchive($slug)
-    { // http://127,0.0.1:8000/{slug}/archive
-      if($slug == Auth::user()->slug){
-        $query = Articoli::whereNull('id_gruppo')->where('id_autore', Auth::user()->id)->where('status','0')->get();
-        return view('front.pages.profile.archive',compact('query'));
-      }else{
-        return redirect($slug);
-      }
+    {
+        // Redazione
+        $query = Editori::where('slug', $slug)->firstOrFail();
+
+        if(!$query->suspended && Auth::user()->hasMemberOf($query->id)){
+          SEOMeta::setTitle('Articoli Salvati - '.$query->name.' - Sywrit', false)
+                    ->setCanonical(\Request::url());
+          $query2 = SavedArticles::where('id_gruppo', $query->id)->get();
+          return view('front.pages.group.archive',compact('query','query2'));
+        }else{
+          return redirect($slug);
+        }
     }
 
     public function getPublisherSettings($slug,$tab = null,Request $request)
@@ -221,6 +294,9 @@ class FrontController extends Controller
         if(!$tab)
           return redirect($slug.'/settings/edit');
 
+          SEOMeta::setTitle('Impostazioni - '.$query->name.' - Sywrit', false)
+                    ->setCanonical(\Request::url());
+
         return view('front.pages.group.settings',compact('query','tab'));
       } else {
         return redirect($slug);
@@ -233,6 +309,14 @@ class FrontController extends Controller
 
     public function getWrite(Request $request)
     {
+      // SEO ///////////////////////////////////////////////////
+
+        SEOMeta::setTitle('Nuovo Articolo', false)
+                  ->setDescription(config('app.name').': la nuova piattaforma multi-genere di scrittura online.')
+                  ->setCanonical(\Request::url());
+
+      //-------------------------------------------------------//
+
       if(!$request->_topic){
         $categories = \DB::table('article_category')->orderBy('name', 'asc')->get();
       } else {
@@ -245,6 +329,39 @@ class FrontController extends Controller
     {
       $query = Articoli::where('slug', $slug)->first();
 
+      // SEO ///////////////////////////////////////////////////
+
+        SEOMeta::setTitle($query->titolo.' - Sywrit', false)
+                  ->setDescription(str_limit(strip_tags($query->testo), 100))
+                  ->setCanonical(\Request::url());
+
+        $og =  collect([
+          'published_time' => Carbon::parse($query->created_at),
+        ]);
+
+        if($query->bot_message != '1') {
+          $og->put('author', $query->getAutore->name.' '.$query->getAutore->surname);
+        }
+
+        if($query->created_at != $query->updated_at) {
+          $og->put('modified_at', Carbon::parse($query->updated_at));
+        }
+
+        if(!empty($query->topic_id)) {
+          $og->put('section', $query->getTopic->name);
+        }
+
+        $og->put('tag', $query->tags);
+
+        OpenGraph::setTitle($query->titolo.' - Sywrit', false)
+                  ->setDescription(str_limit(strip_tags($query->testo), 100))
+                  ->setType('article')
+                  ->setUrl(\Request::url())
+                  ->addImage(asset($query->getBackground()))
+                  ->setArticle($og);
+
+      //-------------------------------------------------------//
+
       if($query->bot_message != '1') {
 
         $options = false;
@@ -256,8 +373,8 @@ class FrontController extends Controller
         }
 
         $tags = explode(',',$query->tags);
-        $date = Carbon::parse($query->published_at)->formatLocalized('%A %d %B %Y');
-        $time = Carbon::parse($query->published_at)->format('H:i');
+        $date = Carbon::parse($query->created_at)->formatLocalized('%A %d %B %Y');
+        $time = Carbon::parse($query->created_at)->format('H:i');
 
         $score = \DB::table('article_score')->where('article_id', $query->id);
         $hasRate = (Auth::user() && \DB::table('article_score')->where('user_id', Auth::user()->id)->where('article_id', $query->id)->count() > 0);
@@ -265,43 +382,65 @@ class FrontController extends Controller
         return view('front.pages.read',compact('query','date','time','tags','options','score','hasRate'));
       } else {
         $tags = explode(',',$query->tags);
-        $date = Carbon::parse($query->published_at)->formatLocalized('%A %d %B %Y');
-        $time = Carbon::parse($query->published_at)->format('H:i');
+        $date = Carbon::parse($query->created_at)->formatLocalized('%A %d %B %Y');
+        $time = Carbon::parse($query->created_at)->format('H:i');
         return view('front.pages.read_bot_message', compact('query','date','time','tags'));
+      }
+    }
+
+    public function getSavedArticle($slug)
+    {
+      $query = SavedArticles::where('slug', $slug)->first();
+
+      // SEO ///////////////////////////////////////////////////
+
+        SEOMeta::setTitle($query->titolo.' - Sywrit', false)
+                  ->setDescription(str_limit(strip_tags($query->testo), 100))
+                  ->setCanonical(\Request::url());
+
+      //-------------------------------------------------------//
+      if(Auth::user() && ($query->id_gruppo > 0 && Auth::user()->hasMemberOf($query->id_gruppo) || Auth::user()->id == $query->id_autore) ) {
+
+        $options = false;
+
+        if( Auth::user() ){
+          $collection = collect(explode(',', Auth::user()->id_gruppo));
+
+          $options = true;
+        }
+
+        $tags = explode(',',$query->tags);
+
+        return view('front.pages.archive.read',compact('query','tags','options'));
+      } else {
+        abort(404);
       }
     }
 
     public function getArticleEdit($id)
     {
+      // SEO ///////////////////////////////////////////////////
+
+        SEOMeta::setTitle('Modifica Articolo', false)
+                  ->setCanonical(\Request::url());
+
+      //-------------------------------------------------------//
+
       $query = Articoli::find($id);
-      if(Auth::user()->hasMemberOf($query->id_gruppo) || (Auth::user()->id == $query->id_autore)){
-        return view('front.pages.edit_post',compact('query'));
-      }else{
-        return redirect('read/'.$query->slug);
-      }
-    }
 
-    public function getArticleArchive(Request $request)
-    {
-      $query = Articoli::where('slug', $request->url)->first();
-      $query2 = ArticleHistory::where('article_id', $query->id)->where('token', $request->token_id)->first();
-
-      $like = false;
-
-      if( Auth::user() ){
-        $collection = collect(explode(',', Auth::user()->id_gruppo));
-        $collection = collect(explode(',', $query->likes));
-
-        if($collection->some(\Auth::user()->id)){
-          $like = true;
+      if(!empty($query)) {
+        if(Auth::user()->hasMemberOf($query->id_gruppo) || (Auth::user()->id == $query->id_autore)){
+          return view('front.pages.edit_post',compact('query'));
+        }else{
+          return redirect('read/'.$query->slug);
+        }
+      } else {
+        $query = SavedArticles::find($id);
+        $categories = \DB::table('article_category')->orderBy('name', 'asc')->get();
+        if(Auth::user()->hasMemberOf($query->id_gruppo) || (Auth::user()->id == $query->id_autore)){
+          return view('front.pages.archive.edit_post',compact('query','categories'));
         }
       }
-
-      $tags = explode(',',$query->tags);
-      $date = Carbon::parse($query2->created_at)->formatLocalized('%A %d %B %Y');
-      $time = Carbon::parse($query2->created_at)->format('H:i');
-
-      return view('front.pages.article_archive', compact('query','query2','tags','date','time'));
     }
 
     /*************/
@@ -309,6 +448,20 @@ class FrontController extends Controller
     public function getTopic($slug, Request $request)
     {
       $topic = ArticleCategory::where('slug', $slug)->first();
+
+      // SEO ///////////////////////////////////////////////////
+
+        SEOMeta::setTitle($topic->name.' - Sywrit', false)
+                  ->setDescription('Articoli della sezione '.$topic->name)
+                  ->setCanonical(\Request::url());
+
+        OpenGraph::setTitle($topic->name.' - Sywrit', false)
+                  ->setDescription('Articoli della sezione '.$topic->name)
+                  ->setType('section')
+                  ->setUrl(\Request::url())
+                  ->addImage(asset('upload/topics/'.$topic->slug.'.jpg'));
+
+      //-------------------------------------------------------//
 
       $INDEX_LIMIT = 9;
       $current_page = ($request->page) ? $request->page : 1;
@@ -320,8 +473,7 @@ class FrontController extends Controller
                   ->addSelect('utenti.slug as user_slug', 'utenti.name as user_name', 'utenti.surname as user_surname', 'editori.name as publisher_name', 'editori.slug as publisher_slug',
                               'articoli.titolo as article_title', 'articoli.id_gruppo as id_editore', 'articoli.slug as article_slug', 'articoli.testo as article_text', 'articoli.copertina as copertina', 'articoli.created_at as created_at')
                   ->where('topic_id', $topic->id)
-                  ->where('status','1')
-                  ->orderBy('published_at','desc')
+                  ->orderBy('created_at', 'desc')
                   ->skip($INDEX_LIMIT * ($current_page-1))
                   ->take($INDEX_LIMIT)
                   ->get();
@@ -337,17 +489,41 @@ class FrontController extends Controller
 
     public function getNotifications()
     {
+
+      // SEO ///////////////////////////////////////////////////
+
+        SEOMeta::setTitle('Notifiche - Sywrit', false)
+                  ->setDescription(config('app.name').': la nuova piattaforma multi-genere di scrittura online.')
+                  ->setCanonical(\Request::url());
+
+      //-------------------------------------------------------//
+
       $query = Notifications::where('target_id',Auth::user()->id)->orderBy('created_at','desc')->paginate(6);
       return view('front.pages.profile.notifications', compact('query'));
     }
 
     public function getSettings()
     {
+      // SEO ///////////////////////////////////////////////////
+
+        SEOMeta::setTitle('Impostazioni - Sywrit', false)
+                  ->setDescription(config('app.name').': la nuova piattaforma multi-genere di scrittura online.')
+                  ->setCanonical(\Request::url());
+
+      //-------------------------------------------------------//
+
       return view('front.pages.profile.settings');
     }
 
     public function getPages($slug, $slug2 = '')
     {
+      // SEO ///////////////////////////////////////////////////
+
+        SEOMeta::setDescription(config('app.name').': la nuova piattaforma multi-genere di scrittura online.')
+                  ->setCanonical(\Request::url());
+
+      //-------------------------------------------------------//
+
       if($slug2) {
         $slug2 = '/'.$slug2;
       }

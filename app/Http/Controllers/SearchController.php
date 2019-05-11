@@ -11,11 +11,21 @@ use App\Models\Editori;
 use App\Models\Articoli;
 use App\Models\User;
 
+use SEOMeta;
+
 class SearchController extends Controller
 {
 
   public function getResults(Request $request, $slug)
   {
+    // SEO ///////////////////////////////////////////////////
+
+      SEOMeta::setTitle($slug.' - Sywrit', false)
+                ->setDescription(config('app.name').': la nuova piattaforma multi-genere di scrittura online.')
+                ->setCanonical(\Request::url());
+
+    //-------------------------------------------------------//
+
     $query = User::where(\DB::raw("concat(name, ' ', surname)"), 'like', '%'. $slug .'%')->get();
 
     $query2 = Articoli::where('titolo', 'like', '%'. $slug .'%')
@@ -26,8 +36,8 @@ class SearchController extends Controller
                         })
                       ->addSelect('utenti.slug as user_slug', 'utenti.name as user_name', 'utenti.surname as user_surname', 'editori.name as publisher_name', 'editori.slug as publisher_slug',
                                   'articoli.bot_message as bot_message', 'articoli.titolo as article_title', 'articoli.id_gruppo as id_editore', 'articoli.slug as article_slug', 'articoli.copertina as copertina',
-                                  'articoli.published_at as published_at', 'articoli.created_at as created_at')
-                      ->orderBy('published_at','desc')->get();
+                                  'articoli.created_at as created_at')
+                      ->orderBy('created_at','desc')->get();
 
     $query3 = Editori::where('name', 'like', '%'. $slug. '%')->get();
 
@@ -39,6 +49,14 @@ class SearchController extends Controller
 
   public function getResultsByTagName($slug)
   {
+    // SEO ///////////////////////////////////////////////////
+
+      SEOMeta::setTitle($slug.' - Sywrit', false)
+                ->setDescription(config('app.name').': la nuova piattaforma multi-genere di scrittura online.')
+                ->setCanonical(\Request::url());
+
+    //-------------------------------------------------------//
+
     $query = Articoli::where('tags', 'like', '%'. $slug .'%')
                       ->leftJoin('utenti', 'articoli.id_autore', '=', 'utenti.id')
                       ->leftJoin('editori', function($join){
@@ -46,8 +64,8 @@ class SearchController extends Controller
                         })
                         ->addSelect('utenti.slug as user_slug', 'utenti.name as user_name', 'utenti.surname as user_surname', 'editori.name as publisher_name', 'editori.slug as publisher_slug',
                                     'articoli.bot_message as bot_message', 'articoli.titolo as article_title', 'articoli.id_gruppo as id_editore', 'articoli.slug as article_slug', 'articoli.copertina as copertina',
-                                    'articoli.published_at as published_at', 'articoli.created_at as created_at')
-                      ->orderBy('published_at','desc')
+                                    'articoli.created_at as created_at')
+                      ->orderBy('created_at','desc')
                       ->paginate(6);
 
     return view('front.pages.tag_search', compact('slug','query'));

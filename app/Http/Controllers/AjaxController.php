@@ -247,7 +247,7 @@ class AjaxController extends Controller
         if($query->suspended) {
           return Response::json(['message' => 'Questo account è stato sospeso da un operatore']);
         }
-        if(Auth::user()->hasFoundedGroup() && $collection->some($publisher_id)) {
+        if(Auth::user()->hasFoundedGroup()) {
           $editore = \DB::table('editori')->where('id', $publisher_id)->first();
           if(!collect(explode(',', $editore->componenti))->some($query->id)) {
             $message = new PublisherRequest();

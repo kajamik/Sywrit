@@ -13,6 +13,9 @@ use App\Notifications\UserWelcome as UserWelcomeNotification;
 //
 use Image;
 
+// Seo
+use SEOMeta;
+
 class RegisterController extends Controller
 {
     /*
@@ -42,6 +45,8 @@ class RegisterController extends Controller
      */
     public function __construct()
     {
+        SEOMeta::setTitle('Iscriviti - Sywrit');
+
         $this->middleware('guest');
     }
 

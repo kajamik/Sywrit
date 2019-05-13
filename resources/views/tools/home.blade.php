@@ -36,7 +36,7 @@
             <div class="col-9">
               <h3 class="card-category">Articoli segnalati</h3>
             </div>
-            <h3 class="card-category">0</h3>
+            <h3 class="card-category">{{ $reported_articles }}</h3>
           </div>
         </div>
         </div>
@@ -78,6 +78,12 @@
             </div>
             <div class="row">
               <div class="col-9">
+                <h3 class="card-category">Utenti in eliminazione</h3>
+              </div>
+              <h3 class="card-category">{{ $cron_users }}</h3>
+            </div>
+            <div class="row">
+              <div class="col-9">
                 <h3 class="card-category">Articoli pubblicati</h3>
               </div>
               <h3 class="card-category">{{ $articles }}</h3>
@@ -102,7 +108,7 @@
               <div class="col-9">
                 <h3 class="card-category">Articoli pubblicati</h3>
               </div>
-              <h3 class="card-category">{{ $articles }}</h3>
+              <h3 class="card-category">{{ $publisher_articles }}</h3>
             </div>
           </div>
           </div>

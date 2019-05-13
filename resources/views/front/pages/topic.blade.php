@@ -15,17 +15,22 @@
             <div class="col-lg-3 col-sm-6 col-xs-12">
             <a href="{{ url('read/'.$value->article_slug)}}">
               <div class="card-header">{{ $value->created_at->diffForHumans() }}</div>
-              <div class="card border-0">
+              <div class="card">
                 <img class="card-img-top" src="{{asset($value->getBackground())}}" alt="Copertina Articolo">
-                  <h4 class="card-title">{{ $value->article_title }}</h4>
-                  <div class="author">
-                    Pubblicato da
-                    @if($value->id_editore)
-                    <a href="{{ url($value->publisher_slug) }}"><span>{{ $value->publisher_name }}</span></a>
-                    @else
-                    <a href="{{ url($value->user_slug) }}"><span>{{ $value->user_name }} {{ $value->user_surname }}</span></a>
-                    @endif
-                  </div>
+                <div class="card-body">
+                  <h5 class="card-title" title="{{ $value->article_title }}">{{ str_limit($value->article_title, 33) }}</h5>
+                  <h6>{!! str_limit(strip_tags($value->article_text), 100) !!}</h6>
+                  Pubblicato da
+                  @if($value->id_editore)
+                  <a href="{{ url($value->publisher_slug) }}">
+                    <span>{{ $value->publisher_name }}</span>
+                  </a>
+                  @else
+                  <a href="{{ url($value->user_slug) }}">
+                    <span>{{ $value->user_name }} {{ $value->user_surname }}</span>
+                  </a>
+                  @endif
+                </div>
               </div>
             </a>
           </div>

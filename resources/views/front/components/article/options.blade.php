@@ -2,7 +2,7 @@
     <i class="fas fa-cog"></i> Opzioni Articolo
   </a>
   <div class="dropdown-menu" id="nodes">
-    <a id="edt" class="dropdown-item" href="{{ url('post/'.$query->id.'/edit') }}">Modifica articolo</a>
+    <a id="edt" class="dropdown-item" href="{{ url('post/'.$query->slug.'/edit') }}">Modifica articolo</a>
     <a id="dlt" class="dropdown-item" href="#" onclick="link(this,'{{ route('article/action/delete') }}')">Elimina articolo</a>
   </div>
 

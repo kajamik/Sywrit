@@ -19,8 +19,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        \Debugbar::disable();
-
         \Carbon\Carbon::setUTF8(true);
         setlocale(LC_TIME, 'it', 'it_IT', 'italian');
         \Carbon\Carbon::setLocale('it');

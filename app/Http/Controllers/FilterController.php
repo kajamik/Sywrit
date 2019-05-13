@@ -411,18 +411,24 @@ class FilterController extends Controller
       $input['document__text'] = strip_tags(str_replace('&nbsp;','',$request->document__text));
       $request->replace($input);
 
-      $this->validate($request,[
-        'document__title' => 'required|min:5|max:60',
-        'document__text' => 'required'
-      ],[
-        'document__title.required' => 'Il titolo dell\'articolo è obbligatorio',
-        'document__text.required' => 'Non è consentito pubblicare un articolo senza contenuto',
-        'document__text.min' => 'Contenuto troppo breve'
-      ]);
-
       if($request->save) {
+        $this->validate($request,[
+          'document__title' => 'required|max:191',
+        ],[
+          'document__text.max' => 'Titolo troppo lungo',
+        ]);
+
         $query = new SavedArticles();
       } else {
+        $this->validate($request,[
+          'document__title' => 'required|max:191',
+          'document__text' => 'required'
+        ],[
+          'document__title.required' => 'Il titolo dell\'articolo è obbligatorio',
+          'document__text.required' => 'Non è consentito pubblicare un articolo senza contenuto',
+          'document__text.max' => 'Titolo troppo lungo',
+        ]);
+
         $query = new Articoli();
       }
 
@@ -433,7 +439,39 @@ class FilterController extends Controller
           $query->topic_id = $request->_ct_sel_;
       }
 
-      $query->testo = $testo;
+      if($testo) {
+        $dom = new \DomDocument();
+        $dom->loadHtml($testo, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+        $images = $dom->getElementsByTagName('img');
+
+        // foreach <img> in the submited message
+        foreach($images as $img){
+          $src = $img->getAttribute('src');
+
+          // if the img source is 'data-url'
+          if(preg_match('/data:image/', $src)){
+
+            // get the mimetype
+            preg_match('/data:image\/(?<mime>.*?)\;/', $src, $groups);
+            $mimetype = $groups['mime'];
+
+            // Generating a random filename
+            $filename = uniqid();
+            $filepath = "/storage/articles/$filename.$mimetype";
+
+            $image = Image::make($src)
+              //->resize(300, 200)
+              ->encode($mimetype, 100)
+              ->save(public_path($filepath));
+
+            $new_src = asset($filepath);
+            $img->removeAttribute('src');
+
+            $img->setAttribute('src', $new_src);
+          } // <!--endif
+        } // <!--endforeach
+        $query->testo = $dom->saveHTML();
+      }
 
       if($a = $request->image) {
         $resize = '__492x340'.Str::random(64).'.jpg';
@@ -463,30 +501,39 @@ class FilterController extends Controller
       $query->save();
 
       // Slug
-      $query->slug = str_slug($query->id.'-'.$query->titolo,'-');
-      $query->save();
-
-      return redirect('read/archive/'.$query->slug);
+      if($request->save) {
+        $query->slug = uniqid();
+        $query->save();
+        return redirect('read/archive/'.$query->slug);
+      } else {
+        $query->slug = str_slug($query->id.'-'.$query->titolo,'-');
+        $query->save();
+        return redirect('read/'.$query->slug);
+      }
     }
 
     public function ArticlePublish(Request $request)
     {
         $query = SavedArticles::find($request->id);
         if(!$query->suspended && (Auth::user()->id == $query->id_autore || Auth::user()->hasMemberOf($query->id_gruppo))) {
-          $query2 = new Articoli();
-          $query2->topic_id = $query->topic_id;
-          $query2->titolo = $query->titolo;
-          $query2->tags = $query->tags;
-          $query2->testo = $query->testo;
-          $query2->copertina = $query->copertina;
-          $query2->id_gruppo = $query->id_gruppo;
-          $query2->id_autore = $query->id_autore;
-          $query2->license = $query->license;
-          $query2->bot_message = '0';
-          $query2->save();
-          $query2->slug = $query2->id.'-'.str_slug($query2->titolo, '-');
-          $query2->save();
-          $query->delete();
+          if($query->testo) {
+            $query2 = new Articoli();
+            $query2->topic_id = $query->topic_id;
+            $query2->titolo = $query->titolo;
+            $query2->tags = $query->tags;
+            $query2->testo = $query->testo;
+            $query2->copertina = $query->copertina;
+            $query2->id_gruppo = $query->id_gruppo;
+            $query2->id_autore = $query->id_autore;
+            $query2->license = $query->license;
+            $query2->bot_message = '0';
+            $query2->save();
+            $query2->slug = $query2->id.'-'.str_slug($query2->titolo, '-');
+            $query2->save();
+            $query->delete();
+          } else {
+            return redirect();
+          }
         }
         return redirect('read/'.$query2->slug);
     }
@@ -499,22 +546,19 @@ class FilterController extends Controller
       $request->replace($input);
 
 
-      $query = Articoli::find($id);
+      $query = Articoli::where('slug', $id)->first();
 
       if(empty($query)) {
         $this->validate($request, [
-          'document__title' => 'required|min:5|max:50',
-          'document__text' => 'required',
+          'document__title' => 'required|max:191',
         ],[
           'document__title.required' => 'Il titolo dell\'articolo è obbligatorio',
-          'document__text.required' => 'Non è consentito pubblicare un articolo senza contenuto'
         ]);
 
-        $query = SavedArticles::find($id);
+        $query = SavedArticles::where('slug', $id)->first();
         $query->titolo = $request->document__title;
-        $query->slug = $query->id.'-'.str_slug($request->document__title, '-');
 
-        if(!$query->suspended && (Auth::user()->hasMemberOf($query->id_gruppo) || Auth::user()->id == $query->id_autore)) {
+        if(!Auth::user()->suspended && ($query->id_gruppo > 0 && Auth::user()->hasMemberOf($query->id_gruppo) || Auth::user()->id == $query->id_autore)) {
 
           $query->tags = str_slug($request->tags, ',');
           $query->testo = $testo;
@@ -556,7 +600,7 @@ class FilterController extends Controller
         'document__text.required' => 'Non è consentito pubblicare un articolo senza contenuto'
       ]);
 
-      if(!$query->suspended && (Auth::user()->hasMemberOf($query->id_gruppo) || Auth::user()->id == $query->id_autore)) {
+      if(!Auth::user()->suspended && ($query->id_gruppo > 0 && Auth::user()->hasMemberOf($query->id_gruppo) || Auth::user()->id == $query->id_autore)) {
 
         $query->tags = str_slug($request->tags, ',');
         $query->testo = $testo;
@@ -589,7 +633,6 @@ class FilterController extends Controller
         }
         $query->save();
       }
-
       return redirect('read/'.$query->slug);
     }
 

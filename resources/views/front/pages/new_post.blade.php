@@ -13,11 +13,10 @@
     <div class="publisher-body">
   <form method="post" action="" enctype="multipart/form-data">
     @csrf
-
     <div class="form-group row">
       <label for="title" class="col-md-4 col-form-label required">Titolo Articolo</label>
         <div class="col-md-12">
-            <input id="title" type="text" class="form-control{{ $errors->has('document__title') ? ' is-invalid' : '' }}" name="document__title" required autofocus>
+            <input id="title" type="text" class="form-control{{ $errors->has('document__title') ? ' is-invalid' : '' }}" name="document__title" value="{{ old('document__title') }}" required autofocus>
             @if ($errors->has('document__title'))
                 <span class="invalid-feedback" role="alert">
                     <strong>{{ $errors->first('document__title') }}</strong>
@@ -56,10 +55,12 @@
         <div class="col-md-12">
           @if ($errors->has('document__title'))
               <span class="invalid-feedback" role="alert">
-                  <strong>{{ $errors->first('document__title') }}</strong>
+                  <strong>{{ $errors->first('document__text') }}</strong>
               </span>
           @endif
-          <textarea class="document{{ $errors->has('document__text') ? ' is-invalid' : '' }}" name="document__text"></textarea>
+          <textarea class="document{{ $errors->has('document__text') ? ' is-invalid' : '' }}" name="document__text">
+            {{ old('document__text') }}
+          </textarea>
         </div>
     </div>
 
@@ -92,7 +93,7 @@
     <div class="form-group row">
       <label for="tags" class="col-md-4 col-form-label"><span class="fa fa-tag"></span> Etichette</label>
         <div class="col-md-12">
-          <input type="text" class="form-control" name="tags" placeholder="&quot;globalwarming climatestrike&quot; risulterà come #globalwarming #climatestrike" />
+          <input type="text" class="form-control" name="tags" placeholder="&quot;globalwarming climatestrike&quot; risulterà come #globalwarming #climatestrike" value="{{ old('tags') }}"/>
         </div>
     </div>
 
@@ -112,14 +113,7 @@
 </div>
 <link rel="stylesheet" href="{{ asset('plugins/dist/summernote.css') }}" />
 <script src="{{ asset('plugins/dist/summernote.min.js') }}"></script>
-<script>
-$(".document").summernote({
-  height: 165,
-  toolbar: [
-    ['style'],['style', ['bold', 'italic', 'underline']],['color', ['color']],['para', ['ul', 'ol', 'paragraph']]
-    ,['link'],['picture'],['help']
-  ],
-  placeholder: 'Inizia a scrivere',
-});
-</script>
+<script>var initial_form_state, last_form_state;$(".document").summernote({height: 165,
+toolbar:[['style'],['style', ['bold', 'italic', 'underline']],['color', ['color']],['para', ['ul', 'ol', 'paragraph']],['link'],['picture'],['help']],placeholder: 'Inizia a scrivere',
+callbacks:{onChange:function(){last_form_state = $('form').serialize();}}});$(window).bind('beforeunload', function(e) {if(last_form_state != initial_form_state){return false;}});$(document).on("submit","form",function(event){$(window).off('beforeunload');});</script>
 @endsection

@@ -34,9 +34,12 @@ class SearchController extends Controller
                       ->leftJoin('editori', function($join){
                           $join->on('articoli.id_gruppo', '=', 'editori.id');
                         })
+                      ->leftJoin('article_category', function($join){
+                          $join->on('articoli.topic_id', '=', 'article_category.id');
+                        })
                       ->addSelect('utenti.slug as user_slug', 'utenti.name as user_name', 'utenti.surname as user_surname', 'editori.name as publisher_name', 'editori.slug as publisher_slug',
-                                  'articoli.bot_message as bot_message', 'articoli.titolo as article_title', 'articoli.id_gruppo as id_editore', 'articoli.slug as article_slug', 'articoli.copertina as copertina',
-                                  'articoli.created_at as created_at')
+                                  'articoli.bot_message as bot_message', 'articoli.titolo as article_title', 'articoli.id_gruppo as id_editore', 'articoli.slug as article_slug', 'articoli.testo as article_text', 'articoli.copertina as copertina',
+                                  'articoli.created_at as created_at', 'article_category.id as topic_id', 'article_category.name as topic_name', 'article_category.slug as topic_slug')
                       ->orderBy('created_at','desc')->get();
 
     $query3 = Editori::where('name', 'like', '%'. $slug. '%')->get();
@@ -62,9 +65,12 @@ class SearchController extends Controller
                       ->leftJoin('editori', function($join){
                           $join->on('articoli.id_gruppo', '=', 'editori.id');
                         })
+                      ->leftJoin('article_category', function($join){
+                          $join->on('articoli.topic_id', '=', 'article_category.id');
+                        })
                         ->addSelect('utenti.slug as user_slug', 'utenti.name as user_name', 'utenti.surname as user_surname', 'editori.name as publisher_name', 'editori.slug as publisher_slug',
-                                    'articoli.bot_message as bot_message', 'articoli.titolo as article_title', 'articoli.id_gruppo as id_editore', 'articoli.slug as article_slug', 'articoli.copertina as copertina',
-                                    'articoli.created_at as created_at')
+                                    'articoli.bot_message as bot_message', 'articoli.titolo as article_title', 'articoli.id_gruppo as id_editore', 'articoli.slug as article_slug', 'articoli.testo as article_text', 'articoli.copertina as copertina',
+                                    'articoli.created_at as created_at', 'article_category.id as topic_id', 'article_category.name as topic_name', 'article_category.slug as topic_slug')
                       ->orderBy('created_at','desc')
                       ->paginate(6);
 

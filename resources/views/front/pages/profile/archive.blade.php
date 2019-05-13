@@ -50,13 +50,13 @@
             @if($query->count())
             <div class="col-lg-12">
               <div class="row" id="articles">
-                @foreach($query->take(12) as $articolo)
+                @foreach($query->take(12) as $value)
                 <div class="col-lg-4 col-sm-8 col-xs-12">
-                  <a href="{{ url('read/archive/'. $articolo->slug) }}">
+                  <a href="{{ url('read/archive/'. $value->slug) }}">
                     <div class="card">
-                      <img class="card-img-top" src="{{asset($articolo->getBackground())}}" alt="Copertina">
+                      <img class="card-img-top" src="{{ asset($value->getBackground()) }}" alt="Copertina">
                       <div class="card-body">
-                        <h4 class="card-title">{{ $articolo->titolo }}</h4>
+                        <h5 class="card-title">{{ $value->titolo }}</h5>
                       </div>
                     </div>
                   </a>

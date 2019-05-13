@@ -31,14 +31,16 @@
 
           <div class="form-group row">
             <div class="col-md-12">
-              <textarea class="document" name="document__text">{{ $query->testo }}</textarea>
+              <textarea class="document" name="document__text">
+                {{ $query->testo }}
+              </textarea>
             </div>
           </div>
 
           <div class="form-group row">
             <label for="tags" class="col-md-4 col-form-label"><span class="fa fa-tag"></span> Etichette</label>
               <div class="col-md-12">
-                <input type="text" class="form-control" name="tags" value="{!! str_replace(',', ' ', $query->tags) !!}" placeholder="&quot;globalwarming climatestrike&quot; risulterà come #globalwarming #climatestrike" />
+                <input type="text" class="form-control" name="tags" value="{!! str_replace(',', ' ', $query->tags) !!}" placeholder="&quot;globalwarming climatestrike&quot; risulterà come #globalwarming #climatestrike" value="{{ old('tags') }}" />
               </div>
           </div>
 
@@ -57,14 +59,7 @@
 
 <link rel="stylesheet" href="{{ asset('plugins/dist/summernote.css') }}" />
 <script src="{{ asset('plugins/dist/summernote.min.js') }}"></script>
-<script>
-$(".document").summernote({
-  height: 165,
-  toolbar: [
-    ['style'],['style', ['bold', 'italic', 'underline']],['color', ['color']],['para', ['ul', 'ol', 'paragraph']]
-    ,['link'],['picture'],['help']
-  ],
-  placeholder: 'Inizia a scrivere',
-});
-</script>
+<script>var initial_form_state, last_form_state;$(".document").summernote({height: 165,
+toolbar:[['style'],['style', ['bold', 'italic', 'underline']],['color', ['color']],['para', ['ul', 'ol', 'paragraph']],['link'],['picture'],['help']],placeholder: 'Inizia a scrivere',
+callbacks:{onChange:function(){last_form_state = $('form').serialize();}}});$(window).bind('beforeunload', function(e) {if(last_form_state != initial_form_state){return false;}});$(document).on("submit","form",function(event){$(window).off('beforeunload');});</script>
 @endsection

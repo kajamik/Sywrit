@@ -31,8 +31,7 @@ use OpenGraph;
 use Twitter;
 
 class FrontController extends Controller
-{
-
+{    
     public function index(Request $request)
     {
       // SEO ///////////////////////////////////////////////////
@@ -58,7 +57,7 @@ class FrontController extends Controller
                       })
                     ->addSelect('utenti.slug as user_slug', 'utenti.name as user_name', 'utenti.surname as user_surname', 'editori.name as publisher_name', 'editori.slug as publisher_slug',
                                 'articoli.titolo as article_title', 'articoli.id_gruppo as id_editore', 'articoli.slug as article_slug', 'articoli.testo as article_text', 'articoli.copertina as copertina',
-                                'articoli.bot_message as bot_message', 'articoli.created_at as created_at', 'article_category.id as topic_id', 'article_category.name as topic_name')
+                                'articoli.bot_message as bot_message', 'articoli.created_at as created_at', 'article_category.id as topic_id', 'article_category.name as topic_name', 'article_category.slug as topic_slug')
                     ->orderBy('bot_message', 'desc')
                     ->orderBy('created_at', 'desc')
                     ->skip($INDEX_LIMIT * ($current_page-1))
@@ -104,7 +103,7 @@ class FrontController extends Controller
                       $join->on('articoli.topic_id', '=', 'article_category.id');
                     })
                     ->addSelect('articoli.titolo as article_title', 'articoli.slug as article_slug', 'articoli.testo as article_text', 'articoli.copertina as copertina',
-                                'articoli.created_at as created_at', 'article_category.id as topic_id', 'article_category.name as topic_name')
+                                'articoli.created_at as created_at', 'article_category.id as topic_id', 'article_category.name as topic_name', 'article_category.slug as topic_slug')
                     ->where('id_autore', $query->id)
                     ->orderBy('created_at', 'desc');
 
@@ -224,7 +223,7 @@ class FrontController extends Controller
                     })
                     ->addSelect('utenti.slug as user_slug', 'utenti.name as user_name', 'utenti.surname as user_surname',
                                 'articoli.titolo as article_title', 'articoli.slug as article_slug', 'articoli.testo as article_text', 'articoli.copertina as copertina',
-                                'articoli.created_at as created_at', 'article_category.id as topic_id', 'article_category.name as topic_name')
+                                'articoli.created_at as created_at', 'article_category.id as topic_id', 'article_category.name as topic_name', 'article_category.slug as topic_slug')
                     ->where('articoli.id_gruppo', $query->id)
                     ->orderBy('created_at', 'desc')
                     ->skip($INDEX_LIMIT * ($current_page-1))
@@ -309,6 +308,8 @@ class FrontController extends Controller
 
     public function getWrite(Request $request)
     {
+      session()->put('writing', 'true');
+
       // SEO ///////////////////////////////////////////////////
 
         SEOMeta::setTitle('Nuovo Articolo', false)
@@ -426,18 +427,18 @@ class FrontController extends Controller
 
       //-------------------------------------------------------//
 
-      $query = Articoli::find($id);
+      $query = Articoli::where('slug', $id)->first();
 
       if(!empty($query)) {
-        if(Auth::user()->hasMemberOf($query->id_gruppo) || (Auth::user()->id == $query->id_autore)){
+        if(($query->id_gruppo > 0 && Auth::user()->hasMemberOf($query->id_gruppo)) || (Auth::user()->id == $query->id_autore)){
           return view('front.pages.edit_post',compact('query'));
         }else{
           return redirect('read/'.$query->slug);
         }
       } else {
-        $query = SavedArticles::find($id);
+        $query = SavedArticles::where('slug', $id)->first();
         $categories = \DB::table('article_category')->orderBy('name', 'asc')->get();
-        if(Auth::user()->hasMemberOf($query->id_gruppo) || (Auth::user()->id == $query->id_autore)){
+        if(($query->id_gruppo > 0 && Auth::user()->hasMemberOf($query->id_gruppo)) || (Auth::user()->id == $query->id_autore)){
           return view('front.pages.archive.edit_post',compact('query','categories'));
         }
       }

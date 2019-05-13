@@ -386,7 +386,6 @@ ul {
 .block-body * {
   margin-left: 0 !important;
   padding: 0;
-  width: 100% !important;
   float: none !important;
 }
 
@@ -645,7 +644,7 @@ article span[style^='background'] {
 
 /*** ***/
 
-input[type="file"] {
+.custom-upload ~ input[type="file"] {
     display: none;
 }
 .custom-upload {

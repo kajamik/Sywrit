@@ -29,7 +29,7 @@
               @endif
               </a>
               <h5 class="card-title">{{ $value->article_title }}</h5>
-              <h6>{{ str_limit(strip_tags($value->article_text), 100) }}</h6>
+              <p>{!! str_limit(preg_replace('/(<.*?>)|(&.*?;)/', '', $value->article_text), 100) !!}</p>
               <p>
                 Scritto da
                   <a href="{{ url($value->user_slug) }}">

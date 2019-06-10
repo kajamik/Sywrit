@@ -90,38 +90,40 @@ span.time {
         @endif
         <div class="row pt-5">
           <div class="col-lg-10 col-sm-12 col-xs-12">
-            <div class="row">
-              @if($score->count() > 0)
-                <span id="rcount" class="pr-3">{{ number_format($score->sum('score') / $score->count(), 2) }} / 5</span>
-                @if($hasRate || Auth::user() && Auth::user()->id == $query->id_autore || !Auth::user())
-                <div class="rating">
-                  @for($i = 0; $i < 5; $i++)
-                    @if( $score->sum('score') / $score->count() > $i)
-                      @if( floor($score->sum('score') / $score->count()) > $i)
-                      <span class="circle full"></span>
-                      @else
-                      <span class="circle half"></span>
-                      @endif
+
+            @if($score->count() > 0)
+              <span id="rcount" class="pr-3">{{ number_format($score->sum('score') / $score->count(), 2) }} / 5</span>
+              @if($hasRate || Auth::user() && Auth::user()->id == $query->id_autore)
+              <div class="rating">
+                @for($i = 0; $i < 5; $i++)
+                  @if( $score->sum('score') / $score->count() > $i)
+                    @if( floor($score->sum('score') / $score->count()) > $i)
+                    <span class="circle full"></span>
                     @else
-                      <span class="circle"></span>
+                    <span class="circle half"></span>
                     @endif
-                  @endfor
-                </div>
-                @endif
-              @endif
-              @if(Auth::user() && !$hasRate && Auth::user()->id != $query->id_autore)
-              <div id="ui-rating-box">
-                <select id="ui-rating-select" name="rating" autocomplete="off">
-                  <option value=""></option>
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                  <option value="4">4</option>
-                  <option value="5">5</option>
-                </select>
+                  @else
+                    <span class="circle"></span>
+                  @endif
+                @endfor
               </div>
               @endif
+            @endif
+
+            @if(!Auth::check() || (!$hasRate && Auth::user()->id != $query->id_autore && !Auth::user()->suspended))
+            <div>Valuta articolo</div>
+            <div id="ui-rating-box">
+              <select id="ui-rating-select" name="rating" autocomplete="off">
+                <option value=""></option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
             </div>
+            @endif
+
         </div>
         <div class="socials">
           <div class="col-lg-12 col-sm-12 col-xs-12">
@@ -132,8 +134,8 @@ span.time {
               <span class="fa-2x fab fa-linkedin"></span>
             </a>
             @if(Auth::user() && $query->id_autore != Auth::user()->id && !Auth::user()->suspended)
-            <a id="report" href="#report" title="Segnala articolo">
-              <span class="fa-2x fas fa-exclamation-triangle"></span>
+            <a id="report" class="ml-4" href="#report" title="Segnala articolo">
+              <span class="fa-2x fas fa-flag"></span>
             </a>
           </div>
           @endif
@@ -182,47 +184,32 @@ span.time {
     });
   });
   </script>
+  @endif
+  @endauth
+  @if(Auth::guest() || (!$hasRate && Auth::user()->id != $query->id_autore && !Auth::user()->suspended))
   <script src="{{ asset('js/_xs_r.min.js') }}"></script>
   <script>
   $('#ui-rating-select').barrating('show', {
     theme: 'bars-square',
     showValues: false,
     onSelect: function(value, text) {
-      App.query("GET", "{{ route('rate') }}", {id:{{ $query->id }}, rate_value:value}, false, function(data) {
-        $(".br-wrapper *").fadeOut(1500, function(){
-          $(this).fadeIn();
-          $("#rcount").html(data.result.rating);
-        });
+      App.query("GET", "{{ route('rate') }}", {id: {{ $query->id }}, rate_value:value}, false, function(data) {
+        if(data.success) {
+          $(".br-wrapper *").fadeOut();
+        } else {
+          App.getUserInterface({
+            "ui": {
+              "title": "Avviso",
+              "content": [
+                {"type": ["h5"], "text": "Effettua l'accesso per valutare questo articolo."}
+              ]
+            }
+          });
+        }
       });
     }
   });
   </script>
   @endif
-  @endauth
-  {{--<script>
-  $("#timeline").click(function(){
-    App.query("GET", "{{ url('article_history') }}", { id:{{ $query->id }} }, false, function(data) {
-     var properties = [];
-
-      Object.keys(data).forEach(i => {
-        properties.push(
-          {"type": ["h5"], "text": data[i].created_at },
-          {"type": ["a"], "href": "/archive/article/read?url={{ $query->slug }}&&token_id="+data[i].token, "text": data[i].no_tags_text},
-          {"type": ["hr"]}
-        );
-      });
-
-      App.getUserInterface({
-        "ui": {
-          "title": "{{ trans('Cronologia modifiche') }}",
-          "content":
-            properties
-
-        }
-      });
-
-    });
-  });
-  </script>--}}
   </div>
 @endsection

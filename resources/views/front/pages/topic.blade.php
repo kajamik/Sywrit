@@ -19,7 +19,7 @@
                 <img class="card-img-top" src="{{asset($value->getBackground())}}" alt="Copertina Articolo">
                 <div class="card-body">
                   <h5 class="card-title" title="{{ $value->article_title }}">{{ str_limit($value->article_title, 33) }}</h5>
-                  <h6>{!! str_limit(strip_tags($value->article_text), 100) !!}</h6>
+                  <p>{!! str_limit(preg_replace('/(<.*?>)|(&.*?;)/', '', $value->article_text), 100) !!}</p>
                   Pubblicato da
                   @if($value->id_editore)
                   <a href="{{ url($value->publisher_slug) }}">

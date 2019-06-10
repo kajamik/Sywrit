@@ -14,7 +14,7 @@
                 <div class="d-flex">
                   <input id="search_query" name="q" type="text" placeholder="Cerca" onkeyup="fetch_live_search(this.value);" />
                   <div class="set d-flex">
-                    <button id="search" type="submit">
+                    <button id="search" type="submit" role="button" aria-label="true">
                       <span class="fa fa-search"></span>
                     </button>
                   </div>
@@ -92,9 +92,8 @@
             } // -- End Interface --
           });
         });
-          </script>
-          </script>
-          @endauth
+        </script>
+        @endauth
           @auth
           <li>
             <a href="{{url('write')}}">
@@ -103,10 +102,10 @@
           </li>
           @endauth
           <li class="dropdown">
-            <a href="#" data-toggle="dropdown" role="button" aria-expanded="false" href="#" title="Categorie">
+            <a href="#" data-toggle="dropdown" role="button" aria-expanded="false" title="Categorie">
               <span class="fa-1x fa fa-th"></span>
             </a>
-            <div class="dropdown-menu ml-5" role="menu">
+            <div class="dropdown-menu ml-5">
               @foreach($categorie as $value)
               <a class="dropdown-item" href="{{ url('topic/'.$value->slug) }}">
                 {{ $value->name }}
@@ -116,10 +115,10 @@
           </li>
           @auth
           <li class="dropdown">
-            <a id="notification" href="#" data-toggle="dropdown" role="button" aria-expanded="false" href="#" onclick="fetch_live_notifications();" title="Notifiche">
+            <a id="notification" href="#" data-toggle="dropdown" onclick="fetch_live_notifications();" title="Notifiche">
               <i class="fa fa-bell" aria-hidden="true" title="Notifiche"></i>
             </a>
-            <div class="dropdown-menu" role="menu">
+            <div class="dropdown-menu">
               <div class="notification-header">
                 <div class="notification-title">
                   <h3>Notifiche</h3>
@@ -137,8 +136,8 @@
             </div>
           </li>
           <li class="dropdown">
-            <a class="dropdown-toggle" href="#" data-toggle="dropdown" role="button" aria-expanded="false">
-              <img class="u-icon img-circle" src="{{ asset(Auth::user()->getAvatar()) }}"><span class="user-name">{{ Auth::user()->name }}</span>
+            <a class="dropdown-toggle" href="#" data-toggle="dropdown">
+              <img class="u-icon img-circle" src="{{ asset(Auth::user()->getAvatar()) }}" alt="dropdown"><span class="user-name">{{ Auth::user()->name }}</span>
             </a>
             <div class="dropdown-menu" role="menu">
               <a class="dropdown-item" href="{{ url(Auth::user()->slug) }}"><i class="fa fa-user"></i> Il mio profilo</a>

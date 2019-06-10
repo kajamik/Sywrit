@@ -19,7 +19,7 @@
                       <span>{{ $value->topic_name }}</span>
                     @endif
                     <h5 class="card-title" title="{{ $value->article_title }}">{{ str_limit($value->article_title, 33) }}</h5>
-                    <h6>{!! str_limit(strip_tags($value->article_text), 100) !!}</h6>
+                    <p>{!! str_limit(preg_replace('/(<.*?>)|(&.*?;)/', '', $value->article_text), 100) !!}</p>
                     <p>
                       @if($value->bot_message == '1')
                         Messaggio generato dal sistema

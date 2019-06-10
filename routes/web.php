@@ -125,4 +125,9 @@ Route::post('publisher/create', 'FilterController@postNewPublisher')->middleware
 Route::get('page/{slug}', 'FrontController@getPages');
 Route::get('page/{slug}/{slug2}', 'FrontController@getPages');
 
+// Facebook auth
+
+Route::get('auth/facebook', 'Auth\LoginController@redirectToProvider');
+Route::get('facebook/callback', 'Auth\LoginController@handleProviderCallback');
+
 Route::fallback(function(){ return response()->view('errors.404', [], 404); });

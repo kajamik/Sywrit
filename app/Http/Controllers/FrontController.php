@@ -31,7 +31,7 @@ use OpenGraph;
 use Twitter;
 
 class FrontController extends Controller
-{    
+{
     public function index(Request $request)
     {
       // SEO ///////////////////////////////////////////////////
@@ -56,7 +56,7 @@ class FrontController extends Controller
                         $join->on('articoli.topic_id', '=', 'article_category.id');
                       })
                     ->addSelect('utenti.slug as user_slug', 'utenti.name as user_name', 'utenti.surname as user_surname', 'editori.name as publisher_name', 'editori.slug as publisher_slug',
-                                'articoli.titolo as article_title', 'articoli.id_gruppo as id_editore', 'articoli.slug as article_slug', 'articoli.testo as article_text', 'articoli.copertina as copertina',
+                                'articoli.titolo as article_title', 'articoli.id_gruppo as id_editore', 'articoli.slug as article_slug', DB::raw('articoli.testo as article_text'), 'articoli.copertina as copertina',
                                 'articoli.bot_message as bot_message', 'articoli.created_at as created_at', 'article_category.id as topic_id', 'article_category.name as topic_name', 'article_category.slug as topic_slug')
                     ->orderBy('bot_message', 'desc')
                     ->orderBy('created_at', 'desc')

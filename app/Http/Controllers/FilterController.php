@@ -56,7 +56,7 @@ class FilterController extends Controller
         File::delete($filePath);
       }
       $fileName = rand().'.jpg';
-      $image = Image::make($a)->resize(1110, 350)->encode('jpg');
+      $image = Image::make($a)->resize(1110, 350)->encode('jpg', 100);
       Storage::disk('accounts')->put($fileName, $image);
       $query->copertina = $fileName;
     }
@@ -79,7 +79,7 @@ class FilterController extends Controller
         $fileName = rand().'.jpg';
         //crop(480,500,0,0)
         //crop($request->width[0],$request->height[0],$request->x[0],$request->y[0])
-        $image = Image::make($a)->resize(160, 160)->encode('jpg');
+        $image = Image::make($a)->resize(160, 160)->encode('jpg', 100);
         Storage::disk('accounts')->put($fileName, $image);
       }
       $query->avatar = $fileName;
@@ -274,7 +274,7 @@ class FilterController extends Controller
           Storage::disk('groups')->delete($query->cover);
         }
         $resize = '__160x160'.Str::random(64).'.jpg';
-        $image = Image::make($a)->resize(1110, 350)->encode('jpg');
+        $image = Image::make($a)->resize(1110, 350)->encode('jpg', 100);
         Storage::disk('groups')->put($resize, $image);
         $query->cover = $resize;
       }
@@ -289,8 +289,7 @@ class FilterController extends Controller
           Storage::disk('groups')->delete($query->avatar);
         }
         $fileName = rand().'.jpg';
-        //crop($request->width[0],$request->height[0],$request->x[0],$request->y[0])->resize(160, 160)
-        $image = Image::make($a)->encode('jpg');
+        $image = Image::make($a)->encode('jpg', 100);
         Storage::disk('groups')->put($fileName, $image);
         $query->avatar = $fileName;
       }
@@ -334,7 +333,7 @@ class FilterController extends Controller
             Storage::disk('groups')->delete($query->cover);
           }
           $resize = '__160x160'.Str::random(64).'.jpg';
-          $image = Image::make($a)->resize(1110, 350)->encode('jpg');
+          $image = Image::make($a)->resize(1110, 350)->encode('jpg', 100);
           Storage::disk('groups')->put($resize, $image);
           $query->cover = $resize;
         }
@@ -349,11 +348,7 @@ class FilterController extends Controller
             Storage::disk('groups')->delete($query->avatar);
           }
           $fileName = rand().'.jpg';
-          /*if(resize){
-            $('#image_'+$(b).attr('id')).rcrop();
-          }*/
-          //crop($request->width[0],$request->height[0],$request->x[0],$request->y[0])
-          $image = Image::make($a)->resize(160, 160)->encode('jpg');
+          $image = Image::make($a)->resize(160, 160)->encode('jpg', 100);
           Storage::disk('groups')->put($fileName, $image);
           $query->avatar = $fileName;
         }
@@ -440,7 +435,7 @@ class FilterController extends Controller
       }
 
       if($testo) {
-        $dom = new \DomDocument();
+        /*$dom = new \DomDocument();
         $dom->loadHtml($testo, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
         $images = $dom->getElementsByTagName('img');
 
@@ -469,18 +464,15 @@ class FilterController extends Controller
 
             $img->setAttribute('src', $new_src);
           } // <!--endif
-        } // <!--endforeach
-        $query->testo = $dom->saveHTML();
+        } // <!--endforeach*/
+        $query->testo = $testo;
       }
 
       if($a = $request->image) {
         $resize = '__492x340'.Str::random(64).'.jpg';
         $normal_image = '__'.Str::random(64).'.jpg';
-        //crop($request->width[0],$request->height[0],$request->x[0],$request->y[0])
-        $image = Image::make($a)->resize(492, 340)->encode('jpg');
+        $image = Image::make($a)->resize(492, 340)->encode('jpg', 100);
         Storage::disk('articles')->put($resize, $image);
-        $image = Image::make($a)->encode('jpg');
-        Storage::disk('articles')->put($normal_image, $image);
         $query->copertina = $resize;
       }
 

@@ -8,6 +8,17 @@
                 <div class="card-header">{{ __('Effettua l\'accesso al portale') }}</div>
 
                 <div class="card-body">
+
+                  <div class="form-group row">
+                      <div class="col-md-8 offset-md-4">
+                        <a href="{{ url('auth/facebook') }}">
+                          <button type="button" class="btn btn-facebook">
+                              {{ __('Accedi con Facebook') }}
+                          </button>
+                        </a>
+                      </div>
+                  </div>
+                  
                     <form method="POST" action="{{ route('login') }}">
                         @csrf
 
@@ -64,6 +75,7 @@
                                 @endif
                             </div>
                         </div>
+
                     </form>
                 </div>
             </div>

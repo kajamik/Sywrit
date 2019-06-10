@@ -45,47 +45,43 @@ class AjaxController extends Controller
         $rating_value = $request->rate_value;
       }
 
-      try{
-        $article = Articoli::where('id', $article_id)->first();
+      $article = Articoli::where('id', $article_id)->first();
 
-        if(Auth::user()->id != $article->id_autore && !$score && !empty($article)){
+      if(Auth::user()->id != $article->id_autore && $score == 0 && !empty($article)){
 
-          $score = new ArticleScore();
-          $score->user_id = Auth::user()->id;
-          $score->article_id = $article->id;
-          $score->score = $rating_value;
-          $score->save();
+        $score = new ArticleScore();
+        $score->user_id = Auth::user()->id;
+        $score->article_id = $article->id;
+        $score->score = $rating_value;
+        $score->save();
 
-          if($article->id_gruppo != NULL) {
-            $editore = \DB::table('editori')->where('id', $query->id_gruppo)->first();
-            $components = collect(explode(',',$editore->componenti))->filter(function ($value, $key) {
-              return $value != "";
-            });
-            foreach($components as $value) {
-              $noty = new Notifications();
-              $noty->sender_id = Auth::user()->id;
-              $noty->target_id = $value;
-              $noty->content_id = $query->id;
-              $noty->text = $rating_value;
-              $noty->type = '2';
-              $noty->marked = '0';
-              $noty->save();
-            }
-          } else {
-              $noty = new Notifications();
-              $noty->sender_id = Auth::user()->id;
-              $noty->target_id = $article->id_autore;
-              $noty->content_id = $article->id;
-              $noty->text = $rating_value;
-              $noty->type = '2';
-              $noty->marked = '0';
-              $noty->save();
+        if($article->id_gruppo != NULL) {
+          $editore = \DB::table('editori')->where('id', $article->id_gruppo)->first();
+          $components = collect(explode(',',$editore->componenti))->filter(function ($value, $key) {
+            return ($value != "" && $value != Auth::user()->id);
+          });
+          foreach($components as $value) {
+            $noty = new Notifications();
+            $noty->sender_id = Auth::user()->id;
+            $noty->target_id = $value;
+            $noty->content_id = $article->id;
+            $noty->text = $rating_value;
+            $noty->type = '2';
+            $noty->marked = '0';
+            $noty->save();
           }
+        } else {
+            $noty = new Notifications();
+            $noty->sender_id = Auth::user()->id;
+            $noty->target_id = $article->id_autore;
+            $noty->content_id = $article->id;
+            $noty->text = $rating_value;
+            $noty->type = '2';
+            $noty->marked = '0';
+            $noty->save();
         }
-        return Response::json($rating_value);
-      }catch(ErrorException $error){
-        //
       }
+      return Response::json($rating_value);
   }
 
   public function SearchLiveData(Request $request)
@@ -155,6 +151,7 @@ class AjaxController extends Controller
     }
     $query->delete();
   }
+  
   /*** Commenti ***/
 
   public function loadComments(Request $request)

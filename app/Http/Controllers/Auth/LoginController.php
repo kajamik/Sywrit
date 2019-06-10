@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use \Illuminate\Http\Request;
 
+use Socialite;
+
 // SEO
 use SEOMeta;
 
@@ -54,4 +56,33 @@ class LoginController extends Controller
         $del->delete();
       }
     }
+
+    /*** Redirect the user to the Facebook authentication page.
+    *
+    * @return \Illuminate\Http\Response
+    */
+
+    public function redirectToProvider()
+    {
+        return Socialite::driver('facebook')->redirect();
+    }
+
+    /**
+     * Obtain the user information from Facebook.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function handleProviderCallback()
+    {
+        $userSocial = Socialite::driver('facebook')->user();
+
+        /*$authUser = $this->findOrCreateUser($userSocial, 'facebook');
+        Auth::login($authUser, true);
+        return redirect($this->redirectTo);*/
+
+      /*  $user = new User;
+
+        $user->name = $userSocial->name;*/
+    }
+
 }

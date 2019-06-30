@@ -9,35 +9,12 @@
 
 @section('main')
 <style>
-.publisher-body .block-article a, .publisher-body .block-article a:hover {
-  text-decoration: underline;
-}
-div.date-info {
-  margin-top: 12px;
-}
-span.date {
-  text-transform: capitalize;
-}
-span.time {
-  padding: 0;
-}
 .block-body {
   padding: 12px;
+  min-height: 18em;
 }
 .feeds {
   padding: 15px;
-}
-.btn-custom {
-  background-color: #fff;
-  border: 1px solid #000;
-  border-radius: 3px;
-}
-.btn-custom:active {
-  outline: none;
-}
-._button_active_ {
-  background-color: #A22932;
-  color: #fff;
 }
 </style>
   <div class="publisher-home">
@@ -49,100 +26,149 @@ span.time {
           @endif
         </div>
         @endauth
-      <article class="block-article">
-        <div class="block-title">
-          <h1 class="text-uppercase">{{ $query->titolo }}</h1>
-        </div>
-        @if($query->id_gruppo > 0)
-        <p>Pubblicato da <a href="{{ url($editore->slug) }}">{{ $editore->name }}</a></p>
-        @endif
-        <p>Scritto da <a href="{{ url($autore->slug) }}">{{ $autore->name }} {{ $autore->surname }}</a></p>
-        <div class="date-info">
-          <span class="date"><i class="far fa-calendar-alt"></i> {{ $date }}</span>
-          <span class="time"><i class="far fa-clock"></i> {{ $time }}</span><br/>
-        </div>
-        <hr/>
-        <div class="block-body">
-          {!! $query->testo !!}
-        </div>
-        <hr style="border-style:dotted"/>
-        <div class="both"></div>
-        <div class="auth">
-          @if($query->license == "1")
-          <p>&copy; Produzione riservata</p>
-          @else
-          <img src="{{ asset('upload/icons/cc.png') }}" title="{{ trans('Licenza Creative Commons BY SA') }}" alt="License Creative Commons BY SA" />
+      <div class="row">
+        <div class="col-lg-9 col-md-9">
+        <article class="block-article">
+          <div class="block-title">
+            <h1 class="text-uppercase">{{ $query->titolo }}</h1>
+          </div>
+          @if($query->id_gruppo > 0)
+          <p>Pubblicato da <a href="{{ url($editore->slug) }}">{{ $editore->name }}</a></p>
           @endif
-        </div>
-        @if(!empty($query->tags))
-        <div class="block-meta">
-          <ul class="meta-tags">
-            <span class="fa fa-tags"></span>
-            @foreach($tags as $tag)
-              <li><a href="{{ url('search/tag/'.$tag) }}">#{{ $tag }}</a></li>
-            @endforeach
-          </ul>
-        </div>
-        @endif
-      <div class="block-footer">
-        @if($query->created_at != $query->updated_at)
-        <span>Modificato {{ $query->updated_at->diffForHumans() }}</span>
-        @endif
-        <div class="row pt-5">
-          <div class="col-lg-10 col-sm-12 col-xs-12">
-
-            @if($score->count() > 0)
-              <span id="rcount" class="pr-3">{{ number_format($score->sum('score') / $score->count(), 2) }} / 5</span>
-              @if($hasRate || Auth::user() && Auth::user()->id == $query->id_autore)
-              <div class="rating">
-                @for($i = 0; $i < 5; $i++)
-                  @if( $score->sum('score') / $score->count() > $i)
-                    @if( floor($score->sum('score') / $score->count()) > $i)
-                    <span class="circle full"></span>
-                    @else
-                    <span class="circle half"></span>
-                    @endif
-                  @else
-                    <span class="circle"></span>
-                  @endif
-                @endfor
-              </div>
-              @endif
+          <p>Scritto da <a href="{{ url($autore->slug) }}">{{ $autore->name }} {{ $autore->surname }}</a></p>
+          <div class="date-info">
+            <span class="date"><i class="far fa-calendar-alt"></i> {{ $date }}</span>
+            <span class="time"><i class="far fa-clock"></i> {{ $time }}</span><br/>
+          </div>
+          <hr/>
+          <div class="block-body">
+            {!! $query->testo !!}
+          </div>
+          <hr style="border-style:dotted"/>
+          <div class="both"></div>
+          <div class="auth">
+            @if($query->license == "1")
+            <p>&copy; Produzione riservata</p>
+            @else
+            <img src="{{ asset('upload/icons/cc.png') }}" title="{{ trans('Licenza Creative Commons BY SA') }}" alt="License Creative Commons BY SA" />
             @endif
-
-            @if(!Auth::check() || (!$hasRate && Auth::user()->id != $query->id_autore && !Auth::user()->suspended))
-            <div>Valuta articolo</div>
-            <div id="ui-rating-box">
-              <select id="ui-rating-select" name="rating" autocomplete="off">
-                <option value=""></option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-              </select>
-            </div>
-            @endif
-
-        </div>
-        <div class="socials">
-          <div class="col-lg-12 col-sm-12 col-xs-12">
-            <a id="share_on_facebook" href="https://www.facebook.com/share.php?u={{Request::url()}}" target="_blank">
-              <span class="fa-2x fab fa-facebook-square"></span>
-            </a>
-            <a id="share_on_linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url={{Request::url()}}" target="_blank">
-              <span class="fa-2x fab fa-linkedin"></span>
-            </a>
-            @if(Auth::user() && $query->id_autore != Auth::user()->id && !Auth::user()->suspended)
-            <a id="report" class="ml-4" href="#report" title="Segnala articolo">
-              <span class="fa-2x fas fa-flag"></span>
-            </a>
+          </div>
+          @if(!empty($query->tags))
+          <div class="block-meta">
+            <ul class="meta-tags">
+              <span class="fa fa-tags"></span>
+              @foreach($tags as $tag)
+                <li><a href="{{ url('search/tag/'.$tag) }}">#{{ $tag }}</a></li>
+              @endforeach
+            </ul>
           </div>
           @endif
+        <div class="block-footer">
+          @if($query->created_at != $query->updated_at)
+          <span>Modificato {{ $query->updated_at->diffForHumans() }}</span>
+          @endif
+          <div class="row pt-5">
+            <div class="article-rating col-lg-10 col-sm-12 col-xs-12">
+
+              @if($score->count() > 0)
+                <span id="rcount" class="pr-3">{{ number_format($score->sum('score') / $score->count(), 2) }} / 5</span>
+                @if($hasRate || Auth::user() && Auth::user()->id == $query->id_autore)
+                <div class="rating">
+                  @for($i = 0; $i < 5; $i++)
+                    @if( $score->sum('score') / $score->count() > $i)
+                      @if( floor($score->sum('score') / $score->count()) > $i)
+                      <span class="circle full"></span>
+                      @else
+                      <span class="circle half"></span>
+                      @endif
+                    @else
+                      <span class="circle"></span>
+                    @endif
+                  @endfor
+                </div>
+                @endif
+              @endif
+
+              @if(!Auth::check() || (!$hasRate && Auth::user()->id != $query->id_autore && !Auth::user()->suspended))
+              <div>Valuta articolo</div>
+              <div id="ui-rating-box">
+                <select id="ui-rating-select" name="rating" autocomplete="off">
+                  <option value=""></option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+              </div>
+              @endif
+
+          </div>
+          <div class="socials">
+            <div class="col-lg-12 col-sm-12 col-xs-12">
+              <a id="share" href="#share">
+                <span class="fa-2x fa fa-share-square"></span>
+              </a>
+              @if(Auth::guest() || (Auth::user() && $query->id_autore != Auth::user()->id && !Auth::user()->suspended))
+              <a id="report" class="ml-4" href="#report" title="Segnala articolo">
+                <span class="fa-2x fas fa-flag"></span>
+              </a>
+            </div>
+            @endif
+            <script>
+              App.share({
+                'apps': [
+                  'facebook', 'linkedin'
+                ],
+                'appendTo': '#share',
+              });
+            </script>
+          </div>
+        </div>
+      </div>
+      </article>
+    </div>
+      <div class="col-lg-3 col-md-3">
+        <div class="position-sticky sticky-top" style="top:63px">
+          <div class="card">
+            <div class="card-header bg-sw">
+              {!! $autore->getRealName() !!}
+            </div>
+            <div class="card-body">
+
+              <div class="text-center">
+
+                <img src="{{ $autore->getAvatar() }}" alt="Avatar di {{ $autore->name }} {{ $autore->surname }}" />
+
+                <hr/>
+
+                @if(!empty($autore->biography))
+                  <h5>Biografia:</h5>
+                  <p>{!! $autore->biography !!}</p>
+                @endif
+
+                @if(!empty($autore->facebook))
+                  <a href="https://facebook.com/{{ $autore->facebook }}" target="_blank" title="Facebook">
+                    <i class="fab fa-facebook fa-2x"></i>
+                  </a>
+                @endif
+                @if(!empty($autore->instagram))
+                  <a href="https://instagram.com/{{ $autore->instagram }}" target="_blank" title="Instagram">
+                    <i class="fab fa-instagram fa-2x"></i>
+                  </a>
+                @endif
+                @if(!empty($autore->linkedin))
+                  <a href="https://linkedin.com/in/{{ $autore->linkedin }}" target="_blank" title="Linkedin">
+                    <i class="fab fa-linkedin fa-2x"></i>
+                  </a>
+              @endif
+
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-    </article>
     {{-- Se gli articolo esistono allora li visualizza --}}
     @include('front.components.article.feeds')
 
@@ -185,31 +211,52 @@ span.time {
   });
   </script>
   @endif
-  @endauth
-  @if(Auth::guest() || (!$hasRate && Auth::user()->id != $query->id_autore && !Auth::user()->suspended))
-  <script src="{{ asset('js/_xs_r.min.js') }}"></script>
+  @else
   <script>
-  $('#ui-rating-select').barrating('show', {
-    theme: 'bars-square',
-    showValues: false,
-    onSelect: function(value, text) {
-      App.query("GET", "{{ route('rate') }}", {id: {{ $query->id }}, rate_value:value}, false, function(data) {
-        if(data.success) {
-          $(".br-wrapper *").fadeOut();
-        } else {
-          App.getUserInterface({
-            "ui": {
-              "title": "Avviso",
-              "content": [
-                {"type": ["h5"], "text": "Effettua l'accesso per valutare questo articolo."}
-              ]
-            }
-          });
-        }
-      });
-    }
+  $("#report").click(function(){
+    validator();
   });
   </script>
+  @endauth
+  <script src="{{ asset('js/_xs_r.min.js') }}"></script>
+  <script>
+    $('#ui-rating-select').barrating('show', {
+      theme: 'bars-square',
+      showValues: false,
+      @if(Auth::user() && (!$hasRate && Auth::user()->id != $query->id_autore && !Auth::user()->suspended))
+      onSelect: function(value, text) {
+        App.query("GET", "{{ route('rate') }}", {id: {{ $query->id }}, rate_value:value}, false, function(data) {
+          $(".article-rating").html(data);
+      });
+    }
+    @else
+    onSelect: function() {validator();}
+    @endif
+  });
+  </script>
+
+  @if(Auth::guest())
+  <script>
+  function validator() {
+    App.getUserInterface({
+      "ui": {
+        "title": "Avviso",
+        "content": [
+          {"type": ["h5"], "text": "Effettua l'accesso per valutare questo articolo."}
+        ]
+      }
+    });
+  }
+  </script>
   @endif
+  {{--<link rel="stylesheet" href="{{ asset('lib/noty.css') }}" />
+  <script src="{{ asset('lib/noty.js') }}"></script>
+  <script>
+  new Noty({
+    type: 'info',
+    layout: 'topRight',
+    text: 'Hai sbloccato un nuovo achievement: <br>Scrivi il tuo primo articolo'
+}).show();
+</script>--}}
   </div>
 @endsection

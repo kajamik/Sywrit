@@ -22,11 +22,12 @@ mix.styles([
 // admin
 .styles([
   'public/css/toolbox/_dex.css',
-], 'public/css/toolbox/_dex.min.css')
-.js([
+], 'public/css/toolbox/_dex.min.css');
+
+mix.minify([
   'public/js/app.js',
 ],'public/js/app.min.js')
-.js([
+.minify([
   'public/js/core/bootstrap-material-design.min.js',
   'public/js/toolbox/_dex.js',
 ], 'public/js/toolbox/_dex.min.js');

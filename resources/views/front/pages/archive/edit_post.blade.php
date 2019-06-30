@@ -8,7 +8,7 @@
 
 @section('main')
     <div class="publisher-body">
-      <a href="{{url('read/archive/'.$query->slug)}}">Annulla modifiche</a>
+      <a href="{{ url('read/archive/'.$query->slug) }}">Annulla modifiche</a>
       <form method="post" action="" enctype="multipart/form-data">
         @csrf
 

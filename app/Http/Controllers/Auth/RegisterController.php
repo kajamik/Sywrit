@@ -12,6 +12,7 @@ use Illuminate\Support\Str;
 use App\Notifications\UserWelcome as UserWelcomeNotification;
 //
 use Image;
+use Storage;
 
 // Seo
 use SEOMeta;
@@ -90,7 +91,7 @@ class RegisterController extends Controller
             'surname' => $data['surname'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
-            'avatar' => $img_name,
+            'avatar' => Storage::disk('accounts')->url('accounts/'.$img_name),
             // informazioni aggiuntive
             'rank' => '1',
             'points' => '0',

@@ -8,19 +8,15 @@ class Articoli extends Model
 {
     protected $table = 'articoli';
 
-    private $storage = 'storage/articles';
-
     public function getBackground() {
-      $file = $this->storage.'/'.$this->copertina;
-
       if($this->bot_message != '1') {
-        if($this->copertina && file_exists($file)){
-            return $file;
+        if($this->copertina){
+            return $this->copertina;
         } else {
-          return 'upload/no-image.jpg';
+          return asset('upload/no-image.jpg');
         }
       } else {
-        return 'upload/_bot.jpg';
+        return asset('upload/_bot.jpg');
       }
     }
 

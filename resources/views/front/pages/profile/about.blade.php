@@ -19,17 +19,17 @@
 }
 </style>
   <div class="publisher-home">
-    <div class="publisher-header" style="background-image: url({{ asset($query->getBackground() )}});border-radius:4px 4px 0 0;">
+    <div class="publisher-header" style="background-image: url({{ $query->getBackground() }});border-radius:4px 4px 0 0;">
       <div class="container">
         <div class="publisher-logo">
           <div class="row">
             <div class="d-inline">
-              <img src="{{ asset($query->getAvatar()) }}" alt="Logo">
+              <img src="{{ $query->getAvatar() }}" alt="Logo">
             </div>
-            <div class="col-lg-10 col-sm-col-xs-12">
-              <div class="mt-2 info">
-                <span>{{ $query->name }} {{ $query->surname }}</span>
-              </div>
+            <div class="ml-2 mt-2 info">
+              <span>
+                {!! $query->getRealName() !!}
+              </span>
             </div>
           </div>
         </div>
@@ -93,20 +93,20 @@
         @endif
       </div>
 
-<style>
-h2 {
-  padding: 8px
-  border-radius: 4px;
-  text-transform: uppercase;
-  font-size: 23px;
-}
-h2 + div {
-  padding: 15px;
-}
-address > a, address > a:hover {
-  text-decoration: underline;
-}
-</style>
+      <style>
+      h2 {
+        padding: 8px
+        border-radius: 4px;
+        text-transform: uppercase;
+        font-size: 23px;
+      }
+      h2 + div {
+        padding: 15px;
+      }
+      address > a, address > a:hover {
+        text-decoration: underline;
+      }
+      </style>
 
         <div class="publisher-content">
           <div class="py-3">
@@ -122,7 +122,7 @@ address > a, address > a:hover {
                   <div class="v_card col-lg-2 col-sm-8 col-xs-12">
                     <a href="{{ url($user->slug) }}">
                       <div class="card">
-                        <img class="card-img-top" src="{{ asset($user->getAvatar()) }}" alt="Avatar">
+                        <img class="card-img-top" src="{{ $user->getAvatar() }}" alt="Avatar">
                         <div class="card-body">
                           <strong class="card-title">{{ $user->name }} {{ $user->surname }}</strong>
                         </div>
@@ -161,5 +161,5 @@ address > a, address > a:hover {
           </div>
     </div>
   </div>
-</section>
+</div>
 @endsection

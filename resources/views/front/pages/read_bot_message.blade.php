@@ -13,7 +13,7 @@
     <meta property="og:description" content="{!! str_limit(strip_tags($query->testo), 100, '...') !!}" />
     <meta property="og:type" content="s" />
     <meta property="og:url" content="{{ Request::url() }}" />
-    <meta property="og:image" content="{{ asset($query->getBackground()) }}" />
+    <meta property="og:image" content="{{ $query->getBackground() }}" />
     <meta property="article:published_time" content="{{ $query->created_at }}" />
     <meta property="article:tag" content="{{ $query->tags }}" />
 @endsection--}}

@@ -1,9 +1,5 @@
 @extends('front.layout.app')
 
-@section('title', 'Pagina non trovata - ')
-
-@section('description', config('app.name'). ': la nuova piattaforma multi-genere di scrittura online.')
-
 @section('main')
 @php
 

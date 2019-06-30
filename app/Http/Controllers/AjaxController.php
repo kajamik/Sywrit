@@ -21,6 +21,9 @@ use App\Models\ArticleComments;
 use App\Models\AnswerComments;
 use App\Models\ArticleScore;
 
+// Achievements
+use App\Achievements\FirstComment;
+
 class AjaxController extends Controller
 {
 
@@ -80,8 +83,9 @@ class AjaxController extends Controller
             $noty->marked = '0';
             $noty->save();
         }
+        return view('front.components.article.rate')->with(['query' => $article]);
+        //return Response::json(['success' => true, 'html' => ]);
       }
-      return Response::json($rating_value);
   }
 
   public function SearchLiveData(Request $request)
@@ -151,7 +155,7 @@ class AjaxController extends Controller
     }
     $query->delete();
   }
-  
+
   /*** Commenti ***/
 
   public function loadComments(Request $request)
@@ -202,6 +206,7 @@ class AjaxController extends Controller
             $noty->save();
         }
       }
+
       return view('front.components.ajax.uploadComment')->with(['post' => $query2]);
     }
   }

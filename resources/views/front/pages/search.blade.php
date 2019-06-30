@@ -13,7 +13,7 @@
             <a href="{{ url('read/'.$value->article_slug)}}">
               <div class="card-header">{{ \Carbon\Carbon::parse($value->created_at)->diffForHumans() }}</div>
               <div class="card">
-                <img class="card-img-top" src="{{ asset($value->getBackground()) }}" alt="{{ $value->article_title }}">
+                <img class="card-img-top" src="{{ $value->getBackground() }}" alt="{{ $value->article_title }}">
                   <div class="card-body">
                     @if($value->topic_id)
                       <span>{{ $value->topic_name }}</span>
@@ -43,7 +43,7 @@
             <div class="col-lg-3 col-sm-4 col-xs-12">
               <a href="{{ url($value->slug) }}">
                 <div class="card">
-                  <img class="card-img-top" src="{{ asset($value->getAvatar()) }}" alt="{{ $value->name }} {{ $value->surname}}">
+                  <img class="card-img-top" src="{{ $value->getAvatar() }}" alt="{{ $value->name }} {{ $value->surname}}">
                   <div class="card-body">
                     @if(!empty($value->direttore))
                     <span>Redazione</span>

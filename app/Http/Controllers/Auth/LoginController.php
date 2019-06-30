@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use \Illuminate\Http\Request;
 
+use App\Models\User;
+use Auth;
 use Socialite;
 
 // SEO
@@ -57,32 +59,62 @@ class LoginController extends Controller
       }
     }
 
-    /*** Redirect the user to the Facebook authentication page.
-    *
-    * @return \Illuminate\Http\Response
-    */
-
+    /**
+     * Redirect the user to the GitHub authentication page.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function redirectToProvider()
     {
         return Socialite::driver('facebook')->redirect();
     }
 
     /**
-     * Obtain the user information from Facebook.
+     * Obtain the user information from GitHub.
      *
      * @return \Illuminate\Http\Response
      */
     public function handleProviderCallback()
     {
-        $userSocial = Socialite::driver('facebook')->user();
+        $userSocial = Socialite::driver('facebook')
+                          ->fields([
+                            'name',
+                            'first_name',
+                            'last_name',
+                            'email',
+                            'gender',
+                            'verified'
+                          ])
+                          ->user();
 
-        /*$authUser = $this->findOrCreateUser($userSocial, 'facebook');
-        Auth::login($authUser, true);
-        return redirect($this->redirectTo);*/
+        $user = User::where('social_auth_id', $userSocial->getId())->first();
 
-      /*  $user = new User;
+        if(!$user) {
+          // New User
+          $user = User::create([
+              'name' => $userSocial->user['first_name'],
+              'surname' => $userSocial->user['last_name'],
+              'email' => $userSocial->user['email'],
+              'password' => $userSocial->token,
+              'avatar' => $userSocial->avatar,
+              'social_auth_id' => $userSocial->getId(),
+              // informazioni aggiuntive
+              'rank' => '1',
+              'points' => '0',
+              'followers_count' => '0',
+              'notifications_count' => '0',
+          ]);
 
-        $user->name = $userSocial->name;*/
+          $user->slug = $user->id.'-'.str_slug($userSocial->user['first_name'].$userSocial->user['last_name'], '');
+          $user->save();
+
+          // invio l'email di benvenuto all'utente
+          $user->notify(new \App\Notifications\UserWelcome($user->name));
+        }
+
+        Auth::login($user, true);
+
+        return redirect($this->redirectTo);
+
     }
-
 }

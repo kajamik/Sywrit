@@ -16,7 +16,7 @@
             <a href="{{ url('read/'.$value->article_slug)}}">
               <div class="card-header">{{ $value->created_at->diffForHumans() }}</div>
               <div class="card">
-                <img class="card-img-top" src="{{asset($value->getBackground())}}" alt="Copertina Articolo">
+                <img class="card-img-top" src="{{ $value->getBackground() }}" alt="Copertina Articolo">
                 <div class="card-body">
                   <h5 class="card-title" title="{{ $value->article_title }}">{{ str_limit($value->article_title, 33) }}</h5>
                   <p>{!! str_limit(preg_replace('/(<.*?>)|(&.*?;)/', '', $value->article_text), 100) !!}</p>

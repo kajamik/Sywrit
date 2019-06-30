@@ -11,21 +11,22 @@
 
                   <div class="form-group row">
                       <div class="col-md-8 offset-md-4">
-                        <a href="{{ url('auth/facebook') }}">
-                          <button type="button" class="btn btn-facebook">
+                        <a href="{{ url('auth/facebook/redirect') }}">
+                          <button type="button" class="btn btn-facebook btn-block">
+                              <i class="fab fa-facebook-f"></i>
                               {{ __('Accedi con Facebook') }}
                           </button>
                         </a>
                       </div>
                   </div>
-                  
+
                     <form method="POST" action="{{ route('login') }}">
                         @csrf
 
                         <div class="form-group row">
                             <label for="email" class="col-md-4 col-form-label text-md-right">{{ __('Indirizzo email') }}</label>
 
-                            <div class="col-md-6">
+                            <div class="col-md-8">
                                 <input id="email" type="email" class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" name="email" value="{{ old('email') }}" required autofocus>
 
                                 @if ($errors->has('email'))
@@ -39,7 +40,7 @@
                         <div class="form-group row">
                             <label for="password" class="col-md-4 col-form-label text-md-right">{{ __('Password') }}</label>
 
-                            <div class="col-md-6">
+                            <div class="col-md-8">
                                 <input id="password" type="password" class="form-control{{ $errors->has('password') ? ' is-invalid' : '' }}" name="password" required>
 
                                 @if ($errors->has('password'))

@@ -10,17 +10,17 @@
 }
 </style>
   <div class="publisher-home">
-    <div class="publisher-header" style="background-image: url({{ asset($query->getBackground() )}});border-radius:4px 4px 0 0;">
+    <div class="publisher-header" style="background-image: url( {{ $query->getBackground() }} );border-radius:4px 4px 0 0;">
       <div class="container">
         <div class="publisher-logo">
           <div class="row">
             <div class="d-inline">
-              <img src="{{ asset($query->getAvatar()) }}" alt="Logo">
+              <img src="{{ $query->getAvatar() }}" alt="Logo">
             </div>
-            <div class="col-lg-10 col-sm-col-xs-12">
-              <div class="mt-2 info">
-                <span>{{ $query->name }} {{ $query->surname }}</span>
-              </div>
+            <div class="ml-2 mt-2 info">
+              <span>
+                {!! $query->getRealName() !!}
+              </span>
             </div>
           </div>
         </div>
@@ -45,7 +45,7 @@
             @else
             <p>Editore presso
                 @foreach($query->getPublishersInfo() as $value)
-                  <a class="text-underline" href="{{ url($value->slug) }}"> {{ $value->name }}</a>
+                  <a class="text-underline" href="{{ url('publisher/'.$value->slug) }}"> {{ $value->name }}</a>
                 @endforeach
             </p>
             @endif

@@ -1,10 +1,7 @@
-<a data-toggle="dropdown" href="#">
-    <i class="fas fa-cog"></i> Opzioni Articolo
-  </a>
-  <div class="dropdown-menu" id="nodes">
-    <a id="edt" class="dropdown-item" href="{{ url('post/'.$query->slug.'/edit') }}">Modifica articolo</a>
-    <a id="dlt" class="dropdown-item" href="#" onclick="link(this,'{{ route('article/action/delete') }}')">Elimina articolo</a>
-  </div>
+  <ul class="d-flex bg-sw p-2 mb-3">
+    <li><a id="edt" href="{{ url('post/'.$query->slug.'/edit') }}">Modifica articolo</a></li>
+    <li><a id="dlt" class="ml-2" href="#" onclick="link(this,'{{ route('article/action/delete') }}')">Elimina articolo</a></li>
+  </ul>
 
 <script>
 function link(e, route){

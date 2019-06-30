@@ -137,7 +137,7 @@
           </li>
           <li class="dropdown">
             <a class="dropdown-toggle" href="#" data-toggle="dropdown">
-              <img class="u-icon img-circle" src="{{ asset(Auth::user()->getAvatar()) }}" alt="dropdown"><span class="user-name">{{ Auth::user()->name }}</span>
+              <img class="u-icon img-circle" src="{{ Auth::user()->getAvatar() }}" alt="dropdown"><span class="user-name">{{ Auth::user()->name }}</span>
             </a>
             <div class="dropdown-menu" role="menu">
               <a class="dropdown-item" href="{{ url(Auth::user()->slug) }}"><i class="fa fa-user"></i> Il mio profilo</a>
@@ -147,7 +147,7 @@
               @if(Auth::user()->haveGroup())
               {{-- da modificare --}}
               @foreach(Auth::user()->getPublishersInfo() as $value)
-                <a class="dropdown-item" href="{{ url($value->slug) }}"><i class="fa fa-newspaper"></i> {{ $value->name }}</a>
+                <a class="dropdown-item" href="{{ url('publisher/'.$value->slug) }}"><i class="fa fa-newspaper"></i> {{ $value->name }}</a>
               @endforeach
               <hr/>
               @endif

@@ -223,7 +223,7 @@ function notify(title, text, url = '') {
   }
 }
 
-App.info = function(){
+App.info = function() {
   $("*[data-script=info]").each(function() {
     $(this).css('cursor','pointer');
     $(this).on("click", function(){
@@ -234,4 +234,37 @@ App.info = function(){
       }
     });
   });
+}
+
+App.share = function(data) {
+  // share
+  var share = {};
+
+  var links = {
+    // name: [icon, url]
+    'facebook': ['fa-facebook', 'https://www.facebook.com/share.php?u='],
+    'linkedin': ['fa-linkedin', 'https://www.linkedin.com/sharing/share-offsite/?url=']
+    // more...
+  };
+
+  // UX create
+
+  var $this = $(data.appendTo);
+
+  $this.click(function() {
+      event.preventDefault();
+      if($(this).hasClass("sb-open")) {
+        $(this).next(".sb-dialog").remove();
+        $(this).removeClass("sb-open");
+      } else {
+        $(this).addClass("sb-open");
+        $("<div class='sb-dialog'></div>").insertAfter( $(this) );
+        $.each(data.apps, function(f) {
+          $("<a href='"+ links[data.apps[f]][1] + window.location.href + "'><div class='fab "+ links[data.apps[f]][0] +"'></div></a>").appendTo( $(".sb-dialog") );
+        });
+      }
+  });
+
+  //----------
+
 }

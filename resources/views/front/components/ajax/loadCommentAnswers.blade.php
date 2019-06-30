@@ -3,7 +3,7 @@
 @foreach($query as $value)
   <div class="card-body">
     <div class="d-flex">
-      <img style="height:4em" class="p-2" src="{{ asset($value->getUserInfo->getAvatar()) }}" />
+      <img style="height:4em" class="p-2" src="{{ $value->getUserInfo->getAvatar() }}" />
         <div class="d-flex flex-grow-1">
           {{ $value->text }}
         </div>
@@ -53,7 +53,7 @@
     <div class="col-md-12">
       {{ $value->created_at->diffForHumans() }}
       <a href="{{ url($value->getUserInfo->slug) }}">
-        <span>{{ $value->getUserInfo->name }} {{ $value->getUserInfo->surname }}</span>
+        <span>{!! $value->getUserInfo->getRealName() !!}</span>
       </a>
     </div>
   </div>

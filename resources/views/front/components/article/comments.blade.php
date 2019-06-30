@@ -6,20 +6,20 @@
     @auth
     @if(Auth::user() && !Auth::user()->suspended)
     <div class="d-flex">
-      <img style="height:6em" class="p-2" src="{{ asset(Auth::user()->getAvatar()) }}" />
+      <img style="height:6em" class="p-2" src="{{ Auth::user()->getAvatar() }}" />
         <div class="d-flex flex-grow-1">
           <textarea class="form-control" placeholder="Scrivi un commento..."></textarea>
         </div>
     </div>
     <div class="py-2 col-md-12">
-      <button id="sendMsg" type="button" class="btn btn-dark btn-block">
+      <button id="sendMsg" type="button" class="btn btn-sw btn-block">
         Invia
       </button>
     </div>
     @else
     <div class="d-flex">
-      <img style="height:6em" class="p-2" src="{{ asset(Auth::user()->getAvatar()) }}" />
-        <div class="d-flex flex-grow-1 bg-light">
+      <img style="height:6em" class="p-2" src="{{ Auth::user()->getAvatar() }}" />
+        <div class="d-flex flex-grow-1 bg-sw">
           <p class="mt-3 offset-1">Questo account è stato sospeso da un operatore</p>
         </div>
     </div>
@@ -27,7 +27,7 @@
     @else
     <div class="d-flex">
       <img style="height:6em" class="p-2" src="{{ asset('upload/default.png') }}" />
-        <div class="d-flex flex-grow-1 bg-light">
+        <div class="d-flex flex-grow-1 bg-sw">
           <p class="mt-3 offset-1">Per commentare devi prima effettuare l'accesso</p>
         </div>
     </div>
@@ -74,6 +74,6 @@
 
 @if($count > 6)
 <div class="offset-md-5">
-  <button id="loadComments" class="btn btn-light pb-2">Carica altri commenti</button>
+  <button id="loadComments" class="btn btn-light mb-5">Carica altri commenti</button>
 </div>
 @endif

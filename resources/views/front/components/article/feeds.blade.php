@@ -23,9 +23,9 @@
       @foreach($feeds as $value)
       <div class="col-lg-3 col-sm-12 col-xs-12">
       <a href="{{ url('read/'.$value->slug)}}">
-        <div class="card-header"></div>
+        <div class="card-header">{{ $value->created_at->diffForHumans() }}</div>
         <div class="card border-0">
-          <img class="card-img-top" src="{{asset($value->getBackground())}}" alt="Copertina Articolo">
+          <img class="card-img-top" src="{{ $value->getBackground() }}" alt="">
 
             <h4 class="card-title">{{ $value->titolo }}</h4>
             <div class="author">

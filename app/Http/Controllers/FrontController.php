@@ -30,6 +30,10 @@ use SEOMeta;
 use OpenGraph;
 use Twitter;
 
+// Achievements
+use App\Models\Achievement;
+use App\Achievements\FirstArticle;
+
 class FrontController extends Controller
 {
     public function index(Request $request)
@@ -78,9 +82,9 @@ class FrontController extends Controller
     {
       $query = User::where('slug',$slug)->first();
 
-      if(empty($query)){
+      /*if(empty($query)){
         return $this->getPublisherIndex($slug, $request);
-      }
+      }*/
 
       // SEO ///////////////////////////////////////////////////
 
@@ -127,9 +131,9 @@ class FrontController extends Controller
     {
       $query = User::where('slug', $slug)->first();
 
-      if(empty($query)) {
+      /*if(empty($query)) {
         return $this->getPublisherAbout($slug);
-      }
+      }*/
 
       // SEO ///////////////////////////////////////////////////
 
@@ -152,15 +156,14 @@ class FrontController extends Controller
     }
 
     public function getPrivateArchive($slug)
-    { // http://127,0.0.1:8000/{slug}/archive
-
+    {
       if($slug == Auth::user()->slug) {
         $query = SavedArticles::whereNull('id_gruppo')->where('id_autore', Auth::user()->id)->get();
         SEOMeta::setTitle('Articoli Salvati - Sywrit', false)
                   ->setCanonical(\Request::url());
         return view('front.pages.profile.archive',compact('query'));
       } else {
-        return $this->getPublisherArchive($slug);
+        abort(404);
       }
     }
 
@@ -278,7 +281,7 @@ class FrontController extends Controller
           $query2 = SavedArticles::where('id_gruppo', $query->id)->get();
           return view('front.pages.group.archive',compact('query','query2'));
         }else{
-          return redirect($slug);
+          return redirect('publisher/'.$slug);
         }
     }
 
@@ -291,14 +294,14 @@ class FrontController extends Controller
           return redirect($slug);
 
         if(!$tab)
-          return redirect($slug.'/settings/edit');
+          return redirect('publisher/'.$slug.'/settings/edit');
 
           SEOMeta::setTitle('Impostazioni - '.$query->name.' - Sywrit', false)
                     ->setCanonical(\Request::url());
 
         return view('front.pages.group.settings',compact('query','tab'));
       } else {
-        return redirect($slug);
+        return redirect('publisher/'.$slug);
       }
     }
 
@@ -501,6 +504,20 @@ class FrontController extends Controller
 
       $query = Notifications::where('target_id',Auth::user()->id)->orderBy('created_at','desc')->paginate(6);
       return view('front.pages.profile.notifications', compact('query'));
+    }
+
+    public function getAchievement()
+    {
+      // SEO ///////////////////////////////////////////////////
+
+        SEOMeta::setTitle('I miei obiettivi - Sywrit', false)
+                  ->setDescription(config('app.name').': la nuova piattaforma multi-genere di scrittura online.')
+                  ->setCanonical(\Request::url());
+
+      //-------------------------------------------------------//
+
+      $ach = Achievement::get();
+      return view('front.pages.profile.achievement', compact('ach'));
     }
 
     public function getSettings()

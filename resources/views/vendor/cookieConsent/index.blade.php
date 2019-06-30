@@ -4,7 +4,7 @@
 
     <script>
 
-        window.laravelCookieConsent = (function () {
+        window.cookieConsent = (function () {
 
             const COOKIE_VALUE = 1;
             const COOKIE_DOMAIN = '{{ config('session.domain') ?? request()->getHost() }}';

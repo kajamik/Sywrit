@@ -22,7 +22,7 @@
               <a href="{{ url('read/'.$value->article_slug) }}">
                 <div class="card-header">{{ \Carbon\Carbon::parse($value->published_at)->diffForHumans() }}</div>
                 <div class="card border">
-                  <img class="card-img-top" src="{{asset($value->getBackground())}}" alt="Copertina Articolo">
+                  <img class="card-img-top" src="{{ $value->getBackground() }}" alt="Copertina Articolo">
                   <div class="card-body">
                     @if($value->topic_id)
                       <span>{{ $value->topic_name }}</span>
@@ -49,8 +49,7 @@
         @endif
       </div>
     </div>
+    {{-- close top_bar --}}
   </div>
-</div>
-</div>
 </div>
 @endsection

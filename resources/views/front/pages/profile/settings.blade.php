@@ -3,17 +3,17 @@
 @section('main')
 
   <div class="publisher-home">
-    <div class="publisher-header" style="background-image: url({{asset(Auth::user()->getBackground())}})">
+    <div class="publisher-header" style="background-image: url({{ Auth::user()->getBackground() }})">
       <div class="container">
         <div class="publisher-logo">
           <div class="row">
             <div class="d-inline">
-              <img src="{{ asset(Auth::user()->getAvatar()) }}" alt="Logo">
+              <img src="{{ Auth::user()->getAvatar() }}" alt="Logo">
             </div>
-            <div class="col-lg-10 col-sm-col-xs-12">
-              <div class="mt-2 info">
-                <span>{{ Auth::user()->name }} {{ Auth::user()->surname }}</span>
-              </div>
+            <div class="ml-2 mt-2 info">
+              <span>
+                {!! Auth::user()->getRealName() !!}
+              </span>
             </div>
           </div>
         </div>

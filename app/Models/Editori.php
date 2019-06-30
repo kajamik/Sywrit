@@ -8,29 +8,25 @@ class Editori extends Model
 {
     protected $table = 'editori';
 
-    private $storage = 'storage/groups';
-
     public function articoli() {
         return $this->hasMany('App\Models\Articoli','id_gruppo','id');
     }
 
     public function getBackground() {
-      $file = $this->storage.'/'.$this->cover;
 
-      if($this->cover && file_exists($file)){
-        return $file;
+      if($this->cover){
+        return $this->cover;
       }else{
-        return 'upload/bg.jpg';
+        return asset('upload/bg.jpg');
       }
     }
 
     public function getAvatar() {
-      $file = $this->storage.'/'.$this->avatar;
 
-      if($this->avatar && file_exists($file)){
-        return $file;
+      if($this->avatar){
+        return $this->avatar;
       }else{
-        return 'upload/default.png';
+        return asset('upload/default.png');
       }
     }
 

@@ -163,9 +163,12 @@ return [
         Illuminate\View\ViewServiceProvider::class,
         Intervention\Image\ImageServiceProvider::class,
         Artesaos\SEOTools\Providers\SEOToolsServiceProvider::class,
+
         /*
          * Package Service Providers...
          */
+
+         Sywrit\Achievement\Providers\AchievementServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -229,6 +232,7 @@ return [
         'SEOMeta'   => Artesaos\SEOTools\Facades\SEOMeta::class,
         'OpenGraph' => Artesaos\SEOTools\Facades\OpenGraph::class,
         'Twitter'   => Artesaos\SEOTools\Facades\TwitterCard::class,
+        'Achievement' => Sywrit\Achievement\Facades\AchievementFacade::class,
     ],
 
 ];

@@ -45,11 +45,6 @@ Route::get('live_notif', ['uses' => 'AjaxController@getNotifications', 'as' => '
 // Home
 Route::group(['prefix' => '/'], function() {
   Route::get('{slug}/about', 'FrontController@getAbout');
-  Route::group(['prefix' => '{slug}/settings', 'middleware' => ['auth','isSuspended']], function() {
-    Route::get('/', 'FrontController@getPublisherSettings');
-    Route::get('{tab}', 'FrontController@getPublisherSettings');
-    Route::post('{tab}', 'FilterController@postPublisherSettings');
-  });
   /*Route::get('{slug}/join/{token}', 'EditoriaController@getInvite');*/
 });
 
@@ -87,9 +82,10 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('request_accepted', 'AjaxController@acceptGroupRequest');
   });
   Route::get('getStateNotifications', 'AjaxController@getStateNotifications');
-  Route::get('load-comments', 'AjaxController@loadComments');
-  Route::get('load-answers', 'AjaxController@loadAnswers');
 });
+
+Route::get('load-comments', 'AjaxController@loadComments');
+Route::get('load-answers', 'AjaxController@loadAnswers');
 
 ///////////
 Route::group(['prefix' => 'write', 'middleware' => ['auth','isSuspended']], function(){
@@ -100,6 +96,7 @@ Route::group(['prefix' => 'write', 'middleware' => ['auth','isSuspended']], func
 Route::get('/', 'FrontController@index');
 Route::group(['middleware' => ['auth', 'isSuspended']], function(){
   Route::get('notifications', 'FrontController@getNotifications');
+  //Route::get('achievement', 'FrontController@getAchievement');
   Route::get('settings', ['uses' => 'FrontController@getSettings', 'as' => 'settings']);
   Route::post('settings', 'FilterController@postSettings');
   Route::post('change_username', ['uses' => 'FilterController@postChangeUsername', 'as' => 'settings/username']);
@@ -114,8 +111,24 @@ Route::get('action/support', 'AjaxController@getSupportRequest');
 Route::get('topic/{slug}', 'FrontController@getTopic');
 
 // Profile
-Route::get('{slug}', 'FrontController@getProfile');
-Route::get('{slug}/archive', 'FrontController@getPrivateArchive')->middleware('auth','isSuspended');
+Route::group(['prefix' => '{slug}'], function() {
+  Route::get('/', 'FrontController@getProfile');
+  Route::get('archive', 'FrontController@getPrivateArchive')->middleware('auth','isSuspended');
+});
+
+// Publishers
+Route::group(['prefix' => 'publisher'], function() {
+
+  Route::get('{slug}', 'FrontController@getPublisherIndex');
+  Route::get('{slug}/about', 'FrontController@getPublisherAbout');
+  Route::get('{slug}/archive', 'FrontController@getPublisherArchive')->middleware('auth','isSuspended');
+
+  Route::group(['prefix' => '{slug}/settings', 'middleware' => ['auth','isSuspended']], function() {
+    Route::get('/', 'FrontController@getPublisherSettings');
+    Route::get('{tab}', 'FrontController@getPublisherSettings');
+    Route::post('{tab}', 'FilterController@postPublisherSettings');
+  });
+});
 
 // CREATE GROUP
 Route::get('publisher/create', 'FrontController@getNewPublisher')->middleware('auth','isSuspended');
@@ -127,7 +140,10 @@ Route::get('page/{slug}/{slug2}', 'FrontController@getPages');
 
 // Facebook auth
 
-Route::get('auth/facebook', 'Auth\LoginController@redirectToProvider');
-Route::get('facebook/callback', 'Auth\LoginController@handleProviderCallback');
+Route::get('auth/facebook/redirect', 'Auth\LoginController@redirectToProvider');
+Route::get('auth/facebook/callback', 'Auth\LoginController@handleProviderCallback');
 
-Route::fallback(function(){ return response()->view('errors.404', [], 404); });
+
+Route::fallback(function(){
+  return response()->view('errors.404', [], 404);
+});

@@ -58,7 +58,7 @@ class FilterController extends Controller
       $fileName = rand().'.jpg';
       $image = Image::make($a)->resize(1110, 350)->encode('jpg', 100);
       Storage::disk('accounts')->put($fileName, $image);
-      $query->copertina = $fileName;
+      $query->copertina = Storage::disk('accounts')->url('accounts/'.$fileName);
     }
     if($a = $request->avatar){
       $this->validate($request,[
@@ -82,7 +82,7 @@ class FilterController extends Controller
         $image = Image::make($a)->resize(160, 160)->encode('jpg', 100);
         Storage::disk('accounts')->put($fileName, $image);
       }
-      $query->avatar = $fileName;
+      $query->avatar = Storage::disk('accounts')->url('accounts/'.$fileName);
     }
     // Socials
       $query->biography = $request->bio;
@@ -179,7 +179,7 @@ class FilterController extends Controller
       }
       return redirect('/');
     }
-    return redirect($query->slug);
+    return redirect('publisher/'.$query->slug);
   }
 
     public function ArticleReport(Request $request)
@@ -276,7 +276,7 @@ class FilterController extends Controller
         $resize = '__160x160'.Str::random(64).'.jpg';
         $image = Image::make($a)->resize(1110, 350)->encode('jpg', 100);
         Storage::disk('groups')->put($resize, $image);
-        $query->cover = $resize;
+        $query->cover = Storage::disk('groups')->url('groups/'.$resize);
       }
       if($a = $request->avatar){
         $this->validate($request,[
@@ -291,7 +291,7 @@ class FilterController extends Controller
         $fileName = rand().'.jpg';
         $image = Image::make($a)->encode('jpg', 100);
         Storage::disk('groups')->put($fileName, $image);
-        $query->avatar = $fileName;
+        $query->avatar = Storage::disk('groups')->url('groups/'.$fileName);
       }
       $query->direttore = Auth::user()->id;
       $query->followers_count = '0';
@@ -306,7 +306,7 @@ class FilterController extends Controller
         $user->id_gruppo = $query->id;
       }
       $user->save();
-      return redirect($query->slug);
+      return redirect('publisher/'.$query->slug);
     }
 
     public function postPublisherSettings($slug,Request $request)
@@ -335,7 +335,7 @@ class FilterController extends Controller
           $resize = '__160x160'.Str::random(64).'.jpg';
           $image = Image::make($a)->resize(1110, 350)->encode('jpg', 100);
           Storage::disk('groups')->put($resize, $image);
-          $query->cover = $resize;
+          $query->cover = Storage::disk('groups')->url('groups/'.$resize);
         }
         if($a = $request->avatar){
           $this->validate($request,[
@@ -350,7 +350,7 @@ class FilterController extends Controller
           $fileName = rand().'.jpg';
           $image = Image::make($a)->resize(160, 160)->encode('jpg', 100);
           Storage::disk('groups')->put($fileName, $image);
-          $query->avatar = $fileName;
+          $query->avatar = Storage::disk('groups')->url('groups/'.$fileName);
         }
         $query->save();
       }
@@ -473,7 +473,7 @@ class FilterController extends Controller
         $normal_image = '__'.Str::random(64).'.jpg';
         $image = Image::make($a)->resize(492, 340)->encode('jpg', 100);
         Storage::disk('articles')->put($resize, $image);
-        $query->copertina = $resize;
+        $query->copertina = Storage::disk('articles')->url('articles/'.$resize);
       }
 
       if($request->_au > 0) {
@@ -500,8 +500,14 @@ class FilterController extends Controller
       } else {
         $query->slug = str_slug($query->id.'-'.$query->titolo,'-');
         $query->save();
+
+        // Unlock Achievement
+        /*if(!Auth::user()->achievementStatus(1)) {
+          Auth::user()->achievementUnlock(1);
+        }*/
         return redirect('read/'.$query->slug);
       }
+
     }
 
     public function ArticlePublish(Request $request)
@@ -523,6 +529,11 @@ class FilterController extends Controller
             $query2->slug = $query2->id.'-'.str_slug($query2->titolo, '-');
             $query2->save();
             $query->delete();
+
+            // Unlock Achievement
+            /*if(!Auth::user()->achievementStatus(1)) {
+              Auth::user()->achievementUnlock(1);
+            }*/
           } else {
             return redirect();
           }
@@ -579,7 +590,7 @@ class FilterController extends Controller
             $resize = '__492x340'.Str::random(64).'.jpg';
             $image = Image::make($a)->resize(492, 340)->encode('jpg');
             Storage::disk('articles')->put($resize, $image);
-            $query->copertina = $resize;
+            $query->copertina = Storage::disk('articles')->url('articles/'.$resize);
           }
           $query->save();
         }
@@ -621,7 +632,7 @@ class FilterController extends Controller
           $resize = '__492x340'.Str::random(64).'.jpg';
           $image = Image::make($a)->resize(492, 340)->encode('jpg');
           Storage::disk('articles')->put($resize, $image);
-          $query->copertina = $resize;
+          $query->copertina = Storage::disk('articles')->url('articles/'.$resize);
         }
         $query->save();
       }

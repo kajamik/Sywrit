@@ -5,6 +5,8 @@ namespace App\Exceptions;
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
+use SEOMeta;
+
 class Handler extends ExceptionHandler
 {
     /**
@@ -53,6 +55,9 @@ class Handler extends ExceptionHandler
       if($exception instanceof \Illuminate\Validation\ValidationException) {
         return parent::render($request, $exception);
       } else if(!$exception instanceof \Illuminate\Auth\AuthenticationException) {
+        SEOMeta::setTitle('Errore 404 - Sywrit', false)
+                  ->setDescription(config('app.name').': la nuova piattaforma multi-genere di scrittura online.')
+                  ->setCanonical(\Request::url());
         return response()->view('errors.404', [], 404);
       }
       return parent::render($request, $exception);

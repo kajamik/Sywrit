@@ -24,7 +24,7 @@
       @endphp
       <div id="usr_{{$user->id}}" class="v_card col-lg-2 col-sm-8 col-xs-12">
         <div class="card">
-          <img class="card-img-top" src="{{asset($user->getAvatar())}}" alt="Avatar">
+          <img class="card-img-top" src="{{ $user->getAvatar() }}" alt="Avatar">
           <div class="card-body">
             <strong class="card-title">{{ $user->name }} {{ $user->surname }}</strong>
             <em>Ruolo:

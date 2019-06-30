@@ -29,7 +29,7 @@
                 <div class="col-lg-4 col-sm-8 col-xs-12">
                   <a href="{{ url('read/archive/'. $articolo->slug) }}">
                     <div class="card">
-                      <img class="card-img-top" src="{{asset($articolo->getBackground())}}" alt="Copertina">
+                      <img class="card-img-top" src="{{ $articolo->getBackground() }}" alt="Copertina">
                       <div class="card-body">
                         <h4 class="card-title">{{ $articolo->titolo }}</h4>
                       </div>

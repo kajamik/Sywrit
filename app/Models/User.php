@@ -7,6 +7,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use App\Notifications\ResetPassword as ResetPasswordNotification;
 use App\Notifications\VerifyEmail as VerifyEmailNotification;
+//use App\Traits\Achiever;
 
 class User extends Authenticatable
 {
@@ -14,15 +15,13 @@ class User extends Authenticatable
 
     use Notifiable;
 
-    private $storage = 'storage/accounts';
-
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'id', 'name', 'surname', 'email', 'password', 'slug', 'avatar',
+        'id', 'name', 'surname', 'email', 'password', 'slug', 'avatar', 'social_auth_id',
         'rank', 'points', 'followers_count', 'notifications_count', 'permission'
     ];
 
@@ -64,18 +63,17 @@ class User extends Authenticatable
     }
 
     public function getBackground() {
-      $file = $this->storage.'/'.$this->copertina;
-      if($this->copertina && file_exists($file))
-        return $file;
-      return 'upload/bg.jpg';
+      if($this->copertina) {
+        return $this->copertina;
+      }
+      return asset('upload/bg.jpg');
     }
 
     public function getAvatar() {
-      $file = $this->storage.'/'.$this->avatar;
-      if($this->avatar && file_exists($file)) {
-        return $file;
+      if($this->avatar) {
+        return $this->avatar;
       }
-      return 'upload/default.png';
+      return asset('upload/default.png');
     }
 
     public function haveGroup() {
@@ -115,6 +113,16 @@ class User extends Authenticatable
         }
       }
       return false;
+    }
+
+    public function getRealName() {
+      $str = $this->name .' '. $this->surname. ' ';
+      if($this->verified) {
+        $str .= '<div class="sw-ico">';
+        $str .= '<i class="sw_dark fas fa-check-circle" title="Profilo verificato &#xA;&#xA; Sywrit ha confermato l\'autenticità di questo profilo."></i>';
+        $str .= '</div>';
+      }
+      return $str;
     }
 
     /*public function getRankName() {

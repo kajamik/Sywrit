@@ -5,7 +5,7 @@
       {{ \Carbon\Carbon::parse($value->created_at)->diffForHumans() }}
     </div>
     <div class="card">
-      <img class="card-img-top" src="{{ asset($value->getBackground()) }}" alt="{{ $value->article_title }}" />
+      <img class="card-img-top" src="{{ $value->getBackground() }}" alt="{{ $value->article_title }}" />
         <div class="card-body">
           @if($value->topic_id)
             <span>{{ $value->topic_name }}</span>

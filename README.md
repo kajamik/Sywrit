@@ -3,6 +3,15 @@
 
 ```
 
+Regole:
+
+1) Codice pulito, niente codice HTML in PHP;
+2) Dare priorità ai problemi più visibili, e soprattutto che riguardano gli utenti;
+3) Non migliorare fino a quando non si sono risolto tutti i problemi.
+
+```
+```
+
 Configurazione E-mail
 
 MAIL_DRIVER=SMTP

@@ -41,8 +41,7 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "app/",
-            "Sywrit\\Achievement\\": "local-package/sywrit/achievement/src"
+            "App\\": "app/"
         },
         "classmap": [
             "database/seeds",

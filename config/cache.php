@@ -32,6 +32,10 @@ return [
 
     'stores' => [
 
+        'request' => [
+            'driver' => 'array'
+        ],
+
         'apc' => [
             'driver' => 'apc',
         ],

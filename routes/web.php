@@ -37,15 +37,12 @@ Route::group(['prefix' => 'search'], function() {
   Route::get('{slug}', 'SearchController@getResults');
   // Advanced search
   Route::get('tag/{slug}', 'SearchController@getResultsByTagName');
-  /*Route::get('articles/{slug}', 'SearchController@getResultsByArticlesName');
-  Route::get('users/{slug}', 'SearchController@getResultsByUsersName');*/
 });
 Route::get('live_search', ['uses' => 'AjaxController@SearchLiveData', 'as' => 'live_search']);
 Route::get('live_notif', ['uses' => 'AjaxController@getNotifications', 'as' => 'live_notif']);
 // Home
 Route::group(['prefix' => '/'], function() {
   Route::get('{slug}/about', 'FrontController@getAbout');
-  /*Route::get('{slug}/join/{token}', 'EditoriaController@getInvite');*/
 });
 
 Route::group(['prefix' => 'read'], function() {
@@ -143,6 +140,11 @@ Route::get('page/{slug}/{slug2}', 'FrontController@getPages');
 Route::get('auth/facebook/redirect', 'Auth\LoginController@redirectToProvider');
 Route::get('auth/facebook/callback', 'Auth\LoginController@handleProviderCallback');
 
+// Ajax Controller
+
+Route::group(['prefix' => 'ajax'], function() {
+    Route::get('auth', 'AjaxController@getAuth');
+});
 
 Route::fallback(function(){
   return response()->view('errors.404', [], 404);

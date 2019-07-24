@@ -29,7 +29,7 @@ App.follow = function(element,data,cache){
 
 App.insl = function(id){
   var page = 1;
-  document.addEventListener('scroll', function (event) {
+  document.addEventListener('scroll', function () {
     if ($(window).scrollTop() == $(document).height() - $(window).height()) {
       page++;
       App.query('get','?page='+(page),null,false,function(data){
@@ -81,15 +81,11 @@ function search_item(s, v){
   return null;
 }
 
-App.getUserInterface = function(t){
+App.getUserInterface = function(t, e){
 
   $(".__ui__g").remove();
 
   $("body").css('overflow','hidden');
-
-  if(event !== 'undefined'){
-    event.preventDefault();
-  }
 
   for(var i in t){
     var header = search_item(t[i], 'header');
@@ -126,7 +122,10 @@ App.getUserInterface = function(t){
  }
 
   var n = 0;
-  for(var i in content){
+  if(typeof content == 'string') {
+    $(".__ui__g_body").append(content);
+  } else {
+    for(var i in content){
       if(typeof content[i].type[0] == 'object') {
         var select = content[i].type[0].select;
         var selClass = $("<div class='form-group'><select id='"+content[i].name+"' class='"+content[i].class+"' name='"+content[i].name+"'></select></div>").appendTo( ($("div").hasClass("__ui__g_form_control")) ? $(".__ui__g_form_control") : $(".__ui__g_body") );
@@ -141,6 +140,7 @@ App.getUserInterface = function(t){
           $(f(content[i])+content[i].label).appendTo( ($("div").hasClass("__ui__g_form_control")) ? $(".__ui__g_form_control") : $(".__ui__g_body") );
         }
       }
+    }
   }
 
   // set style
@@ -252,7 +252,6 @@ App.share = function(data) {
   var $this = $(data.appendTo);
 
   $this.click(function() {
-      event.preventDefault();
       if($(this).hasClass("sb-open")) {
         $(this).next(".sb-dialog").remove();
         $(this).removeClass("sb-open");

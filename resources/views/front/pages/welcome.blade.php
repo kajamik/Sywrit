@@ -4,34 +4,25 @@
 
   <div class="publisher-home">
     <div class="publisher-body">
+
       <div class="block-hero"></div>
-        {{--<div class="row">
-          <div class="col-lg-4 col-sm-4 col-xs-12">
-          <div class="card border-0 text-center">
-            <div class="card-header">
-              <span class="far fa-star"></span>
-              Sponsorizzazione
-            </div>
-            <a href="#">
-              <div class="card-body" style="padding:0">
-                <img style="width:100%;" src="{{ asset('upload/google-ads.png') }}" alt="" />
-              </div>
-              <div class="card-footer text-muted">
-                <button class="btn btn-link">Ottieni maggiori informazioni</button>
-              </div>
+
+      <hr style="background-color:#fefeff;"/>
+
+      <div class="row">
+        <div class="col-lg-9 col-md-7 col-sm-12">
+
+          {{-- Solo nuovi utenti--}}
+          <div class="d-flex bg-sw p-2 mb-3">
+            <a href="{{ url('write') }}">
+              Crea il tuo primo articolo.
             </a>
           </div>
-        </div>
-        </div>--}}
-
-        <hr style="background-color:#fefeff;"/>
-      <div class="row">
-        <div class="col-lg-12 col-md-12 col-sm-12">
 
           @if($articoli->count())
           <div class="row" id="news">
             @foreach($articoli as $value)
-            <div class="col-lg-3 col-sm-12 col-xs-12">
+            <div class="col-lg-4 col-sm-12 col-xs-12">
             <a href="{{ url('read/'.$value->article_slug) }}">
               <div class="card-header">
                 {{ \Carbon\Carbon::parse($value->created_at)->diffForHumans() }}
@@ -78,24 +69,50 @@
         @endif
         </div>
 
-        {{--<div class="col-lg-4 col-xs-12">
-          <div class="col-lg-12 col-sm-12 col-xs-12">
-          <div class="card border-0 text-center">
-            <div class="card-header">
-              <span class="far fa-star"></span>
-              Sponsorizzazione
+        {{-- Menù laterale --}}
+        <div class="col-lg-3 col-md-5 col-sm-12">
+          <div class="sw-lnav">
+            <div class="sw-component">
+              <div class="sw-component-header bg-sw">Articoli popolari</div>
+                @foreach($popular_articles as $value)
+                <a href="{{ url('read/'.$value->article_slug) }}">
+                  <div class="sw-item" style="background-image: url('{{ $value->getBackground() }}');background-repeat: no-repeat;background-size:100%;background-size:contain;">
+                    <div class="sw-item-header">
+                      {!! str_limit(preg_replace('/(<.*?>)|(&.*?;)/', '', $value->article_text), 100) !!}
+                    </div>
+                    <div class="sw-item-footer">
+                      Di
+                      @if($value->id_editore)
+                      <a href="{{ url($value->publisher_slug) }}">
+                        <span>{{ $value->publisher_name }}</span>
+                      </a>
+                      @else
+                      <a href="{{ url($value->user_slug) }}">
+                        <span>{{ $value->user_name }} {{ $value->user_surname }}</span>
+                      </a>
+                      @endif
+                    </div>
+                  </div>
+                </a>
+                @endforeach
             </div>
-            <a href="#">
-              <div class="card-body" style="padding:0">
-                <img style="width:100%;" src="{{ asset('upload/google-ads.png') }}" alt="" />
+            <div class="sw-component">
+              <div class="sw-component-header bg-sw">Seguici su</div>
+              <div class="sw-item text-center">
+                <div class="sw-icon-large">
+                  <a href="https://facebook.com/sywrit">
+                    <i class="fab fa-facebook"></i>
+                  </a>
+                </div>
+                <div class="sw-icon-large">
+                  <a href="https://instagram.com/sywrit">
+                    <i class="fab fa-instagram"></i>
+                  </a>
+                </div>
               </div>
-              <div class="card-footer text-muted">
-                <button class="btn btn-link">Ottieni maggiori informazioni</button>
-              </div>
-            </a>
+            </div>
           </div>
         </div>
-      </div>--}}
 
       <script>
         App.insl('news');

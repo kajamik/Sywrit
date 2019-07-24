@@ -7,17 +7,6 @@
   }
 @endphp
 
-{{--@section('seo')
-
-    <meta property="og:title" content="{!! $query->titolo !!} - {{ config('app.name') }}" />
-    <meta property="og:description" content="{!! str_limit(strip_tags($query->testo), 100, '...') !!}" />
-    <meta property="og:type" content="s" />
-    <meta property="og:url" content="{{ Request::url() }}" />
-    <meta property="og:image" content="{{ $query->getBackground() }}" />
-    <meta property="article:published_time" content="{{ $query->created_at }}" />
-    <meta property="article:tag" content="{{ $query->tags }}" />
-@endsection--}}
-
 @section('main')
 <style>
 .publisher-body .block-article a, .publisher-body .block-article a:hover {
@@ -53,48 +42,92 @@ span.time {
 </style>
   <div class="publisher-home">
     <div class="publisher-body">
-      <article class="block-article">
-        <div class="block-title">
-          <h1 class="text-uppercase">{{ $query->titolo }}</h1>
+      <div class="row">
+        <div class="col-lg-9 col-md-9">
+          <article class="block-article">
+            <div class="block-title">
+              <h1 class="text-uppercase">{{ $query->titolo }}</h1>
+            </div>
+            <p>Articolo generato dal sistema</p>
+            <div class="date-info">
+              <span class="date"><i class="far fa-calendar-alt"></i> {{ $date }}</span>
+              <span class="time"><i class="far fa-clock"></i> {{ $time }}</span><br/>
+            </div>
+            <hr/>
+            <div class="block-body">
+              {!! $query->testo !!}
+            </div>
+            <hr style="border-style:dotted"/>
+            <div class="both"></div>
+            @if(!empty($query->tags))
+            <div class="block-meta">
+              <ul class="meta-tags">
+                <span class="fa fa-tags"></span>
+                @foreach($tags as $tag)
+                  <li><a href="{{ url('search/tag/'.$tag) }}">#{{ $tag }}</a></li>
+                @endforeach
+              </ul>
+            </div>
+            @endif
+          <div class="block-footer">
+            @if($query->created_at != $query->updated_at)
+            <span>Modificato {{ $query->updated_at->diffForHumans() }}</span>
+            @endif
+            <div class="row pt-5">
+              <div class="socials">
+                <div class="col-lg-12 col-sm-12 col-xs-12">
+                  <a id="share" href="#share">
+                    <span class="fa-2x fa fa-share-square"></span>
+                  </a>
+                </div>
+                <script>
+                  App.share({
+                    'apps': [
+                      'facebook', 'linkedin'
+                    ],
+                    'appendTo': '#share',
+                  });
+                </script>
+              </div>
         </div>
-        <p>Articolo generato dal sistema</p>
-        <div class="date-info">
-          <span class="date"><i class="far fa-calendar-alt"></i> {{ $date }}</span>
-          <span class="time"><i class="far fa-clock"></i> {{ $time }}</span><br/>
-        </div>
-        <hr/>
-        <div class="block-body">
-          {!! $query->testo !!}
-        </div>
-        <hr style="border-style:dotted"/>
-        <div class="both"></div>
-        @if(!empty($query->tags))
-        <div class="block-meta">
-          <ul class="meta-tags">
-            <span class="fa fa-tags"></span>
-            @foreach($tags as $tag)
-              <li><a href="{{ url('search/tag/'.$tag) }}">#{{ $tag }}</a></li>
-            @endforeach
-          </ul>
-        </div>
-        @endif
-      <div class="block-footer">
-        @if($query->created_at != $query->updated_at)
-        <span>Modificato {{ $query->updated_at->diffForHumans() }}</span>
-        @endif
-        <div class="row pt-5">
-        <div class="socials">
-          <div class="col-lg-12 col-sm-12 col-xs-12">
-            <a id="share_on_facebook" href="https://www.facebook.com/share.php?u={{Request::url()}}" target="_blank">
-              <span class="fa-2x fab fa-facebook-square"></span>
-            </a>
-            <a id="share_on_linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url={{Request::url()}}" target="_blank">
-              <span class="fa-2x fab fa-linkedin"></span>
-            </a>
+      </article>
+    </div>
+    <div class="col-lg-3 col-md-3">
+      <div class="position-sticky sticky-top" style="top:63px">
+        <div class="card">
+          <div class="card-header bg-sw">
+            Simon
+            <div class="sw-ico">
+              <i class="fa fa-robot" title="Sono un bot!! &#xA;I profili con questa icona sono generati in modo automatico"></i>
+            </div>
+          </div>
+          <div class="card-body">
+
+            <div class="text-center">
+
+              <img src="{{ asset('upload/_bot.jpg') }}" alt="Avatar di Sywbot" />
+
+              <h4>Autore</h4>
+
+              <hr/>
+
+              <h5>Biografia:</h5>
+              <p>Sono il bot generato dal sistema</p>
+
+              <a href="https://facebook.com/sywrit" target="_blank" title="Facebook">
+                <i class="fab fa-facebook fa-2x"></i>
+              </a>
+              <a href="https://instagram.com/sywrit" target="_blank" title="Instagram">
+                <i class="fab fa-instagram fa-2x"></i>
+              </a>
+
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </article>
+  </div>
+  </div>
 
   </div>
   </div>

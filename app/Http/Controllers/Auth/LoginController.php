@@ -33,7 +33,7 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/';
+    public $redirectTo;
 
     /**
      * Create a new controller instance.
@@ -59,14 +59,20 @@ class LoginController extends Controller
       }
     }
 
+    /*protected function loggedOut(Request $request)
+    {
+        return redirect(($request->to) ? $request->to : '/');
+    }*/
+
     /**
      * Redirect the user to the GitHub authentication page.
      *
      * @return \Illuminate\Http\Response
      */
-    public function redirectToProvider()
+    public function redirectToProvider(Request $request)
     {
-        return Socialite::driver('facebook')->redirect();
+        $request->session()->put('redirectTo', $request->to);
+        return Socialite::driver('facebook')->redirect('asd');
     }
 
     /**
@@ -76,6 +82,9 @@ class LoginController extends Controller
      */
     public function handleProviderCallback()
     {
+        $redirectTo = \Session::get('redirectTo');
+        \Session::pull('redirectTo');
+
         $userSocial = Socialite::driver('facebook')
                           ->fields([
                             'name',
@@ -114,7 +123,7 @@ class LoginController extends Controller
 
         Auth::login($user, true);
 
-        return redirect($this->redirectTo);
+        return redirect($redirectTo);
 
     }
 }

@@ -68,64 +68,42 @@
           <span>Modificato {{ $query->updated_at->diffForHumans() }}</span>
           @endif
           <div class="row pt-5">
-            <div class="article-rating col-lg-10 col-sm-12 col-xs-12">
-
-              @if($score->count() > 0)
-                <span id="rcount" class="pr-3">{{ number_format($score->sum('score') / $score->count(), 2) }} / 5</span>
-                @if($hasRate || Auth::user() && Auth::user()->id == $query->id_autore)
-                <div class="rating">
-                  @for($i = 0; $i < 5; $i++)
-                    @if( $score->sum('score') / $score->count() > $i)
-                      @if( floor($score->sum('score') / $score->count()) > $i)
-                      <span class="circle full"></span>
-                      @else
-                      <span class="circle half"></span>
-                      @endif
-                    @else
-                      <span class="circle"></span>
-                    @endif
-                  @endfor
-                </div>
+            <div class="col-lg-10 col-sm-12 col-xs-12">
+              <div id="reaction">
+                @if($liked)
+                <i class="bs-icon fa-2x fas fa-hand-spock"></i>
+                @else
+                <i class="bs-icon fa-2x far fa-hand-spock"></i>
                 @endif
-              @endif
-
-              @if(!Auth::check() || (!$hasRate && Auth::user()->id != $query->id_autore && !Auth::user()->suspended))
-              <div>Valuta articolo</div>
-              <div id="ui-rating-box">
-                <select id="ui-rating-select" name="rating" autocomplete="off">
-                  <option value=""></option>
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                  <option value="4">4</option>
-                  <option value="5">5</option>
-                </select>
+                <span>{{ $likes }}</span>
               </div>
-              @endif
-
-          </div>
-          <div class="socials">
-            <div class="col-lg-12 col-sm-12 col-xs-12">
-              <a id="share" href="#share">
-                <span class="fa-2x fa fa-share-square"></span>
-              </a>
-              @if(Auth::guest() || (Auth::user() && $query->id_autore != Auth::user()->id && !Auth::user()->suspended))
-              <a id="report" class="ml-4" href="#report" title="Segnala articolo">
-                <span class="fa-2x fas fa-flag"></span>
-              </a>
             </div>
-            @endif
-            <script>
-              App.share({
-                'apps': [
-                  'facebook', 'linkedin'
-                ],
-                'appendTo': '#share',
-              });
-            </script>
+            <div class="socials row">
+              <div class="col-lg-12 col-sm-12 col-xs-12">
+                <div class="col-lg-6">
+                  <div id="share">
+                    <span class="fa-2x fa fa-share-square"></span>
+                  </div>
+                </div>
+                @if(Auth::guest() || (Auth::user() && $query->id_autore != Auth::user()->id && !Auth::user()->suspended))
+                <div class="col-lg-2">
+                  <div id="report" class="ml-4" href="#report" title="Segnala articolo">
+                    <span class="fa-2x fas fa-flag"></span>
+                  </div>
+              </div>
+                @endif
+              </div>
+              <script>
+                App.share({
+                  'apps': [
+                    'facebook', 'linkedin'
+                  ],
+                  'appendTo': '#share',
+                });
+              </script>
+            </div>
           </div>
         </div>
-      </div>
       </article>
     </div>
       <div class="col-lg-3 col-md-3">
@@ -139,6 +117,8 @@
               <div class="text-center">
 
                 <img src="{{ $autore->getAvatar() }}" alt="Avatar di {{ $autore->name }} {{ $autore->surname }}" />
+
+                <h4>Autore</h4>
 
                 <hr/>
 
@@ -176,9 +156,8 @@
     @include('front.components.article.comments')
 
   </div>
-  @auth
-  @if($query->id_autore != Auth::user()->id && !Auth::user()->suspended)
   <script>
+    @if(Auth::user() && $query->id_autore != Auth::user()->id && !Auth::user()->suspended)
     $("#report").click(function(){
       App.getUserInterface({
       "ui": {
@@ -209,28 +188,18 @@
       } // -- End Interface --
     });
   });
-  </script>
-  @endif
-  @else
-  <script>
+  @elseif(Auth::guest())
   $("#report").click(function(){
-    validator();
+      validator();
   });
-  </script>
-  @endauth
-  <script src="{{ asset('js/_xs_r.min.js') }}"></script>
-  <script>
-    $('#ui-rating-select').barrating('show', {
-      theme: 'bars-square',
-      showValues: false,
-      @if(Auth::user() && (!$hasRate && Auth::user()->id != $query->id_autore && !Auth::user()->suspended))
-      onSelect: function(value, text) {
-        App.query("GET", "{{ route('rate') }}", {id: {{ $query->id }}, rate_value:value}, false, function(data) {
-          $(".article-rating").html(data);
+  @endif
+  $('#reaction').click(function(){
+    @if(Auth::user())
+      $.get("{{ url('rate') }}", {id: {{ $query->id }}}, function(data) {
+        $("#reaction").html(data);
       });
-    }
     @else
-    onSelect: function() {validator();}
+      validator();
     @endif
   });
   </script>
@@ -238,13 +207,13 @@
   @if(Auth::guest())
   <script>
   function validator() {
-    App.getUserInterface({
-      "ui": {
-        "title": "Avviso",
-        "content": [
-          {"type": ["h5"], "text": "Effettua l'accesso per valutare questo articolo."}
-        ]
-      }
+    $.get("{{ url('ajax/auth') }}", {path: '{{ Request::path() }}', callback: 'auth_login'}, function(data) {
+      App.getUserInterface({
+        "ui": {
+          "title": "Benvenuto ospite!!",
+          "content": data
+        }
+      });
     });
   }
   </script>

@@ -35,6 +35,7 @@ use Auth;
 
 class FilterController extends Controller
 {
+
   public function postSettings(Request $request)
   {
     $this->validate($request,[
@@ -179,7 +180,7 @@ class FilterController extends Controller
       }
       return redirect('/');
     }
-    return redirect('publisher/'.$query->slug);
+    return redirect($query->slug);
   }
 
     public function ArticleReport(Request $request)
@@ -246,7 +247,7 @@ class FilterController extends Controller
       }
     }
 
-    /** Publishers **/
+    // Publishers
 
     public function postNewPublisher(Request $request)
     {
@@ -306,7 +307,7 @@ class FilterController extends Controller
         $user->id_gruppo = $query->id;
       }
       $user->save();
-      return redirect('publisher/'.$query->slug);
+      return redirect($query->slug);
     }
 
     public function postPublisherSettings($slug,Request $request)
@@ -396,8 +397,6 @@ class FilterController extends Controller
       }
     }
 
-    /**************************************/
-
     // Articoli
     public function postWrite(Request $request)
     {
@@ -435,40 +434,50 @@ class FilterController extends Controller
       }
 
       if($testo) {
-        /*$dom = new \DomDocument();
-        $dom->loadHtml($testo, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+        $dom = new \DomDocument('1.0', 'UTF-8');
+        $dom->loadHtml(mb_convert_encoding($testo, 'HTML-ENTITIES', 'UTF-8'));
         $images = $dom->getElementsByTagName('img');
 
-        // foreach <img> in the submited message
         foreach($images as $img){
-          $src = $img->getAttribute('src');
+          $data = $img->getAttribute('src');
+          $dim = $img->getAttribute('style');
 
-          // if the img source is 'data-url'
-          if(preg_match('/data:image/', $src)){
+          $data = explode(';base64,', $data);
+          $data = base64_decode($data[1]);
 
-            // get the mimetype
-            preg_match('/data:image\/(?<mime>.*?)\;/', $src, $groups);
-            $mimetype = $groups['mime'];
+          $dim = preg_split('/;\s/', $dim);
 
-            // Generating a random filename
-            $filename = uniqid();
-            $filepath = "/storage/articles/$filename.$mimetype";
+          $image_name = Str::random(64).'.jpg';
 
-            $image = Image::make($src)
-              //->resize(300, 200)
-              ->encode($mimetype, 100)
-              ->save(public_path($filepath));
+          $image = Image::make($data);
 
-            $new_src = asset($filepath);
-            $img->removeAttribute('src');
+          if(count($dim) > 0) {
+              $image->resize($dim[0], null);
+          } elseif(count($dim) > 1) {
+              $image->resize($dim[0], $dim[1]);
+          }
+          $image->encode('jpg', 100);
 
-            $img->setAttribute('src', $new_src);
-          } // <!--endif
-        } // <!--endforeach*/
+          Storage::disk('articles')->put($image_name, $image);
+
+          $img->removeAttribute('src');
+          $img->removeAttribute('style');
+          $img->removeAttribute('data-filename');
+          $img->setAttribute('src', Storage::disk('articles')->url('articles/'.$image_name));
+        }
+        $testo = $dom->saveHTML();
+
         $query->testo = $testo;
       }
 
+      // Copertina
       if($a = $request->image) {
+        $this->validate($request,[
+          'image' => 'image|mimes:jpeg,jpg,png',
+        ],[
+          'image.image' => 'Devi inserire un\'immagine',
+          'image.mimes'  => 'Formato immagine non valido',
+        ]);
         $resize = '__492x340'.Str::random(64).'.jpg';
         $normal_image = '__'.Str::random(64).'.jpg';
         $image = Image::make($a)->resize(492, 340)->encode('jpg', 100);
@@ -501,10 +510,6 @@ class FilterController extends Controller
         $query->slug = str_slug($query->id.'-'.$query->titolo,'-');
         $query->save();
 
-        // Unlock Achievement
-        /*if(!Auth::user()->achievementStatus(1)) {
-          Auth::user()->achievementUnlock(1);
-        }*/
         return redirect('read/'.$query->slug);
       }
 
@@ -530,12 +535,8 @@ class FilterController extends Controller
             $query2->save();
             $query->delete();
 
-            // Unlock Achievement
-            /*if(!Auth::user()->achievementStatus(1)) {
-              Auth::user()->achievementUnlock(1);
-            }*/
           } else {
-            return redirect();
+            return redirect('');
           }
         }
         return redirect('read/'.$query2->slug);
@@ -578,10 +579,10 @@ class FilterController extends Controller
 
           if($a = $request->image){
             $this->validate($request,[
-              'copertina' => 'image|mimes:jpeg,jpg,png',
+              'image' => 'image|mimes:jpeg,jpg,png',
             ],[
-              'copertina.image' => 'Devi inserire un\'immagine',
-              'copertina.mimes'  => 'Formato immagine non valido',
+              'image.image' => 'Devi inserire un\'immagine',
+              'image.mimes'  => 'Formato immagine non valido',
             ]);
             $filePath = public_path().'/storage/articles/'.$query->copertina;
             if(File::exists($filePath)){
@@ -620,10 +621,10 @@ class FilterController extends Controller
 
         if($a = $request->image){
           $this->validate($request,[
-            'copertina' => 'image|mimes:jpeg,jpg,png',
+            'image' => 'image|mimes:jpeg,jpg,png',
           ],[
-            'copertina.image' => 'Devi inserire un\'immagine',
-            'copertina.mimes'  => 'Formato immagine non valido',
+            'image.image' => 'Devi inserire un\'immagine',
+            'image.mimes'  => 'Formato immagine non valido',
           ]);
           $filePath = public_path().'/storage/articles/'.$query->copertina;
           if(File::exists($filePath)){

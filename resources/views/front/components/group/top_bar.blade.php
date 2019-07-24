@@ -31,17 +31,17 @@
     </div>
     <nav class="publisher-nav">
       <ul id='nav'>
-        <li><a href="{{url('publisher/'.$query->slug)}}">Redazione</a></li>
-        <li><a href="{{url('publisher/'.$query->slug.'/about')}}">Contatti</a></li>
+        <li><a href="{{url($query->slug)}}">Redazione</a></li>
+        <li><a href="{{url($query->slug.'/about')}}">Contatti</a></li>
         @if(Auth::user() && $query->hasMember())
-        <li><a href="{{url('publisher/'.$query->slug.'/archive')}}">Articoli Salvati</a></li>
+        <li><a href="{{url($query->slug.'/archive')}}">Articoli Salvati</a></li>
         <li>
           <a data-toggle="dropdown" href="#">
             Impostazioni
           </a>
           <div class="dropdown-menu">
             @if($query->direttore == Auth::user()->id && !$query->suspended)
-            <a class="dropdown-item" href="{{ url('publisher/'.$query->slug.'/settings') }}"><i class="fa fa-cog"></i> Impostazioni</a>
+            <a class="dropdown-item" href="{{ url($query->slug.'/settings') }}"><i class="fa fa-cog"></i> Impostazioni</a>
             @endif
             <a id="leaveGroup" class="dropdown-item" href="#" onclick="document.getElementById('leaveGroup').submit();"><i class="fa fa-times"></i> Abbandona il gruppo</a>
             <script>

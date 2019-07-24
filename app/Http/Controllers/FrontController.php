@@ -36,6 +36,7 @@ use App\Achievements\FirstArticle;
 
 class FrontController extends Controller
 {
+
     public function index(Request $request)
     {
       // SEO ///////////////////////////////////////////////////
@@ -62,11 +63,29 @@ class FrontController extends Controller
                     ->addSelect('utenti.slug as user_slug', 'utenti.name as user_name', 'utenti.surname as user_surname', 'editori.name as publisher_name', 'editori.slug as publisher_slug',
                                 'articoli.titolo as article_title', 'articoli.id_gruppo as id_editore', 'articoli.slug as article_slug', DB::raw('articoli.testo as article_text'), 'articoli.copertina as copertina',
                                 'articoli.bot_message as bot_message', 'articoli.created_at as created_at', 'article_category.id as topic_id', 'article_category.name as topic_name', 'article_category.slug as topic_slug')
-                    ->orderBy('bot_message', 'desc')
                     ->orderBy('created_at', 'desc')
                     ->skip($INDEX_LIMIT * ($current_page-1))
                     ->take($INDEX_LIMIT)
                     ->get();
+
+          $popular_articles = Articoli::
+                              leftJoin('utenti', function($join){
+                                $join->on('articoli.id_autore', '=', 'utenti.id');
+                              })
+                              ->leftJoin('editori', function($join){
+                                  $join->on('articoli.id_gruppo', '=', 'editori.id');
+                                })
+                              ->leftJoin('article_category', function($join){
+                                  $join->on('articoli.topic_id', '=', 'article_category.id');
+                                })
+                              ->addSelect('utenti.slug as user_slug', 'utenti.name as user_name', 'utenti.surname as user_surname', 'editori.name as publisher_name', 'editori.slug as publisher_slug',
+                                          'articoli.titolo as article_title', 'articoli.id_gruppo as id_editore', 'articoli.slug as article_slug', DB::raw('articoli.testo as article_text'), 'articoli.copertina as copertina',
+                                          'articoli.bot_message as bot_message', 'articoli.created_at as created_at', 'article_category.id as topic_id', 'article_category.name as topic_name', 'article_category.slug as topic_slug')
+                              ->orderBy('created_at', 'desc')
+                              ->skip($INDEX_LIMIT * ($current_page-1))
+                              ->take($INDEX_LIMIT)
+                              ->limit(5)
+                              ->get();
 
           if($request->ajax()){
             if(count($articoli)){
@@ -74,7 +93,7 @@ class FrontController extends Controller
             }
           }
 
-      return view('front.pages.welcome',compact('articoli'));
+      return view('front.pages.welcome',compact('articoli', 'popular_articles'));
     }
 
     // PROFILE
@@ -82,9 +101,9 @@ class FrontController extends Controller
     {
       $query = User::where('slug',$slug)->first();
 
-      /*if(empty($query)){
+      if(empty($query)){
         return $this->getPublisherIndex($slug, $request);
-      }*/
+      }
 
       // SEO ///////////////////////////////////////////////////
 
@@ -118,22 +137,24 @@ class FrontController extends Controller
 
       $score = \DB::table('article_score')->where('article_id', $query->id);
 
+      $gruppi = Auth::user()->getPublishersInfo();
+
         if($request->ajax()){
           if($articoli->count()){
             return ['posts' => view('front.components.profile.loadArticles')->with(compact('articoli'))->render()];
           }
         }
 
-      return view('front.pages.profile.index',compact('query','articoli','count','score'));
+      return view('front.pages.profile.index',compact('query','articoli','count','score','gruppi'));
     }
 
     public function getAbout($slug)
     {
       $query = User::where('slug', $slug)->first();
 
-      /*if(empty($query)) {
+      if(empty($query)) {
         return $this->getPublisherAbout($slug);
-      }*/
+      }
 
       // SEO ///////////////////////////////////////////////////
 
@@ -163,7 +184,7 @@ class FrontController extends Controller
                   ->setCanonical(\Request::url());
         return view('front.pages.profile.archive',compact('query'));
       } else {
-        abort(404);
+        return $this->getPublisherArchive($slug);
       }
     }
 
@@ -281,7 +302,7 @@ class FrontController extends Controller
           $query2 = SavedArticles::where('id_gruppo', $query->id)->get();
           return view('front.pages.group.archive',compact('query','query2'));
         }else{
-          return redirect('publisher/'.$slug);
+          return redirect($slug);
         }
     }
 
@@ -294,14 +315,14 @@ class FrontController extends Controller
           return redirect($slug);
 
         if(!$tab)
-          return redirect('publisher/'.$slug.'/settings/edit');
+          return redirect($slug.'/settings/edit');
 
           SEOMeta::setTitle('Impostazioni - '.$query->name.' - Sywrit', false)
                     ->setCanonical(\Request::url());
 
         return view('front.pages.group.settings',compact('query','tab'));
       } else {
-        return redirect('publisher/'.$slug);
+        return redirect($slug);
       }
     }
 
@@ -311,7 +332,6 @@ class FrontController extends Controller
 
     public function getWrite(Request $request)
     {
-      session()->put('writing', 'true');
 
       // SEO ///////////////////////////////////////////////////
 
@@ -326,7 +346,7 @@ class FrontController extends Controller
       } else {
         $categories = \DB::table('article_category')->where('slug', $request->_topic)->first();
       }
-      return view('front.pages.new_post',compact('categories'));
+      return view('front.pages.new_post', compact('categories'));
     }
 
     public function getArticle($slug)
@@ -380,10 +400,10 @@ class FrontController extends Controller
         $date = Carbon::parse($query->created_at)->formatLocalized('%A %d %B %Y');
         $time = Carbon::parse($query->created_at)->format('H:i');
 
-        $score = \DB::table('article_score')->where('article_id', $query->id);
-        $hasRate = (Auth::user() && \DB::table('article_score')->where('user_id', Auth::user()->id)->where('article_id', $query->id)->count() > 0);
+        $likes = \DB::table('article_likes')->where('article_id', $query->id)->count();
+        $liked = (Auth::user() && \DB::table('article_likes')->where('user_id', Auth::user()->id)->where('article_id', $query->id)->count() > 0);
 
-        return view('front.pages.read',compact('query','date','time','tags','options','score','hasRate'));
+        return view('front.pages.read',compact('query','date','time','tags','options','likes','liked'));
       } else {
         $tags = explode(',',$query->tags);
         $date = Carbon::parse($query->created_at)->formatLocalized('%A %d %B %Y');

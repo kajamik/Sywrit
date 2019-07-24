@@ -19,10 +19,13 @@ use App\Models\Notifications;
 use App\Models\PublisherRequest;
 use App\Models\ArticleComments;
 use App\Models\AnswerComments;
-use App\Models\ArticleScore;
+use App\Models\ArticleLikes;
 
 // Achievements
 use App\Achievements\FirstComment;
+
+// Notifications
+use App\Notifications\NotifyArticleOwner;
 
 class AjaxController extends Controller
 {
@@ -36,55 +39,50 @@ class AjaxController extends Controller
 
   public function rate(Request $request)
   {
+    /*if(!empty($article->id_gruppo)) {
+
+      $editore = \DB::table('editori')->where('id', $article->id_gruppo)->first();
+      $components = collect(explode(',',$editore->componenti))->filter(function ($value, $key) {
+        return ($value != "" && $value != Auth::user()->id);
+      });
+
+      foreach($components as $value) {
+        $noty = new Notifications();
+        $noty->sender_id = Auth::user()->id;
+        $noty->target_id = $value;
+        $noty->content_id = $article->id;
+        $noty->type = '2';
+        $noty->read = '0';
+        $noty->save();
+      }
+    } else {
+        $noty = new Notifications();
+        $noty->sender_id = Auth::user()->id;
+        $noty->target_id = $article->id_autore;
+        $noty->content_id = $article->id;
+        $noty->type = '2';
+        $noty->read = '0';
+        $noty->save();
+    }*/
+
       $article_id = $request->id;
 
-      $score = ArticleScore::where('user_id', Auth::user()->id)->where('article_id', $article_id)->count();
-
-      if($request->rate_value <= 0) {
-        $rating_value = 1;
-      } elseif($request->rate_value > 5) {
-        $rating_value = 5;
-      } else {
-        $rating_value = $request->rate_value;
-      }
+      $liked = ArticleLikes::where('user_id', Auth::user()->id)->where('article_id', $article_id);
 
       $article = Articoli::where('id', $article_id)->first();
 
-      if(Auth::user()->id != $article->id_autore && $score == 0 && !empty($article)){
+      if(Auth::user()->id != $article->id_autore && !empty($article)){
 
-        $score = new ArticleScore();
-        $score->user_id = Auth::user()->id;
-        $score->article_id = $article->id;
-        $score->score = $rating_value;
-        $score->save();
-
-        if($article->id_gruppo != NULL) {
-          $editore = \DB::table('editori')->where('id', $article->id_gruppo)->first();
-          $components = collect(explode(',',$editore->componenti))->filter(function ($value, $key) {
-            return ($value != "" && $value != Auth::user()->id);
-          });
-          foreach($components as $value) {
-            $noty = new Notifications();
-            $noty->sender_id = Auth::user()->id;
-            $noty->target_id = $value;
-            $noty->content_id = $article->id;
-            $noty->text = $rating_value;
-            $noty->type = '2';
-            $noty->marked = '0';
-            $noty->save();
-          }
+        if(!$liked->count()) {
+          $query = new ArticleLikes();
+          $query->user_id = Auth::user()->id;
+          $query->article_id = $article->id;
+          $query->save();
         } else {
-            $noty = new Notifications();
-            $noty->sender_id = Auth::user()->id;
-            $noty->target_id = $article->id_autore;
-            $noty->content_id = $article->id;
-            $noty->text = $rating_value;
-            $noty->type = '2';
-            $noty->marked = '0';
-            $noty->save();
+          $liked->delete();
         }
+
         return view('front.components.article.rate')->with(['query' => $article]);
-        //return Response::json(['success' => true, 'html' => ]);
       }
   }
 
@@ -172,40 +170,17 @@ class AjaxController extends Controller
   {
     $post = $request->post;
     $query = Articoli::where('id', $request->id)->first();
-    if(!empty($post)){
-      $query2 = new ArticleComments();
-      $query2->user_id = Auth::user()->id;
-      $query2->text = $post;
-      $query2->article_id = $query->id;
-      $query2->save();
 
-      if($query->id_autore != Auth::user()->id) {
-        if($query->id_gruppo != NULL) {
-          $editore = \DB::table('editori')->where('id', $query->id_gruppo)->first();
-          $components = collect(explode(',',$editore->componenti))->filter(function ($value, $key) {
-            return ($value != "" && $value != Auth::user()->id);
-          });
-            foreach($components as $value) {
-            $noty = new Notifications();
-            $noty->sender_id = Auth::user()->id;
-            $noty->target_id = $value;
-            $noty->content_id = $query->id;
-            $noty->text = '';
-            $noty->type = '3';
-            $noty->marked = '0';
-            $noty->save();
-          }
-        } else {
-            $noty = new Notifications();
-            $noty->sender_id = Auth::user()->id;
-            $noty->target_id = $query->id_autore;
-            $noty->content_id = $query->id;
-            $noty->text = '';
-            $noty->type = '3';
-            $noty->marked = '0';
-            $noty->save();
-        }
-      }
+    if(!empty($post)){
+
+      $query2 = ArticleComments::create([
+        'user_id' => Auth::user()->id,
+        'text' => $post,
+        'article_id' => $query->id
+      ]);
+
+      $article = Articoli::find($query2->article_id);
+      User::find($article->getAutore->id)->notify(new NotifyArticleOwner());
 
       return view('front.components.ajax.uploadComment')->with(['post' => $query2]);
     }
@@ -320,29 +295,35 @@ class AjaxController extends Controller
 
   public function getSupportRequest(Request $request)
   {
-    $obj = new \stdClass();
-    $obj->from = "no-reply@sywrit.com";
-    $obj->to = "support@sywrit.com";
+      $obj = new \stdClass();
+      $obj->from = "no-reply@sywrit.com";
+      $obj->to = "support@sywrit.com";
 
-    if(Auth::user()) {
-      $obj->username = Auth::user()->name.' '.Auth::user()->surname;
-      $obj->email = Auth::user()->email;
-    } else {
-      $obj->username = "Ospite";
-      $obj->email = $request->email;
-    }
+      if(Auth::user()) {
+        $obj->username = Auth::user()->name.' '.Auth::user()->surname;
+        $obj->email = Auth::user()->email;
+      } else {
+        $obj->username = "Ospite";
+        $obj->email = $request->email;
+      }
 
-    if($request->selector == '1') {
-      $obj->subject = 'Richiesta supporto';
-    } elseif($request->selector == '2') {
-      $obj->subject = 'Feeback';
-    }
+      if($request->selector == '1') {
+        $obj->subject = 'Richiesta supporto';
+      } elseif($request->selector == '2') {
+        $obj->subject = 'Feeback';
+      }
 
-    $obj->message = $request->text;
+      $obj->message = $request->text;
 
-    Mail::send(new SupportEmail($obj));
+      Mail::send(new SupportEmail($obj));
 
-    return Response::json(['message' => 'Grazie per averci contattato.']);
+      return Response::json(['message' => 'Grazie per averci contattato.']);
+  }
+
+  public function getAuth(Request $request)
+  {
+      $callback = $request->callback;
+      return view('front.components.ajax.'. $callback)->with(['redirectTo' => $request->path]);
   }
 
 }

@@ -44,7 +44,8 @@
             <p>Editore individuale</p>
             @else
             <p>Editore presso
-                @foreach($query->getPublishersInfo() as $value)
+
+                @foreach($gruppi as $value)
                   <a class="text-underline" href="{{ url('publisher/'.$value->slug) }}"> {{ $value->name }}</a>
                 @endforeach
             </p>
@@ -91,9 +92,9 @@
         @endif
         @if(Auth::user() && Auth::user()->id != $query->id && !Auth::user()->suspended)
         <div class="col-md-12">
-          <a id="report" href="#report">
+          <button id="report" class="btn btn-link">
             Segnala utente
-          </a>
+          </button>
         </div>
         <script>
           $("#report").click(function(){

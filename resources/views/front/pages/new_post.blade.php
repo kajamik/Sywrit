@@ -43,11 +43,16 @@
 
     <div class="form-group row">
       <div class="col-md-12">
-        <label for="file-upload" class="form-control custom-upload">
+        <label for="file-upload" class="form-control{{ $errors->has('image') ? ' is-invalid' : '' }} custom-upload">
           <i class="fa fa-cloud-upload-alt"></i> Carica copertina
         </label>
         <input id="file-upload" type="file" onchange="App.upload(this.nextElementSibling, false)" name="image">
         <div id="image_preview" class="preview_body"></div>
+        @if ($errors->has('image'))
+            <span class="invalid-feedback" role="alert">
+                <strong>{{ $errors->first('image') }}</strong>
+            </span>
+        @endif
       </div>
     </div>
 
@@ -58,9 +63,12 @@
                   <strong>{{ $errors->first('document__text') }}</strong>
               </span>
           @endif
-          <textarea class="document{{ $errors->has('document__text') ? ' is-invalid' : '' }}" name="document__text">
+          <div class="document{{ $errors->has('document__text') ? ' is-invalid' : '' }}" name="document__text">
+            <p>Inizia a scrivere...</p>
+          </div>
+          {{--<textarea class="document{{ $errors->has('document__text') ? ' is-invalid' : '' }}" name="document__text">
             {{ old('document__text') }}
-          </textarea>
+          </textarea>--}}
         </div>
     </div>
 
@@ -111,9 +119,19 @@
   </form>
 </div>
 </div>
-<link rel="stylesheet" href="{{ asset('plugins/dist/summernote.css') }}" />
+{{--<link rel="stylesheet" href="{{ asset('plugins/dist/summernote.css') }}" />
 <script src="{{ asset('plugins/dist/summernote.min.js') }}"></script>
 <script>var initial_form_state, last_form_state;$(".document").summernote({height: 500,
 toolbar:[['style'],['style', ['bold', 'italic', 'underline']],['color', ['color']],['para', ['ul', 'ol', 'paragraph']],['link'],['picture'],['help']],placeholder: 'Inizia a scrivere',
-callbacks:{onChange:function(){last_form_state = $('form').serialize();}}});$(window).bind('beforeunload', function(e) {if(last_form_state != initial_form_state){return false;}});$(document).on("submit","form",function(event){$(window).off('beforeunload');});</script>
+callbacks:{onChange:function(){last_form_state = $('form').serialize();}}});</script>
+--}}
+<script src="{{ asset('plugins/editor/ckeditor.js') }}"></script>
+<script>
+var initial_form_state, last_form_state;
+	ClassicEditor.create(document.querySelector('.document'), {
+    plugins: ['Base64UploadAdapter']
+  }
+);
+  $(window).bind('beforeunload', function(e) {if(last_form_state != initial_form_state){return false;}});$(document).on("submit","form",function(event){$(window).off('beforeunload');});
+</script>
 @endsection

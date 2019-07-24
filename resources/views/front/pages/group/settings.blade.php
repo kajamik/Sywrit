@@ -31,9 +31,9 @@
     </div>
     <nav class="publisher-nav">
       <ul id="nav">
-        <li><a href="{{ url('publisher/'.$query->slug) }}">Home</a></li>
-        <li><a class="@if($tab == 'edit') active @endif" href="{{ url('publisher/'.$query->slug.'/settings/edit') }}">Modifica gruppo</a></li>
-        <li><a class="@if($tab == 'role') active @endif" href="{{ url('publisher/'.$query->slug.'/settings/role') }}">Gestione ruoli</a></li>
+        <li><a href="{{ url($query->slug) }}">Home</a></li>
+        <li><a class="@if($tab == 'edit') active @endif" href="{{ url($query->slug.'/settings/edit') }}">Modifica gruppo</a></li>
+        <li><a class="@if($tab == 'role') active @endif" href="{{ url($query->slug.'/settings/role') }}">Gestione ruoli</a></li>
       </ul>
     </nav>
     <div class="publisher-body">

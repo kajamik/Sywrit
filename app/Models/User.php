@@ -9,6 +9,8 @@ use App\Notifications\ResetPassword as ResetPasswordNotification;
 use App\Notifications\VerifyEmail as VerifyEmailNotification;
 //use App\Traits\Achiever;
 
+use App\Support\Database\CacheQueryBuilder;
+
 class User extends Authenticatable
 {
     protected $table = 'utenti';
@@ -100,7 +102,7 @@ class User extends Authenticatable
           $query = \DB::table('editori')->where('id', $value)->select('id', 'name', 'slug', 'suspended')->first();
           $collection->push($query);
         }
-        return $collection;
+        return $collection->toArray();
       }
     }
 
@@ -119,7 +121,7 @@ class User extends Authenticatable
       $str = $this->name .' '. $this->surname. ' ';
       if($this->verified) {
         $str .= '<div class="sw-ico">';
-        $str .= '<i class="sw_dark fas fa-check-circle" title="Profilo verificato &#xA;&#xA; Sywrit ha confermato l\'autenticità di questo profilo."></i>';
+        $str .= '<i class="sw_dark fas fa-check-circle" title="Profilo verificato&#xA;Sywrit ha confermato l\'autenticità di questo profilo."></i>';
         $str .= '</div>';
       }
       return $str;

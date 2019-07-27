@@ -68,40 +68,30 @@
           <span>Modificato {{ $query->updated_at->diffForHumans() }}</span>
           @endif
           <div class="row pt-5">
-            <div class="col-lg-10 col-sm-12 col-xs-12">
-              <div id="reaction">
-                @if($liked)
-                <i class="bs-icon fa-2x fas fa-hand-spock"></i>
-                @else
-                <i class="bs-icon fa-2x far fa-hand-spock"></i>
-                @endif
-                <span>{{ $likes }}</span>
-              </div>
-            </div>
-            <div class="socials row">
-              <div class="col-lg-12 col-sm-12 col-xs-12">
-                <div class="col-lg-6">
-                  <div id="share">
-                    <span class="fa-2x fa fa-share-square"></span>
-                  </div>
+
+            <div class="col-lg-10 col-sm-9 col-xs-8 col-6">
+              <div class="col-2">
+                <div id="reaction">
+                  @if($liked)
+                  <i class="bs-icon fa-2x fas fa-hand-spock"></i>
+                  @else
+                  <i class="bs-icon fa-2x far fa-hand-spock"></i>
+                  @endif
+                  <span>{{ $likes }}</span>
                 </div>
-                @if(Auth::guest() || (Auth::user() && $query->id_autore != Auth::user()->id && !Auth::user()->suspended))
-                <div class="col-lg-2">
-                  <div id="report" class="ml-4" href="#report" title="Segnala articolo">
-                    <span class="fa-2x fas fa-flag"></span>
-                  </div>
               </div>
-                @endif
               </div>
-              <script>
-                App.share({
-                  'apps': [
-                    'facebook', 'linkedin'
-                  ],
-                  'appendTo': '#share',
-                });
-              </script>
+
+            <div id="share">
+              <span class="bs-icon fa-2x fa fa-share-square"></span>
             </div>
+            @if(Auth::guest() || (Auth::user() && $query->id_autore != Auth::user()->id && !Auth::user()->suspended))
+              <div id="report" class="ml-4" href="#report" title="Segnala articolo">
+                <span class="bs-icon fa-2x fas fa-flag"></span>
+              </div>
+            @endif
+            <script>App.share({'apps': ['facebook', 'linkedin'],'appendTo': '#share'});</script>
+
           </div>
         </div>
       </article>
@@ -115,13 +105,9 @@
             <div class="card-body">
 
               <div class="text-center">
-
                 <img src="{{ $autore->getAvatar() }}" alt="Avatar di {{ $autore->name }} {{ $autore->surname }}" />
-
                 <h4>Autore</h4>
-
                 <hr/>
-
                 @if(!empty($autore->biography))
                   <h5>Biografia:</h5>
                   <p>{!! $autore->biography !!}</p>

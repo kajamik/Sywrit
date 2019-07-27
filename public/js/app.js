@@ -253,11 +253,11 @@ App.share = function(data) {
 
   $this.click(function() {
       if($(this).hasClass("sb-open")) {
-        $(this).next(".sb-dialog").remove();
+        $(this).children(".sb-dialog").remove();
         $(this).removeClass("sb-open");
       } else {
         $(this).addClass("sb-open");
-        $("<div class='sb-dialog'></div>").insertAfter( $(this) );
+        $("<div class='sb-dialog'></div>").appendTo( $(this) );
         $.each(data.apps, function(f) {
           $("<a href='"+ links[data.apps[f]][1] + window.location.href + "'><div class='fab "+ links[data.apps[f]][0] +"'></div></a>").appendTo( $(".sb-dialog") );
         });

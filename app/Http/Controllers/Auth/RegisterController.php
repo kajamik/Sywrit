@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Models\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -11,6 +10,9 @@ use Illuminate\Support\Str;
 // Notification
 use App\Notifications\UserWelcome as UserWelcomeNotification;
 //
+use App\Models\User;
+
+use Auth;
 use Image;
 use Storage;
 
@@ -74,6 +76,9 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+      $redirectTo = \Session::get('redirectTo');
+      \Session::pull('redirectTo');
+
       $img = Image::make(Image::canvas(160, 160, 'rgba(199, 191, 230,1)'));
       $img->text(Str::limit($data['name'], 1, '').Str::limit($data['surname'], 1, ''), 80, 48, function($font) {
         $font->file(public_path('fonts/RobotoSlab-Regular.ttf'));
@@ -92,6 +97,7 @@ class RegisterController extends Controller
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'avatar' => Storage::disk('accounts')->url('accounts/'.$img_name),
+            'verified' => '0',
             // informazioni aggiuntive
             'rank' => '1',
             'points' => '0',
@@ -105,6 +111,10 @@ class RegisterController extends Controller
         // invio l'email di benvenuto all'utente
         $user->notify(new UserWelcomeNotification($user->name));
 
+        if($redirectTo) {
+          $this->redirectTo = $redirectTo;
+        }
+        
         return $user;
     }
 }

@@ -322,8 +322,11 @@ class AjaxController extends Controller
 
   public function getAuth(Request $request)
   {
+      if(!$request->session()->get('redirectTo')) {
+        $request->session()->put('redirectTo', $request->path);
+      }
       $callback = $request->callback;
-      return view('front.components.ajax.'. $callback)->with(['redirectTo' => $request->path]);
+      return view('front.components.ajax.'. $callback);
   }
 
 }

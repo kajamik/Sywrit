@@ -1,4 +1,4 @@
-<a href="{{ url('auth/facebook/redirect?to='.$redirectTo) }}">
+<a href="{{ url('auth/facebook/redirect') }}">
   <button type="button" class="btn btn-facebook btn-block">
       <i class="fab fa-facebook-f"></i>
       {{ __('Accedi con Facebook') }}
@@ -73,7 +73,7 @@
 
 <script>
 $("#scene").on('click', function() {
-  $.get("{{ url('ajax/auth') }}", {path: '{{ Request::path() }}', callback: 'auth_register'}, function(data) {
+  $.get("{{ url('ajax/auth') }}", {callback: 'auth_register'}, function(data) {
     $(".__ui__g_body").html(data);
   });
 });

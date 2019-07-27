@@ -3,10 +3,9 @@
   $count = \DB::table('article_comments')->where('article_id', $query->id)->count();
 @endphp
   <div class="feedback my-5">
-    @auth
-    @if(Auth::user() && !Auth::user()->suspended)
+    @if(Auth::guest() || (Auth::user() && !Auth::user()->suspended))
     <div class="d-flex">
-      <img style="height:6em" class="p-2" src="{{ Auth::user()->getAvatar() }}" />
+      <img style="height:6em" class="p-2" src="{{ Auth::user() ? Auth::user()->getAvatar() : '' }}" />
         <div class="d-flex flex-grow-1">
           <textarea class="form-control" placeholder="Scrivi un commento..."></textarea>
         </div>
@@ -16,7 +15,7 @@
         Invia
       </button>
     </div>
-    @else
+    @elseif(Auth::user() && !Auth::user()->suspended)
     <div class="d-flex">
       <img style="height:6em" class="p-2" src="{{ Auth::user()->getAvatar() }}" />
         <div class="d-flex flex-grow-1 bg-sw">
@@ -24,14 +23,6 @@
         </div>
     </div>
     @endif
-    @else
-    <div class="d-flex">
-      <img style="height:6em" class="p-2" src="{{ asset('upload/default.png') }}" />
-        <div class="d-flex flex-grow-1 bg-sw">
-          <p class="mt-3 offset-1">Per commentare devi prima effettuare l'accesso</p>
-        </div>
-    </div>
-    @endauth
   </div>
 
   {{-- Commenti--}}
@@ -49,12 +40,18 @@
       });
     });
 
+      @if(Auth::user())
       $("#sendMsg").click(function(){
         updateComments();
         App.query("get","{{ url('send-comment') }}",{id: {{ $query->id }}, post: $("textarea").val() },false,function(data){
             $(data).prependTo($("#comments-data"));
         });
       });
+      @else
+      $(".feedback textarea").click(function(){
+        validator();
+      });
+      @endif
 
     function updateComments() {
       App.query("get","{{ url('load-comments') }}",{id: {{ $query->id }}, q: this.q },false,function(data){

@@ -33,7 +33,7 @@ class LoginController extends Controller
      *
      * @var string
      */
-    public $redirectTo;
+    public $redirectTo = '/';
 
     /**
      * Create a new controller instance.
@@ -71,8 +71,7 @@ class LoginController extends Controller
      */
     public function redirectToProvider(Request $request)
     {
-        $request->session()->put('redirectTo', $request->to);
-        return Socialite::driver('facebook')->redirect('asd');
+        return Socialite::driver('facebook')->redirect();
     }
 
     /**
@@ -107,6 +106,7 @@ class LoginController extends Controller
               'password' => $userSocial->token,
               'avatar' => $userSocial->avatar,
               'social_auth_id' => $userSocial->getId(),
+              'verified' => '0',
               // informazioni aggiuntive
               'rank' => '1',
               'points' => '0',
@@ -122,7 +122,7 @@ class LoginController extends Controller
         }
 
         Auth::login($user, true);
-
+        
         return redirect($redirectTo);
 
     }

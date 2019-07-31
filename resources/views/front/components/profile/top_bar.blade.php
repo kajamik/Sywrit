@@ -44,9 +44,8 @@
             <p>Editore individuale</p>
             @else
             <p>Editore presso
-
                 @foreach($gruppi as $value)
-                  <a class="text-underline" href="{{ url('publisher/'.$value->slug) }}"> {{ $value->name }}</a>
+                  <a class="text-underline" href="{{ url($value->slug) }}"> {{ $value->name }}</a>
                 @endforeach
             </p>
             @endif

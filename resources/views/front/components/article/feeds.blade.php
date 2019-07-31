@@ -12,7 +12,6 @@
                     ->orWhere('id_autore', $query->id_autore);
             })
             ->get();
-
 @endphp
 @if($feeds->count())
 <hr/>

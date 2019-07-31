@@ -73,7 +73,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('send-answers', 'AjaxController@postAnswers');
     Route::get('comment/report', ['uses' => 'FilterController@CommentReport', 'as' => 'comment/action/report']);
     Route::get('acomment/report', ['uses' => 'FilterController@ACommentReport', 'as' => 'acomment/action/report']);
-    Route::get('rate', ['uses' => 'AjaxController@rate', 'as' => 'rate']);
+    Route::get('rate', 'AjaxController@rate');
     Route::get('notifications_delete', 'AjaxController@deleteAllNotifications');
     Route::get('notification_delete', 'AjaxController@deleteNotification');
     Route::get('request_accepted', 'AjaxController@acceptGroupRequest');

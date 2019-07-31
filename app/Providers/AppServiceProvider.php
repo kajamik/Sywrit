@@ -19,6 +19,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+      /*if($this->app->request->is("public")) {
+        $this->app->abort(404);
+      }*/
         \Carbon\Carbon::setUTF8(true);
         setlocale(LC_TIME, 'it', 'it_IT', 'italian');
         \Carbon\Carbon::setLocale('it');

@@ -70,9 +70,6 @@ span.time {
             </div>
             @endif
           <div class="block-footer">
-            @if($query->created_at != $query->updated_at)
-            <span>Modificato {{ $query->updated_at->diffForHumans() }}</span>
-            @endif
             <div class="row pt-5">
               <div class="socials">
                 <div class="col-lg-12 col-sm-12 col-xs-12">

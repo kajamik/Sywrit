@@ -47,8 +47,9 @@
           <hr style="border-style:dotted"/>
           <div class="both"></div>
           <div class="auth">
+            <p>Tipo di licenza: </p>
             @if($query->license == "1")
-            <p>&copy; Produzione riservata</p>
+            <p>Sywrit Standard</p>
             @else
             <img src="{{ asset('upload/icons/cc.png') }}" title="{{ trans('Licenza Creative Commons BY SA') }}" alt="License Creative Commons BY SA" />
             @endif
@@ -64,26 +65,15 @@
           </div>
           @endif
         <div class="block-footer">
-          @if($query->created_at != $query->updated_at)
-          <span>Modificato {{ $query->updated_at->diffForHumans() }}</span>
-          @endif
           <div class="row pt-5">
-
-            <div class="col-lg-10 col-sm-9 col-xs-8 col-6">
-              <div class="col-2">
-                <div id="reaction">
-                  @if($liked)
-                  <i class="bs-icon fa-2x fas fa-hand-spock"></i>
-                  @else
-                  <i class="bs-icon fa-2x far fa-hand-spock"></i>
-                  @endif
-                  <span>{{ $likes }}</span>
-                </div>
+            <div class="col-lg-10 col-sm-10 col-xs-10 col-9">
+              <div class="reaction-body">
+                @include('front.components.article.rate')
               </div>
-              </div>
+            </div>
 
             <div id="share">
-              <span class="bs-icon fa-2x fa fa-share-square"></span>
+              <span class="bs-icon bs-icon-color-sw fa-2x fa fa-share-square"></span>
             </div>
             @if(Auth::guest() || (Auth::user() && $query->id_autore != Auth::user()->id && !Auth::user()->suspended))
               <div id="report" class="ml-4" href="#report" title="Segnala articolo">
@@ -91,7 +81,6 @@
               </div>
             @endif
             <script>App.share({'apps': ['facebook', 'linkedin'],'appendTo': '#share'});</script>
-
           </div>
         </div>
       </article>
@@ -179,10 +168,10 @@
       validator();
   });
   @endif
-  $('#reaction').click(function(){
+  $(".reaction-body").on('click', '#reaction', function(){
     @if(Auth::user())
       $.get("{{ url('rate') }}", {id: {{ $query->id }}}, function(data) {
-        $("#reaction").html(data);
+        $('.reaction-body').html(data);
       });
     @else
       validator();
@@ -199,7 +188,7 @@
           "title": "Benvenuto ospite!!",
           "content": data
         }
-      });
+      }, true);
     });
   }
   </script>

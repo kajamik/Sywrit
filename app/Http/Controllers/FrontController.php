@@ -137,7 +137,7 @@ class FrontController extends Controller
 
       $score = \DB::table('article_score')->where('article_id', $query->id);
 
-      $gruppi = Auth::user()->getPublishersInfo();
+      $gruppi = $query->getPublishersInfo();
 
         if($request->ajax()){
           if($articoli->count()){

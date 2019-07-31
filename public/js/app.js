@@ -81,7 +81,7 @@ function search_item(s, v){
   return null;
 }
 
-App.getUserInterface = function(t, e){
+App.getUserInterface = function(t, refresh = false, e){
 
   $(".__ui__g").remove();
 
@@ -155,7 +155,9 @@ App.getUserInterface = function(t, e){
     });
 
   $("form").on('submit', function(e){
-    e.preventDefault();
+    if(refresh == false) {
+      e.preventDefault();
+    }
     //Process
     for(var i in data) {
       !$.isNumeric(data[i]) ? data[i] = $(data[i]).val() : '';

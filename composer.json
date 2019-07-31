@@ -19,6 +19,7 @@
         "laravel/socialite": "^4.1",
         "laravel/tinker": "^1.0",
         "pusher/pusher-php-server": "^3.4",
+        "rap2hpoutre/laravel-log-viewer": "^1.2",
         "spatie/laravel-cookie-consent": "^2.8"
     },
     "require-dev": {

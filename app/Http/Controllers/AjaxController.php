@@ -71,7 +71,7 @@ class AjaxController extends Controller
 
       $article = Articoli::where('id', $article_id)->first();
 
-      if(Auth::user()->id != $article->id_autore && !empty($article)){
+      if(!empty($article)){
 
         if(!$liked->count()) {
           $query = new ArticleLikes();

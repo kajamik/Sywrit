@@ -8,7 +8,6 @@ use \Illuminate\Http\Request;
 
 use App\Models\User;
 use Auth;
-use Socialite;
 
 // SEO
 use SEOMeta;
@@ -59,71 +58,37 @@ class LoginController extends Controller
       }
     }
 
-    /*protected function loggedOut(Request $request)
-    {
-        return redirect(($request->to) ? $request->to : '/');
-    }*/
-
     /**
-     * Redirect the user to the GitHub authentication page.
+     * Handle a login request to the application.
      *
-     * @return \Illuminate\Http\Response
-     */
-    public function redirectToProvider(Request $request)
-    {
-        return Socialite::driver('facebook')->redirect();
-    }
-
-    /**
-     * Obtain the user information from GitHub.
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response|\Illuminate\Http\JsonResponse
      *
-     * @return \Illuminate\Http\Response
+     * @throws \Illuminate\Validation\ValidationException
      */
-    public function handleProviderCallback()
+    /*public function login(Request $request)
     {
-        $redirectTo = \Session::get('redirectTo');
-        \Session::pull('redirectTo');
+        $this->validateLogin($request);
 
-        $userSocial = Socialite::driver('facebook')
-                          ->fields([
-                            'name',
-                            'first_name',
-                            'last_name',
-                            'email',
-                            'gender',
-                            'verified'
-                          ])
-                          ->user();
+        // If the class is using the ThrottlesLogins trait, we can automatically throttle
+        // the login attempts for this application. We'll key this by the username and
+        // the IP address of the client making these requests into this application.
+        if (method_exists($this, 'hasTooManyLoginAttempts') &&
+            $this->hasTooManyLoginAttempts($request)) {
+            $this->fireLockoutEvent($request);
 
-        $user = User::where('social_auth_id', $userSocial->getId())->first();
-
-        if(!$user) {
-          // New User
-          $user = User::create([
-              'name' => $userSocial->user['first_name'],
-              'surname' => $userSocial->user['last_name'],
-              'email' => $userSocial->user['email'],
-              'password' => $userSocial->token,
-              'avatar' => $userSocial->avatar,
-              'social_auth_id' => $userSocial->getId(),
-              'verified' => '0',
-              // informazioni aggiuntive
-              'rank' => '1',
-              'points' => '0',
-              'followers_count' => '0',
-              'notifications_count' => '0',
-          ]);
-
-          $user->slug = $user->id.'-'.str_slug($userSocial->user['first_name'].$userSocial->user['last_name'], '');
-          $user->save();
-
-          // invio l'email di benvenuto all'utente
-          $user->notify(new \App\Notifications\UserWelcome($user->name));
+            return $this->sendLockoutResponse($request);
         }
 
-        Auth::login($user, true);
-        
-        return redirect($redirectTo);
+        if ($this->attemptLogin($request)) {
+            return $this->sendLoginResponse($request);
+        }
 
-    }
+        // If the login attempt was unsuccessful we will increment the number of attempts
+        // to login and redirect the user back to the login form. Of course, when this
+        // user surpasses their maximum number of attempts they will get locked out.
+        $this->incrementLoginAttempts($request);
+
+        return $this->sendFailedLoginResponse($request);
+    }*/
 }

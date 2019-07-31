@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use \Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Auth\Events\Registered;
 // Notification
 use App\Notifications\UserWelcome as UserWelcomeNotification;
 //
@@ -69,6 +71,29 @@ class RegisterController extends Controller
     }
 
     /**
+     * Handle a registration request for the application.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    /*public function register(Request $request)
+    {
+        $user = User::where('email', $request->email)->first();
+        if($user) {
+          return redirect('recover/code?email='. urlencode($user->email));
+        } else {
+          $this->validator($request->all())->validate();
+
+          event(new Registered($user = $this->create($request->all())));
+
+          $this->guard()->login($user);
+
+          return $this->registered($request, $user)
+                          ?: redirect($this->redirectPath());
+        }
+    }*/
+
+    /**
      * Create a new user instance after a valid registration.
      *
      * @param  array  $data
@@ -114,7 +139,7 @@ class RegisterController extends Controller
         if($redirectTo) {
           $this->redirectTo = $redirectTo;
         }
-        
+
         return $user;
     }
 }

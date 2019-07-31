@@ -136,9 +136,12 @@ Route::get('page/{slug}', 'FrontController@getPages');
 Route::get('page/{slug}/{slug2}', 'FrontController@getPages');
 
 // Facebook auth
+Route::get('auth/facebook/redirect', 'Auth\SocialController@redirectToProvider');
+Route::get('auth/facebook/callback', 'Auth\SocialController@handleProviderCallback');
 
-Route::get('auth/facebook/redirect', 'Auth\LoginController@redirectToProvider');
-Route::get('auth/facebook/callback', 'Auth\LoginController@handleProviderCallback');
+// auth
+/*Route::get('recover/code', 'Auth\SecurityCodeController@getCheckCode');
+Route::post('recover/code', ['uses' => 'Auth\SecurityCodeController@postCheckCode', 'as' => 'sCode']);*/
 
 // Ajax Controller
 

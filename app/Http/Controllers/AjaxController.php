@@ -103,13 +103,13 @@ class AjaxController extends Controller
                 ->limit(5)
                 ->get();
 
-      $query4 = Editori::where('name', 'like', '%'. $search. '%')
+      /*$query4 = Editori::where('name', 'like', '%'. $search. '%')
               ->limit(5)
-              ->get();
+              ->get();*/
 
       $query2 = $query2->merge($query3);
 
-      return view('front.pages.livesearch')->with(['query' => $query, 'query2' => $query2, 'query4' => $query4, 'key' => $search]);
+      return view('front.pages.livesearch')->with(['query' => $query, 'query2' => $query2, 'key' => $search]);
     }
   }
 

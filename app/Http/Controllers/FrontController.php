@@ -101,9 +101,9 @@ class FrontController extends Controller
     {
       $query = User::where('slug',$slug)->first();
 
-      if(empty($query)){
+      /*if(empty($query)){
         return $this->getPublisherIndex($slug, $request);
-      }
+      }*/
 
       // SEO ///////////////////////////////////////////////////
 

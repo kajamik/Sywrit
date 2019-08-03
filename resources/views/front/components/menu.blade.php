@@ -115,27 +115,28 @@
           </li>
           @auth
           <li class="dropdown">
-            <a id="notification" href="#" data-toggle="dropdown" onclick="fetch_live_notifications();" title="Notifiche">
-              <i class="fa fa-bell" aria-hidden="true" title="Notifiche"></i>
-            </a>
-            <div class="dropdown-menu">
-              <div class="notification-header">
-                <div class="notification-title">
-                  <h3>Notifiche</h3>
-                </div>
-                <div class="notification-opts">
-                  <a href="{{ url('notifications') }}">
-                    <span class="fa fa-cogs"></span>
-                  </a>
-                </div>
+          <a id="notification" href="#" data-toggle="dropdown" onclick="fetch_live_notifications();" title="Notifiche">
+            <i class="fa fa-bell" aria-hidden="true" title="Notifiche"></i>
+            <span class='badge badge-notification'></span>
+          </a>
+          <div class="dropdown-menu">
+            <div class="notification-header">
+              <div class="notification-title">
+                <h3>Notifiche</h3>
               </div>
-              <div class="notification-content">
-                <div class="data-notification">
-                </div>
+              <div class="notification-opts">
+                <a href="{{ url('notifications') }}">
+                  <span class="fa fa-cogs"></span>
+                </a>
               </div>
             </div>
-          </li>
-          <li class="dropdown">
+            <div class="notification-content">
+              <div class="data-notification">
+              </div>
+            </div>
+          </div>
+        </li>
+        <li class="dropdown">
             <a class="dropdown-toggle" href="#" data-toggle="dropdown">
               <img class="u-icon img-circle" src="{{ Auth::user()->getAvatar() }}" alt="dropdown"><span class="user-name">{{ Auth::user()->name }}</span>
             </a>
@@ -144,14 +145,20 @@
               <a class="dropdown-item" href="{{ url(Auth::user()->slug.'/archive') }}"><i class="fa fa-file-archive"></i> Articoli Salvati</a>
               <a class="dropdown-item" href="{{ url('settings') }}"><i class="fa fa-cog"></i> Impostazioni</a>
               <hr/>
+              {{--
               @if(Auth::user()->haveGroup())
-              {{-- da modificare --}}
-              @foreach(Auth::user()->getPublishersInfo() as $value)
-                <a class="dropdown-item" href="{{ url('publisher/'.$value->slug) }}"><i class="fa fa-newspaper"></i> {{ $value->name }}</a>
+              @php
+                $gruppi = Auth::user()->getPublishersInfo();
+              @endphp
+
+              @foreach($gruppi as $value)
+                <a class="dropdown-item" href="{{ url($value->slug) }}"><i class="fa fa-newspaper"></i> {{ $value->name }}</a>
               @endforeach
+
               <hr/>
               @endif
               <a class="dropdown-item" href="{{ url('publisher/create') }}"><i class="fa fa-newspaper"></i> Crea redazione</a>
+              --}}
               @if(Auth::user()->isOperator())
               <a class="dropdown-item" href="{{ url('toolbox')}}" target="_blank"><i class="fa fa-toolbox"></i> Strumenti</a>
               @endif
@@ -162,7 +169,7 @@
             <li><a href="{{ route('login') }}">Accedi</a></li>
             <li><a href="{{ route('register') }}">Iscriviti</a></li>
           @endauth
-        </li>
-       </ul>
-     </div>
+      </li>
+    </ul>
+  </div>
 </div>

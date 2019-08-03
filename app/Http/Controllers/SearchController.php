@@ -42,12 +42,11 @@ class SearchController extends Controller
                                   'articoli.created_at as created_at', 'article_category.id as topic_id', 'article_category.name as topic_name', 'article_category.slug as topic_slug')
                       ->orderBy('created_at','desc')->get();
 
-    $query3 = Editori::where('name', 'like', '%'. $slug. '%')->get();
+    //$query3 = Editori::where('name', 'like', '%'. $slug. '%')->get();
 
-    $query = $query->merge($query2)
-                  ->merge($query3);
+    $query = $query->merge($query2);
 
-    return view('front.pages.search', compact('slug','query','query2','query3'));
+    return view('front.pages.search', compact('slug','query','query2'));
   }
 
   public function getResultsByTagName($slug)

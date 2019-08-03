@@ -29,6 +29,9 @@ Route::group(['prefix' => 'toolbox', 'middleware' => 'operator'], function() {
     Route::post('create', 'BotMessageController@postCreateMessage');
     Route::post('delete', 'BotMessageController@postDeleteMessage');
   });
+  Route::group(['prefix' => 'logs', 'namespace' => 'Toolbox'], function(){
+    Route::get('/', 'LogsController@index');
+  });
 });
 /*******************/
 
@@ -54,11 +57,11 @@ Route::group(['prefix' => 'read'], function() {
 Route::group(['middleware' => 'auth'], function(){
   Route::group(['middleware' => 'isSuspended'], function(){
     // Group Actions
-    Route::get('group/action/invite', 'AjaxController@inviteGroup');
+    /*Route::get('group/action/invite', 'AjaxController@inviteGroup');
     Route::get('group/action/leave', 'AjaxController@leaveGroup');
     Route::post('group/{id}/delete', 'FilterController@deleteGroup');
     Route::get('group/user/promote', 'FilterController@promoteUser');
-    Route::get('group/user/fired', 'FilterController@firedUser');
+    Route::get('group/user/fired', 'FilterController@firedUser');*/
     // User action
     Route::get('user/report', ['uses' => 'FilterController@UserReport', 'as' => 'user/action/report']);
     ///////
@@ -114,7 +117,7 @@ Route::group(['prefix' => '{slug}'], function() {
 });
 
 // Publishers
-Route::group(['prefix' => 'publisher'], function() {
+/*Route::group(['prefix' => 'publisher'], function() {
 
   Route::get('{slug}', 'FrontController@getPublisherIndex');
   Route::get('{slug}/about', 'FrontController@getPublisherAbout');
@@ -125,11 +128,11 @@ Route::group(['prefix' => 'publisher'], function() {
     Route::get('{tab}', 'FrontController@getPublisherSettings');
     Route::post('{tab}', 'FilterController@postPublisherSettings');
   });
-});
+});*/
 
 // CREATE GROUP
-Route::get('publisher/create', 'FrontController@getNewPublisher')->middleware('auth','isSuspended');
-Route::post('publisher/create', 'FilterController@postNewPublisher')->middleware('auth','isSuspended');
+/*Route::get('publisher/create', 'FrontController@getNewPublisher')->middleware('auth','isSuspended');
+Route::post('publisher/create', 'FilterController@postNewPublisher')->middleware('auth','isSuspended');*/
 
 // Pages
 Route::get('page/{slug}', 'FrontController@getPages');

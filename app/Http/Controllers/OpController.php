@@ -30,10 +30,11 @@ class OpController extends Controller
 
     $comments = DB::table('article_comments')->count();
     $answers = DB::table('answer_comments')->count();
+    $reactions = DB::table('article_likes')->count();
 
     $reported_articles = DB::table('reported_articles')->count();
 
-    return view('tools/home', compact('users','cron_users','user_articles','articles','archs','publishers','publisher_articles','comments','answers','reported_articles'));
+    return view('tools/home', compact('users','cron_users','user_articles','articles','archs','publishers','publisher_articles','comments','answers','reactions','reported_articles'));
   }
 
 }

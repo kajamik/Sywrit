@@ -8,13 +8,13 @@ use Illuminate\Support\Facades\Input;
 use Response;
 
 // Models
-use App\Models\BotMessage;
+use App\Models\Articoli;
 
 class BotMessageController extends Controller
 {
   public function index()
   {
-    $query = BotMessage::get();
+    $query = Articoli::where('bot_message', '1')->get();
     return view('tools.pages.bot.view', compact('query'));
   }
 
@@ -26,7 +26,7 @@ class BotMessageController extends Controller
   // pagina per creare nuovi messaggi
   public function getCreateMessage()
   {
-    return view('front.pages.bot.create');
+    return view('tools.pages.bot.create');
   }
 
   public function postCreateMessage()

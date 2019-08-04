@@ -4,18 +4,6 @@
 
 @section('main')
 <div class="container">
-  <form action="" method="POST">
-    <div class="form-group">
-      <div class="col-md-6">
-        <input type="text" class="form-control" placeholder="Cerca per id, nome pagina, ...">
-      </div>
-    </div>
-    <div class="form-group">
-      <div class="col-md-2">
-        <button class="btn btn-info" role="button">Filtra</button>
-      </form>
-    </div>
-  </form>
 
   <div class="table_users">
     <table>

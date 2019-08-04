@@ -59,10 +59,10 @@
               <p>Bot Message</p>
             </a>
           </li>
-          <li class="nav-item @if(request()->is('toolbox/live_stream')) active @endif">
-            <a class="nav-link" href="{{ url('toolbox/live_stream') }}">
-              <i class="fa fa-user-clock"></i>
-              <p>Live Stream</p>
+          <li class="nav-item @if(request()->is('toolbox/logs')) active @endif">
+            <a class="nav-link" href="{{ url('toolbox/logs') }}">
+              <i class="fa fa-bug"></i>
+              <p>Logs</p>
             </a>
           </li>
         </ul>
@@ -118,13 +118,8 @@
   <!--   Core JS Files   -->
   <script src="{{ url('js/core/jquery.min.js') }}"></script>
   <script src="{{ url('js/core/popper.min.js') }}"></script>
-  <script src="{{ url('js/core/bootstrap-material-design.min.js') }}"></script>
-  <script src="https://unpkg.com/default-passive-events"></script>
   <script src="{{ url('plugins/jquery/js/perfect-scrollbar.jquery.min.js') }}"></script>
-  <!-- Place this tag in your head or just before your close body tag. -->
-  <script async defer src="https://buttons.github.io/buttons.js"></script>
   <script src="{{ url('plugins/bootstrap/js/bootstrap-notify.js') }}"></script>
-  <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
   <script src="{{ url('js/toolbox/_dex.min.js?v=2.1.0') }}"></script>
   <script>
     $(document).ready(function() {

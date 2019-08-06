@@ -31,9 +31,9 @@
 
           <div class="form-group row">
             <div class="col-md-12">
-              <textarea class="document" name="document__text">
+              <div class="document">
                 {{ $query->testo }}
-              </textarea>
+              </div>
             </div>
           </div>
 
@@ -57,9 +57,6 @@
     </div>
   </div>
 
-<link rel="stylesheet" href="{{ asset('plugins/dist/summernote.css') }}" />
-<script src="{{ asset('plugins/dist/summernote.min.js') }}"></script>
-<script>var initial_form_state, last_form_state;$(".document").summernote({height: 500,
-toolbar:[['style'],['style', ['bold', 'italic', 'underline']],['color', ['color']],['para', ['ul', 'ol', 'paragraph']],['link'],['picture'],['help']],placeholder: 'Inizia a scrivere',
-callbacks:{onChange:function(){last_form_state = $('form').serialize();}}});$(window).bind('beforeunload', function(e) {if(last_form_state != initial_form_state){return false;}});$(document).on("submit","form",function(event){$(window).off('beforeunload');});</script>
+@include('front.components.article.editor', ['editor' => '.document'])
+
 @endsection

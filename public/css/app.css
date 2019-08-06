@@ -365,7 +365,7 @@ ul {
   width: 100%;
   min-height: 385px;
   margin-bottom: 20px;
-  background-image: url('../upload/sywrit_mm.png');
+  background-image: url('../upload/sywrit_mm.jpg');
   background-repeat: no-repeat;
   background-size: cover;
   background-position: 50% 19%;
@@ -435,18 +435,17 @@ ul {
   background-position: top center;
   border: 4px solid rgb(191, 184, 235);
   width: 100%;
-  min-height: 350px;
-  height: auto;
+  height: 325px;
 }
 
 .publisher-home > .publisher-header .publisher-logo {
   width: 100%;
-  margin-top: 205px;
+  position: relative;
+  bottom: 0;
 }
 
 .publisher-home > .publisher-header .publisher-logo img {
   width: 125px;
-  display: inline-block;
   border: 2px solid #fff;
   border-radius: 1px;
 }
@@ -779,4 +778,39 @@ a.bg-sw:focus, a.bg-sw:hover, button.bg-sw:focus, button.bg-sw:hover {
 
 .bs-icon-color-red {
   color: red !important;
+}
+
+.imgareaselect-border1 {
+	background: url(border-anim-v.gif) repeat-y left top;
+}
+
+.imgareaselect-border2 {
+    background: url(border-anim-h.gif) repeat-x left top;
+}
+
+.imgareaselect-border3 {
+    background: url(border-anim-v.gif) repeat-y right top;
+}
+
+.imgareaselect-border4 {
+    background: url(border-anim-h.gif) repeat-x left bottom;
+}
+
+.imgareaselect-border1, .imgareaselect-border2,
+.imgareaselect-border3, .imgareaselect-border4 {
+    filter: alpha(opacity=50);
+	opacity: 0.5;
+}
+
+.imgareaselect-handle {
+    background-color: #fff;
+	border: solid 1px #000;
+    filter: alpha(opacity=50);
+	opacity: 0.5;
+}
+
+.imgareaselect-outer {
+	background-color: #000;
+    filter: alpha(opacity=50);
+	opacity: 0.5;
 }

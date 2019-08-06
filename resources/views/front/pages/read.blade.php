@@ -42,7 +42,9 @@
           </div>
           <hr/>
           <div class="block-body">
+            @markdown
             {!! $query->testo !!}
+            @endmarkdown
           </div>
           <hr style="border-style:dotted"/>
           <div class="both"></div>

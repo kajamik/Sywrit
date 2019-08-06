@@ -13,6 +13,7 @@
     <div class="publisher-body">
   <form method="post" action="" enctype="multipart/form-data">
     @csrf
+
     <div class="form-group row">
       <label for="title" class="col-md-4 col-form-label required">Titolo Articolo</label>
         <div class="col-md-12">
@@ -58,17 +59,15 @@
 
     <div class="form-group row">
         <div class="col-md-12">
-          @if ($errors->has('document__title'))
+          <input type="hidden" name="document__text" />
+          <div class="document{{ $errors->has('document__text') ? ' is-invalid' : '' }}">
+            {{ old('document__text') }}
+          </div>
+          @if ($errors->has('document__text'))
               <span class="invalid-feedback" role="alert">
                   <strong>{{ $errors->first('document__text') }}</strong>
               </span>
           @endif
-          <div class="document{{ $errors->has('document__text') ? ' is-invalid' : '' }}" name="document__text">
-            <p>Inizia a scrivere...</p>
-          </div>
-          {{--<textarea class="document{{ $errors->has('document__text') ? ' is-invalid' : '' }}" name="document__text">
-            {{ old('document__text') }}
-          </textarea>--}}
         </div>
     </div>
 
@@ -119,19 +118,7 @@
   </form>
 </div>
 </div>
-{{--<link rel="stylesheet" href="{{ asset('plugins/dist/summernote.css') }}" />
-<script src="{{ asset('plugins/dist/summernote.min.js') }}"></script>
-<script>var initial_form_state, last_form_state;$(".document").summernote({height: 500,
-toolbar:[['style'],['style', ['bold', 'italic', 'underline']],['color', ['color']],['para', ['ul', 'ol', 'paragraph']],['link'],['picture'],['help']],placeholder: 'Inizia a scrivere',
-callbacks:{onChange:function(){last_form_state = $('form').serialize();}}});</script>
---}}
-<script src="{{ asset('plugins/editor/ckeditor.js') }}"></script>
-<script>
-var initial_form_state, last_form_state;
-	ClassicEditor.create(document.querySelector('.document'), {
-    plugins: ['Base64UploadAdapter']
-  }
-);
-  $(window).bind('beforeunload', function(e) {if(last_form_state != initial_form_state){return false;}});$(document).on("submit","form",function(event){$(window).off('beforeunload');});
-</script>
+
+@include('front.components.article.editor', ['editor' => '.document'])
+
 @endsection

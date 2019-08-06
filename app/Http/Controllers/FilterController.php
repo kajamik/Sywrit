@@ -78,7 +78,6 @@ class FilterController extends Controller
         File::copy($a->getRealPath(), public_path().'/storage/accounts/'.$fileName);
       }else{
         $fileName = rand().'.jpg';
-        //crop(480,500,0,0)
         //crop($request->width[0],$request->height[0],$request->x[0],$request->y[0])
         $image = Image::make($a)->resize(160, 160)->encode('jpg', 100);
         Storage::disk('accounts')->put($fileName, $image);
@@ -402,7 +401,42 @@ class FilterController extends Controller
     {
       $input = $request->all();
       $testo = $request->document__text;
-      $input['document__text'] = strip_tags(str_replace('&nbsp;','',$request->document__text));
+
+      /*$dom = new \DomDocument('1.0', 'UTF-8');
+      $dom->loadHtml(mb_convert_encoding($testo, 'HTML-ENTITIES', 'UTF-8'));
+      $images = $dom->getElementsByTagName('img');
+
+      foreach($images as $img){
+        echo "ol";
+        $data = $img->getAttribute('src');
+        $dim = $img->getAttribute('style');
+
+        $data = explode(';base64,', $data);
+        $data = base64_decode($data[1]);
+
+        $dim = preg_split('/;\s/', $dim);
+
+        $image_name = Str::random(64).'.jpg';
+
+        $image = Image::make($data);
+
+        if(count($dim) > 0) {
+            $image->resize($dim[0], null);
+        } elseif(count($dim) > 1) {
+            $image->resize($dim[0], $dim[1]);
+        }
+        $image->encode('jpg', 100);
+
+        Storage::disk('articles')->put($image_name, $image);
+
+        $img->removeAttribute('src');
+        $img->removeAttribute('style');
+        $img->removeAttribute('data-filename');
+        $img->setAttribute('src', Storage::disk('articles')->url('articles/'.$image_name));
+      }
+      $testo = $dom->saveHTML();
+      return $testo;*/
+      //$input['document__text'] = strip_tags(str_replace('&nbsp;','',$request->document__text));
       $request->replace($input);
 
       if($request->save) {
@@ -433,42 +467,7 @@ class FilterController extends Controller
           $query->topic_id = $request->_ct_sel_;
       }
 
-      if($testo) {
-        $dom = new \DomDocument('1.0', 'UTF-8');
-        $dom->loadHtml(mb_convert_encoding($testo, 'HTML-ENTITIES', 'UTF-8'));
-        $images = $dom->getElementsByTagName('img');
-
-        foreach($images as $img){
-          $data = $img->getAttribute('src');
-          $dim = $img->getAttribute('style');
-
-          $data = explode(';base64,', $data);
-          $data = base64_decode($data[1]);
-
-          $dim = preg_split('/;\s/', $dim);
-
-          $image_name = Str::random(64).'.jpg';
-
-          $image = Image::make($data);
-
-          if(count($dim) > 0) {
-              $image->resize($dim[0], null);
-          } elseif(count($dim) > 1) {
-              $image->resize($dim[0], $dim[1]);
-          }
-          $image->encode('jpg', 100);
-
-          Storage::disk('articles')->put($image_name, $image);
-
-          $img->removeAttribute('src');
-          $img->removeAttribute('style');
-          $img->removeAttribute('data-filename');
-          $img->setAttribute('src', Storage::disk('articles')->url('articles/'.$image_name));
-        }
-        $testo = $dom->saveHTML();
-
         $query->testo = $testo;
-      }
 
       // Copertina
       if($a = $request->image) {

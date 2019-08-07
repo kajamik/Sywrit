@@ -19,6 +19,8 @@
         "laravel/framework": "5.8.*",
         "laravel/socialite": "^4.1",
         "laravel/tinker": "^1.0",
+        "league/html-to-markdown": "^4.8",
+        "pixel418/markdownify": "^2.3",
         "rap2hpoutre/laravel-log-viewer": "^1.2",
         "spatie/laravel-cookie-consent": "^2.8"
     },

@@ -401,43 +401,12 @@ class FilterController extends Controller
     {
       $input = $request->all();
       $testo = $request->document__text;
-
-      /*$dom = new \DomDocument('1.0', 'UTF-8');
-      $dom->loadHtml(mb_convert_encoding($testo, 'HTML-ENTITIES', 'UTF-8'));
-      $images = $dom->getElementsByTagName('img');
-
-      foreach($images as $img){
-        echo "ol";
-        $data = $img->getAttribute('src');
-        $dim = $img->getAttribute('style');
-
-        $data = explode(';base64,', $data);
-        $data = base64_decode($data[1]);
-
-        $dim = preg_split('/;\s/', $dim);
-
-        $image_name = Str::random(64).'.jpg';
-
-        $image = Image::make($data);
-
-        if(count($dim) > 0) {
-            $image->resize($dim[0], null);
-        } elseif(count($dim) > 1) {
-            $image->resize($dim[0], $dim[1]);
-        }
-        $image->encode('jpg', 100);
-
-        Storage::disk('articles')->put($image_name, $image);
-
-        $img->removeAttribute('src');
-        $img->removeAttribute('style');
-        $img->removeAttribute('data-filename');
-        $img->setAttribute('src', Storage::disk('articles')->url('articles/'.$image_name));
-      }
-      $testo = $dom->saveHTML();
-      return $testo;*/
       //$input['document__text'] = strip_tags(str_replace('&nbsp;','',$request->document__text));
-      $request->replace($input);
+      //$request->replace($input);
+
+      if(preg_match('/;base64,/', $testo)) {
+        $testo = $this->Base64ToUrl($testo, 'articles', Str::random(8).'.'.Str::random(16).'.jpg');
+      }
 
       if($request->save) {
         $this->validate($request,[
@@ -516,9 +485,13 @@ class FilterController extends Controller
 
     public function ArticlePublish(Request $request)
     {
+      $testo = $request->document__text;
         $query = SavedArticles::find($request->id);
         if(!$query->suspended && (Auth::user()->id == $query->id_autore || Auth::user()->hasMemberOf($query->id_gruppo))) {
           if($query->testo) {
+            if(preg_match('/;base64,/', $testo)) {
+              $testo = $this->Base64ToUrl($testo, 'articles', Str::random(8).'.'.Str::random(16).'.jpg');
+            }
             $query2 = new Articoli();
             $query2->topic_id = $query->topic_id;
             $query2->titolo = $query->titolo;
@@ -543,11 +516,11 @@ class FilterController extends Controller
 
     public function postArticleEdit($id, Request $request)
     {
-      $input = $request->all();
       $testo = $request->document__text;
-      $input['document__text'] = strip_tags(str_replace('&nbsp;','',$request->document__text));
-      $request->replace($input);
 
+      if(preg_match('/;base64,/', $testo)) {
+        $testo = $this->Base64ToUrl($testo, 'articles', Str::random(8).'.'.Str::random(16).'.jpg');
+      }
 
       $query = Articoli::where('slug', $id)->first();
 
@@ -652,5 +625,19 @@ class FilterController extends Controller
           $query->delete();
         }
         return redirect('/');
+    }
+
+    public function Base64ToUrl($from, $disk, $fileName) {
+        $pattern = '/data:image\/[a-zA-Z]*;base64,[a-zA-Z0-9\/.+]+\=*/';
+        $match = preg_match_all($pattern, $from, $output);
+        $base64 = array(array());
+        foreach($output[0] as $value) {
+          $base64[0][] = $value;
+          $img = file_get_contents($value);
+          Storage::disk($disk)->put($fileName, $img);
+          $base64[1][] = Storage::disk($disk)->url($disk.'/'.$fileName);
+          //Storage::disk('articles')->url('articles/'.$fileName)
+        }
+      return str_replace($base64[0], $base64[1], $from);
     }
 }

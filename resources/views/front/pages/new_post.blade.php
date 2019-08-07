@@ -59,7 +59,6 @@
 
     <div class="form-group row">
         <div class="col-md-12">
-          <input type="hidden" name="document__text" />
           <div class="document{{ $errors->has('document__text') ? ' is-invalid' : '' }}">
             {{ old('document__text') }}
           </div>

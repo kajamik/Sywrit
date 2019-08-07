@@ -1,19 +1,18 @@
 @section('css')
-<link rel="stylesheet" href="https://uicdn.toast.com/tui-editor/latest/tui-editor.css" />
-    <link rel="stylesheet" href="https://uicdn.toast.com/tui-editor/latest/tui-editor-contents.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.33.0/codemirror.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+<link rel="stylesheet" href="{{ asset('editor/css/editor.css') }}" />
+    <link rel="stylesheet" href="{{ asset('editor/css/editor-contents.css') }}" />
+    <link rel="stylesheet" href="{{ asset('editor/css/codemirror.css') }}" />
 @endsection
 
 @section('js')
-<script src="https://uicdn.toast.com/tui-editor/latest/tui-editor-Editor-full.js"></script>
+<script src="{{ asset('editor/js/editor.js') }}"></script>
 <script>
 var initial_form_state, last_form_state;
 var editor = new tui.Editor({
   el: document.querySelector('{{ $editor }}'),
   language: 'it_IT',
-  initialEditType: 'markdown',
-  previewStyle: 'tab',
+  initialEditType: 'wysiwyg',
+  previewStyle: 'vertical',
   height: '500px',
   events: {
       change: function() {
@@ -22,6 +21,6 @@ var editor = new tui.Editor({
   }
 });
 $(window).bind('beforeunload', function(e) {if(last_form_state != initial_form_state){return false;}});
-$(document).on("submit","form",function(event){$('[name=document__text]').attr('value', editor.getMarkdown());$(window).off('beforeunload');});
+$(document).on("submit","form",function(event){$(this).append('<input type="hidden" name="document__text" />');$('[name=document__text]').attr('value', editor.getMarkdown());$(window).off('beforeunload');});
 </script>
 @endsection

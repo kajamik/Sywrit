@@ -32,7 +32,7 @@
           <div class="form-group row">
             <div class="col-md-12">
               <div class="document">
-                {{ $query->testo }}
+                @markdown {!! $query->testo !!} @endmarkdown
               </div>
             </div>
           </div>

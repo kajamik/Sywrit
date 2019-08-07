@@ -88,7 +88,7 @@ span.time {
         </div>
         <hr/>
         <div class="block-body">
-          {!! $query->testo !!}
+          @markdown {!! $query->testo !!} @endmarkdown
         </div>
         <hr style="border-style:dotted"/>
         <div class="both"></div>

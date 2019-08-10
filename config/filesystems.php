@@ -57,22 +57,22 @@ return [
 
         'accounts' => [
             'driver' => 'local',
-            'root' => storage_path('app/public/accounts'),
-            'url' => env('APP_URL').'/storage',
+            'root' => public_path('sf/accounts'),
+            'url' => env('APP_URL').'/sf',
             'visibility' => 'public',
         ],
 
         'articles' => [
             'driver' => 'local',
-            'root' => storage_path('app/public/articles'),
-            'url' => env('APP_URL').'/storage',
+            'root' => public_path('sf/articles'),
+            'url' => env('APP_URL').'/sf',
             'visibility' => 'public',
         ],
 
         'groups' => [
             'driver' => 'local',
-            'root' => storage_path('app/public/groups'),
-            'url' => env('APP_URL').'/storage',
+            'root' => public_path('sf/groups'),
+            'url' => env('APP_URL').'/sf',
             'visibility' => 'public',
         ],
 

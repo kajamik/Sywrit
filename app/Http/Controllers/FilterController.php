@@ -52,14 +52,26 @@ class FilterController extends Controller
         'cover.image' => 'Devi inserire un\'immagine',
         'cover.mimes'  => 'Formato immagine non valido',
       ]);
-      $filePath = public_path().'/storage/accounts/'.Auth::user()->copertina;
-      if(File::exists($filePath)){
-        File::delete($filePath);
-      }
-      $fileName = rand().'.jpg';
-      $image = Image::make($a)->resize(1110, 350)->encode('jpg', 100);
-      Storage::disk('accounts')->put($fileName, $image);
-      $query->copertina = Storage::disk('accounts')->url('accounts/'.$fileName);
+
+      $this->deleteFile( public_path('sf/accounts/'.Auth::user()->copertina) );
+
+      $fileName = 'ac-'.rand().'.jpg';
+
+      $this->uploadFile($a, array(
+        'name' => $fileName,
+        'path' => public_path('sf/accounts/'),
+        'width' => '1100',
+        'height' => '350',
+        'mimetype' => 'jpg',
+        'quality' => '100'
+      ));
+
+      /*$fileName = 'ac-'.rand().'.jpg';
+      $path = public_path('sf/accounts/'. $fileName);
+      $image = Image::make($a)->resize(1110, 350)->encode('jpg', 100)
+                              ->save( $path );*/
+
+      $query->copertina = asset('sf/accounts/'. $fileName);
     }
     if($a = $request->avatar){
       $this->validate($request,[
@@ -68,21 +80,33 @@ class FilterController extends Controller
         'avatar.image' => 'Devi inserire un\'immagine',
         'avatar.mimes'  => 'Formato immagine non valido',
       ]);
-      $filePath = public_path().'/storage/accounts/'.Auth::user()->avatar;
-      if(File::exists($filePath)){
-        File::delete($filePath);
-      }
+
+      $this->deleteFile( public_path('sf/accounts/'.Auth::user()->avatar) );
+
       if($a->getClientOriginalExtension() == 'gif'){
-        $fileName = rand().'.gif';
+        $fileName = 'ac-'.rand().'.gif';
         // Insert gif animated
-        File::copy($a->getRealPath(), public_path().'/storage/accounts/'.$fileName);
+        File::copy($a->getRealPath(), public_path().'/sf/accounts/'. $fileName);
       }else{
-        $fileName = rand().'.jpg';
+
+        $fileName = 'ac-'.rand().'.jpg';
+
+        $this->uploadFile($a, array(
+          'name' => $fileName,
+          'path' => public_path('sf/accounts/'),
+          'width' => '160',
+          'height' => '160',
+          'mimetype' => 'jpg',
+          'quality' => '100'
+        ));
+
+        /*$fileName = 'ac-'.rand().'.jpg';
+        $path = public_path('sf/accounts/'. $fileName);
         //crop($request->width[0],$request->height[0],$request->x[0],$request->y[0])
-        $image = Image::make($a)->resize(160, 160)->encode('jpg', 100);
-        Storage::disk('accounts')->put($fileName, $image);
+        $image = Image::make($a)->resize(160, 160)->encode('jpg', 100)
+                        ->save( $path );*/
       }
-      $query->avatar = Storage::disk('accounts')->url('accounts/'.$fileName);
+      $query->avatar = asset('sf/accounts/'. $fileName);
     }
     // Socials
       $query->biography = $request->bio;
@@ -401,11 +425,9 @@ class FilterController extends Controller
     {
       $input = $request->all();
       $testo = $request->document__text;
-      //$input['document__text'] = strip_tags(str_replace('&nbsp;','',$request->document__text));
-      //$request->replace($input);
 
-      if(preg_match('/;base64,/', $testo)) {
-        $testo = $this->Base64ToUrl($testo, 'articles', Str::random(8).'.'.Str::random(16).'.jpg');
+      if(preg_match('/<img*/', $testo)) {
+        $testo = $this->convertImages($testo, array('name' => Str::random(16).'.'.Str::random(32),'path' => public_path('sf/ct/')));
       }
 
       if($request->save) {
@@ -446,11 +468,23 @@ class FilterController extends Controller
           'image.image' => 'Devi inserire un\'immagine',
           'image.mimes'  => 'Formato immagine non valido',
         ]);
-        $resize = '__492x340'.Str::random(64).'.jpg';
+
+        $fileName = '__492x340'.Str::random(64).'.jpg';
+
+        $this->uploadFile($a, array(
+          'name' => $fileName,
+          'path' => public_path('sf/articles/'),
+          'width' => '492',
+          'height' => '340',
+          'mimetype' => 'jpg',
+          'quality' => '100'
+        ));
+
+        /*$resize = '__492x340'.Str::random(64).'.jpg';
         $normal_image = '__'.Str::random(64).'.jpg';
         $image = Image::make($a)->resize(492, 340)->encode('jpg', 100);
-        Storage::disk('articles')->put($resize, $image);
-        $query->copertina = Storage::disk('articles')->url('articles/'.$resize);
+        Storage::disk('articles')->put($resize, $image);*/
+        $query->copertina = asset('sf/articles/'. $fileName);
       }
 
       if($request->_au > 0) {
@@ -518,8 +552,8 @@ class FilterController extends Controller
     {
       $testo = $request->document__text;
 
-      if(preg_match('/;base64,/', $testo)) {
-        $testo = $this->Base64ToUrl($testo, 'articles', Str::random(8).'.'.Str::random(16).'.jpg');
+      if(preg_match('/<img*/', $testo)) {
+        $testo = $this->convertImages($testo, array('name' => Str::random(16).'.'.Str::random(32),'path' => public_path('sf/ct/')));
       }
 
       $query = Articoli::where('slug', $id)->first();
@@ -556,14 +590,21 @@ class FilterController extends Controller
               'image.image' => 'Devi inserire un\'immagine',
               'image.mimes'  => 'Formato immagine non valido',
             ]);
-            $filePath = public_path().'/storage/articles/'.$query->copertina;
-            if(File::exists($filePath)){
-              File::delete($filePath);
-            }
-            $resize = '__492x340'.Str::random(64).'.jpg';
-            $image = Image::make($a)->resize(492, 340)->encode('jpg');
-            Storage::disk('articles')->put($resize, $image);
-            $query->copertina = Storage::disk('articles')->url('articles/'.$resize);
+
+            $this->deleteFile( public_path('sf/articles/'. $query->copertina) );
+
+            $fileName = '__492x340'.Str::random(64).'.jpg';
+
+            $this->uploadFile($a, array(
+              'name' => $fileName,
+              'path' => public_path('sf/articles/'),
+              'width' => '492',
+              'height' => '340',
+              'mimetype' => 'jpg',
+              'quality' => '100'
+            ));
+
+            $query->copertina = asset('sf/articles/'. $fileName);
           }
           $query->save();
         }
@@ -585,11 +626,11 @@ class FilterController extends Controller
             $query->topic_id = $request->_ct_sel_;
         }
 
-        if($request->_l_sel_ == '1') {
+        /*if($request->_l_sel_ == '1') {
             $query->license = '1';
         } else {
             $query->license = '2';
-        }
+        }*/
 
         if($a = $request->image){
           $this->validate($request,[
@@ -598,14 +639,21 @@ class FilterController extends Controller
             'image.image' => 'Devi inserire un\'immagine',
             'image.mimes'  => 'Formato immagine non valido',
           ]);
-          $filePath = public_path().'/storage/articles/'.$query->copertina;
-          if(File::exists($filePath)){
-            File::delete($filePath);
-          }
-          $resize = '__492x340'.Str::random(64).'.jpg';
-          $image = Image::make($a)->resize(492, 340)->encode('jpg');
-          Storage::disk('articles')->put($resize, $image);
-          $query->copertina = Storage::disk('articles')->url('articles/'.$resize);
+
+          $this->deleteFile( public_path('sf/articles/'. $query->copertina) );
+
+          $fileName = '__492x340'.Str::random(64).'.jpg';
+
+          $this->uploadFile($a, array(
+            'name' => $fileName,
+            'path' => public_path('sf/articles/'),
+            'width' => '492',
+            'height' => '340',
+            'mimetype' => 'jpg',
+            'quality' => '100'
+          ));
+
+          $query->copertina = asset('sf/articles/'. $fileName);
         }
         $query->save();
       }
@@ -627,17 +675,84 @@ class FilterController extends Controller
         return redirect('/');
     }
 
-    public function Base64ToUrl($from, $disk, $fileName) {
-        $pattern = '/data:image\/[a-zA-Z]*;base64,[a-zA-Z0-9\/.+]+\=*/';
-        $match = preg_match_all($pattern, $from, $output);
-        $base64 = array(array());
-        foreach($output[0] as $value) {
-          $base64[0][] = $value;
-          $img = file_get_contents($value);
-          Storage::disk($disk)->put($fileName, $img);
-          $base64[1][] = Storage::disk($disk)->url($disk.'/'.$fileName);
-          //Storage::disk('articles')->url('articles/'.$fileName)
+    public function uploadFile($img, $details)
+    {
+      if(File::isDirectory($details['path'])) {
+        $image = Image::make($img)->fit($details['width'], $details['height'])
+                                  ->save( $details['path'].$details['name'] );
+      } else {
+        File::makeDirectory($details['path'], 0777, true);
+        $this->uploadFile($img, $details);
+      }
+    }
+
+    public function deleteFile($filePath)
+    {
+        $file = public_path($filePath);
+        if(File::exists($file)){
+          File::delete($file);
         }
-      return str_replace($base64[0], $base64[1], $from);
+    }
+
+    public function convertImages($source, $file)
+    {
+        $img = preg_match_all('/[<]img src=[^>]+/', $source, $output);
+        foreach($output[0] as $value) {
+          $src = preg_split('/src="*|"/', $value);
+          if( preg_match('/data:image\/[a-zA-Z]+;base64,(.*)/', $src[1]) ) {
+            $base64[0][] = $src[1];
+            /***************************************************************/
+            $img = file_get_contents($src[1]);
+            $name = $file['name'].'.'.explode('/', getimagesizefromstring($img)['mime'])[1];
+            $this->uploadFile($img, array(
+              'name' => $name,
+              'path' => $file['path'],
+              'width' => getimagesizefromstring($img)[0],
+              'height' => getimagesizefromstring($img)[1]
+            ));
+            /***************************************************************/
+            $base64[1][] = asset('sf/ct/'. $name);
+          } elseif( !$this->equals('/[a-z:]*\/\/[ww*.*]*|\/(.*)/', $src[1], \URL::to('/')) ) {
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $src[1]);
+            curl_setopt($ch, CURLOPT_HEADER, false);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            $img = curl_exec($ch);
+            $encode = base64_encode($img);
+            $base64[0][] = $encode;
+            $mimetype = explode('/', curl_getinfo($ch, CURLINFO_CONTENT_TYPE))[1];
+            if(in_array($mimetype, ['png','jpeg','jpg'])) {
+              $name = $file['name'].'.'.$mimetype;
+              $this->uploadFile($img, array(
+                'name' => $name,
+                'path' => $file['path'],
+                'width' => getimagesizefromstring($img)[0],
+                'height' => getimagesizefromstring($img)[1]
+              ));
+              curl_close($ch);
+              $base64[1][] = asset('sf/ct/'. $name);
+            } else {
+              // formato non accettabile
+              // ignora l'immagine
+              $source = str_replace($value.'>', '', $source);
+            }
+          }
+        }
+        if(isset($base64)) {
+          return str_replace($base64[0], $base64[1], $source);
+        } else {
+          return $source;
+        }
+    }
+
+    public function equals($pattern, $first, $second)
+    {
+        $first = preg_split($pattern, $first)[1];
+        $second = preg_split($pattern, $second)[1];
+        if ($first === $second) {
+          return true;
+        } else {
+          return false;
+        }
     }
 }

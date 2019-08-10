@@ -8,8 +8,9 @@
 <script src="{{ asset('editor/js/editor.js') }}"></script>
 <script>
 var initial_form_state, last_form_state;
+var $editor = document.querySelector('{{ $editor }}');
 var editor = new tui.Editor({
-  el: document.querySelector('{{ $editor }}'),
+  el: $editor,
   language: 'it_IT',
   initialEditType: 'wysiwyg',
   previewStyle: 'vertical',
@@ -21,6 +22,6 @@ var editor = new tui.Editor({
   }
 });
 $(window).bind('beforeunload', function(e) {if(last_form_state != initial_form_state){return false;}});
-$(document).on("submit","form",function(event){$(this).append('<input type="hidden" name="document__text" />');$('[name=document__text]').attr('value', editor.getMarkdown());$(window).off('beforeunload');});
+$(document).on("submit","form",function(event){$(this).append('<input type="hidden" name="document__text" />');$('[name=document__text]').attr('value', editor.getHtml());$(window).off('beforeunload');});
 </script>
 @endsection

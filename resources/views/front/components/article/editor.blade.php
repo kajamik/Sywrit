@@ -12,7 +12,7 @@ var $editor = document.querySelector('{{ $editor }}');
 var editor = new tui.Editor({
   el: $editor,
   language: 'it_IT',
-  initialEditType: 'wysiwyg',
+  initialEditType: 'markdown',
   previewStyle: 'vertical',
   height: '500px',
   events: {

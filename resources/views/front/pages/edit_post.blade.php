@@ -55,7 +55,6 @@
       </form>
       </div>
     </div>
-  </div>
 
 @include('front.components.article.editor', ['editor' => '.document'])
 

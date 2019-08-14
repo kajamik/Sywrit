@@ -53,13 +53,13 @@ class FilterController extends Controller
         'cover.mimes'  => 'Formato immagine non valido',
       ]);
 
-      $this->deleteFile( public_path('sf/accounts/'.Auth::user()->copertina) );
+      $this->deleteFile( public_path('sf/aa/'.Auth::user()->copertina) );
 
-      $fileName = 'ac-'.rand().'.jpg';
+      $fileName = rand().Str::random(14).'.jpg';
 
       $this->uploadFile($a, array(
         'name' => $fileName,
-        'path' => public_path('sf/accounts/'),
+        'path' => public_path('sf/aa/'),
         'width' => '1100',
         'height' => '350',
         'mimetype' => 'jpg',
@@ -71,7 +71,7 @@ class FilterController extends Controller
       $image = Image::make($a)->resize(1110, 350)->encode('jpg', 100)
                               ->save( $path );*/
 
-      $query->copertina = asset('sf/accounts/'. $fileName);
+      $query->copertina = asset('sf/aa/'. $fileName);
     }
     if($a = $request->avatar){
       $this->validate($request,[
@@ -81,19 +81,19 @@ class FilterController extends Controller
         'avatar.mimes'  => 'Formato immagine non valido',
       ]);
 
-      $this->deleteFile( public_path('sf/accounts/'.Auth::user()->avatar) );
+      $this->deleteFile( public_path('sf/aa/'.Auth::user()->avatar) );
 
       if($a->getClientOriginalExtension() == 'gif'){
         $fileName = 'ac-'.rand().'.gif';
         // Insert gif animated
-        File::copy($a->getRealPath(), public_path().'/sf/accounts/'. $fileName);
+        File::copy($a->getRealPath(), public_path().'/sf/aa/'. $fileName);
       }else{
 
-        $fileName = 'ac-'.rand().'.jpg';
+        $fileName = rand().Str::random(14).'.jpg';
 
         $this->uploadFile($a, array(
           'name' => $fileName,
-          'path' => public_path('sf/accounts/'),
+          'path' => public_path('sf/aa/'),
           'width' => '160',
           'height' => '160',
           'mimetype' => 'jpg',
@@ -106,7 +106,7 @@ class FilterController extends Controller
         $image = Image::make($a)->resize(160, 160)->encode('jpg', 100)
                         ->save( $path );*/
       }
-      $query->avatar = asset('sf/accounts/'. $fileName);
+      $query->avatar = asset('sf/aa/'. $fileName);
     }
     // Socials
       $query->biography = $request->bio;
@@ -473,7 +473,7 @@ class FilterController extends Controller
 
         $this->uploadFile($a, array(
           'name' => $fileName,
-          'path' => public_path('sf/articles/'),
+          'path' => public_path('sf/ct/'),
           'width' => '492',
           'height' => '340',
           'mimetype' => 'jpg',
@@ -484,7 +484,7 @@ class FilterController extends Controller
         $normal_image = '__'.Str::random(64).'.jpg';
         $image = Image::make($a)->resize(492, 340)->encode('jpg', 100);
         Storage::disk('articles')->put($resize, $image);*/
-        $query->copertina = asset('sf/articles/'. $fileName);
+        $query->copertina = asset('sf/ct/'. $fileName);
       }
 
       if($request->_au > 0) {
@@ -591,20 +591,20 @@ class FilterController extends Controller
               'image.mimes'  => 'Formato immagine non valido',
             ]);
 
-            $this->deleteFile( public_path('sf/articles/'. $query->copertina) );
+            $this->deleteFile( public_path('sf/ct/'. $query->copertina) );
 
             $fileName = '__492x340'.Str::random(64).'.jpg';
 
             $this->uploadFile($a, array(
               'name' => $fileName,
-              'path' => public_path('sf/articles/'),
+              'path' => public_path('sf/ct/'),
               'width' => '492',
               'height' => '340',
               'mimetype' => 'jpg',
               'quality' => '100'
             ));
 
-            $query->copertina = asset('sf/articles/'. $fileName);
+            $query->copertina = asset('sf/ct/'. $fileName);
           }
           $query->save();
         }
@@ -640,20 +640,20 @@ class FilterController extends Controller
             'image.mimes'  => 'Formato immagine non valido',
           ]);
 
-          $this->deleteFile( public_path('sf/articles/'. $query->copertina) );
+          $this->deleteFile( public_path('sf/ct/'. $query->copertina) );
 
           $fileName = '__492x340'.Str::random(64).'.jpg';
 
           $this->uploadFile($a, array(
             'name' => $fileName,
-            'path' => public_path('sf/articles/'),
+            'path' => public_path('sf/ct/'),
             'width' => '492',
             'height' => '340',
             'mimetype' => 'jpg',
             'quality' => '100'
           ));
 
-          $query->copertina = asset('sf/articles/'. $fileName);
+          $query->copertina = asset('sf/ct/'. $fileName);
         }
         $query->save();
       }
@@ -688,9 +688,8 @@ class FilterController extends Controller
 
     public function deleteFile($filePath)
     {
-        $file = public_path($filePath);
-        if(File::exists($file)){
-          File::delete($file);
+        if(File::exists($filePath)){
+          File::delete($filePath);
         }
     }
 

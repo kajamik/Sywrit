@@ -9,35 +9,12 @@
 
 @section('main')
 <style>
-.publisher-body .block-article a, .publisher-body .block-article a:hover {
-  text-decoration: underline;
-}
-div.date-info {
-  margin-top: 12px;
-}
-span.date {
-  text-transform: capitalize;
-}
-span.time {
-  padding: 0;
-}
 .block-body {
   padding: 12px;
+  min-height: 18em;
 }
 .feeds {
   padding: 15px;
-}
-.btn-custom {
-  background-color: #fff;
-  border: 1px solid #000;
-  border-radius: 3px;
-}
-.btn-custom:active {
-  outline: none;
-}
-._button_active_ {
-  background-color: #A22932;
-  color: #fff;
 }
 </style>
   <div class="publisher-home">
@@ -45,34 +22,8 @@ span.time {
         @auth
         <div class="publisher-info">
             @if($query->id_gruppo > 0 && Auth::user()->hasMemberOf($query->id_gruppo) || $query->id_autore == Auth::user()->id)
-            <a data-toggle="dropdown" href="#">
-                <i class="fas fa-cog"></i> Opzioni Articolo
-              </a>
-              <div class="dropdown-menu" id="nodes">
-                <a id="pb" class="dropdown-item" href="#" onclick="link(this,'{{ route('article/action/publish') }}')">Pubblica articolo</a>
-                <a id="edt" class="dropdown-item" href="{{ url('post/'.$query->slug.'/edit') }}">Modifica articolo</a>
-                <a id="dlt" class="dropdown-item" href="#" onclick="link(this,'{{ route('article/action/delete') }}')">Elimina articolo</a>
-              </div>
-
-            <script>
-            function link(e, route){
-              var el = setNode(e, {
-                html: {
-                  "id": "__form__",
-                  "action": route,
-                  "method": "post"
-                }
-              }, "form");
-              setNode(el.html, {
-                html: {
-                  "name": "id",
-                  "value": "{{ $query->id }}"
-                }
-              }, "input");
-            $("<div/>").html('{{ csrf_field() }}').appendTo($("#"+el.html.id)); $("#"+el.html.id).submit();
-            }
-            </script>
-          @endif
+              @include('front.components.article.options')
+            @endif
         </div>
         @endauth
       <article class="block-article">
@@ -88,7 +39,7 @@ span.time {
         </div>
         <hr/>
         <div class="block-body">
-          @markdown {!! $query->testo !!} @endmarkdown
+          {!! $query->testo !!}
         </div>
         <hr style="border-style:dotted"/>
         <div class="both"></div>

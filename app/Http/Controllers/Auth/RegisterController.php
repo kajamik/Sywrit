@@ -114,14 +114,14 @@ class RegisterController extends Controller
         $font->angle(0);
       });
       $img_name = '_160x160'.Str::random(64).'.jpg';
-      $img->save(public_path('storage/accounts/'.$img_name));
+      $img->save(public_path('sf/aa/'. $img_name));
 
         $user = User::create([
             'name' => $data['name'],
             'surname' => $data['surname'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
-            'avatar' => Storage::disk('accounts')->url('accounts/'.$img_name),
+            'avatar' => asset('sf/aa/'. $img_name),
             'verified' => '0',
             // informazioni aggiuntive
             'rank' => '1',
@@ -134,7 +134,7 @@ class RegisterController extends Controller
         $user->save();
 
         // invio l'email di benvenuto all'utente
-        $user->notify(new UserWelcomeNotification($user->name));
+        //$user->notify(new UserWelcomeNotification($user->name));
 
         if($redirectTo) {
           $this->redirectTo = $redirectTo;

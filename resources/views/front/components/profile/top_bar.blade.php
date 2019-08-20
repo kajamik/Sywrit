@@ -14,8 +14,8 @@
       <div class="container">
         <div class="publisher-logo">
           <div class="row">
-            <div class="d-inline">
-              <img src="{{ $query->getAvatar() }}" alt="Logo">
+            <div class="col-lg-2 col-12">
+              <img src="{{ $query->getAvatar() }}" alt="Avatar">
             </div>
             <div class="ml-2 mt-2 info">
               <span>

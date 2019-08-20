@@ -4,7 +4,7 @@
 
 @section('main')
 <div class="container">
-  <h3>Bentornato nel tuo pannello, {{ Auth::user()->nome }}. Cosa vuoi fare oggi ?</h3>
+  <h3>Bentornato nel tuo pannello</h3>
 
   <div class="row">
 
@@ -45,9 +45,15 @@
     <div class="col-xl-5 col-lg-6 col-md-6 col-sm-6">
       <div class="card">
         <div class="card-header card-header-warning">
-          Riepilogo commenti
+          Riepilogo social
         </div>
         <div class="card-body">
+          <div class="row">
+            <div class="col-9">
+              <h3 class="card-category">Reazioni inviate</h3>
+            </div>
+            <h3 class="card-category">{{ $reactions }}</h3>
+          </div>
           <div class="row">
             <div class="col-9">
               <h3 class="card-category">Commenti creati</h3>

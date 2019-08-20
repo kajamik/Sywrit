@@ -34,7 +34,9 @@
                       <span>{{ $value->topic_name }}</span>
                     @endif
                     <h5 class="card-title" title="{{ $value->article_title }}">{{ str_limit($value->article_title, 33) }}</h5>
-                    <p>{!! str_limit(preg_replace('/(<.*?>)|(&.*?;)/', '', $value->article_text), 100) !!}</p>
+                    {{--
+                      <p>{!! str_limit(preg_replace('/(<.*?>)|(&.*?;)/', '', $value->article_text), 100) !!}</p>
+                    --}}
                     @if($value->bot_message == '1')
                     <p>Messaggio generato dal sistema</p>
                     @else
@@ -72,7 +74,7 @@
         {{-- Menù laterale --}}
         <div class="col-lg-3 col-md-5 col-sm-12">
           <div class="sw-lnav">
-            <div class="sw-component">
+            {{--<div class="sw-component">
               <div class="sw-component-header bg-sw">Articoli popolari</div>
                 @foreach($popular_articles as $value)
                 <a href="{{ url('read/'.$value->article_slug) }}">
@@ -95,7 +97,7 @@
                   </div>
                 </a>
                 @endforeach
-            </div>
+            </div>--}}
             <div class="sw-component">
               <div class="sw-component-header bg-sw">Seguici su</div>
               <div class="sw-item text-center">

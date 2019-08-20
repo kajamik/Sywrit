@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" prefix="og: http://ogp.me/ns#">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" prefix="og: https://ogp.me/ns#">
 <head>
     <meta charset="utf-8" />
     <title>{!! SEOMeta::getTitle() !!}</title>
@@ -14,12 +14,13 @@
 
     <script src="{{ asset('plugins/jquery/js/jquery-3.2.1.min.js') }}"></script>
     <script src="{{ asset('js/bootstrap/bootstrap.min.js') }}"></script>
-    <script src="{{ asset('js/app.min.js') }}"></script>
+    <script src="{{ asset('js/app.js') }}"></script>
 
     <link href="{{ asset('plugins/fontawesome/fontawesome.css') }}" rel="stylesheet" />
     <link href="{{ asset('plugins/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet"/>
-    <link href="{{ asset('css/app.min.css') }}" rel="stylesheet"/>
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet"/>
     <link href="{{ asset('css/print.min.css')}}" media="print" rel="stylesheet"/>
+    @yield('css')
 
     <link rel="shortcut icon" type="image/x-icon" href="{{ asset('upload/rgb_icon.ico') }}" />
     <link rel="icon" href="{{ url('upload/57x57/rgb_logo.png') }}">
@@ -27,6 +28,8 @@
     <link rel="apple-touch-icon" sizes="114x114" href="{{ url('upload/114x114/rgb_logo.png') }}">
     <link rel="apple-touch-icon" sizes="72x72" href="{{ url('upload/72x72/rgb_logo.png') }}">
     <link rel="apple-touch-icon" href="{{ url('upload/57x57/rgb_logo.png') }}">
+
+    <link rel="stylesheet" href="{{ asset('css/image.css') }}" />
 
     <link rel="manifest" href="{{ url('manifest.json') }}">
     <link rel="canonical" href="{!! SEOMeta::getCanonical() !!}" />
@@ -70,44 +73,47 @@
       <a href="{{ url('page/about/privacy') }}">Privacy</a>
       <a href="{{ url('page/legal/terms') }}">Termini e condizioni</a>
     </div>
-    <p>Sito creato da Pietro Paolo Carpentras.
-    &copy; 2019 - {{ \Carbon\Carbon::now()->format('Y') }}. Tutti i diritti riservati</p>
+    <p>Sito creato da Pietro Paolo Carpentras.&copy; 2019 - {{ \Carbon\Carbon::now()->format('Y') }}. Tutti i diritti riservati</p>
+    {{-- <div class="">
+      <h2>Seguici su:</h2>
+      <p><i class="fab fa-facebook"></i></p>
+      <p><i class="fab fa-instagram"></i></p>
+      <p></p>
+    </div> --}}
   </div>
+
+  @yield('js')
 
   <script>$(function(){App.update();$(window).on('resize', function(){App.update();});App.info();});
   fetch_live_search = function(query_search = ''){App.query("get","{{ route('live_search') }}",{q:query_search},false,function(data){$(".data-list").html(data);});}</script>
 
   @auth
-  {{--
-    $.each(data.query, function(index, item){
+    {{-- $.each(data.query, function(index, item){
       notify(item.titolo, "Pubblicato da " + item.user_name, "read/"+item.article_slug);
-    });
-    --}}
+    }); --}}
 
   <script type="text/javascript">
     var message_count = 0;
     $(function(){
-      notifications();
+      //notifications();
       $("#notifications").click(function(){
         fetch_live_notifications();
       });
     });
     function notifications() {
-        App.query("get","{{ url('getStateNotifications') }}",{msg_count:message_count},false,function(data){
-            if(data){
-              message_count = data.count;
-              if($(".badge-notification").length) {
-                if(data.count > 0) {
-                  $(".badge-notification").text(data.count);
-                } else {
-                  $(".badge-notification").remove();
-                }
+        $.get("{{ url('ajax/notification') }}",
+          function(a) {
+            if(a.unseen_notification > 0) {
+              $(".badge-notification").text(a.unseen_notification);
+                /*$.each(a.f,  function(index, item) {
+                  notify("{{ env('APP_NAME', 'Sywrit') }}", "Leggi l'articolo di " + item.user_name + ": "+ item.article_title, "read/"+item.article_slug, item.article_img);
+                });*/
               } else {
-                $("#notification").append("<span class='badge badge-notification'>"+data.count+"</span>");
+                $(".badge-notification").text("0");
               }
-          }
-            setTimeout(notifications, 2000);
-        });
+          }).always(function(a) {
+            setTimeout(notifications, 9500);
+      });
     }
     fetch_live_notifications = function(){
       App.query("get","{{ route('live_notif') }}",null,false,function(data){

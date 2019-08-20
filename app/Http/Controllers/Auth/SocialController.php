@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use \Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 use App\Models\User;
 use Auth;
 use Socialite;
+use Image;
 
 class SocialController extends Controller
 {
@@ -55,7 +57,6 @@ class SocialController extends Controller
                           'last_name',
                           'email',
                           'gender',
-                          'verified'
                         ])
                         ->user();
 
@@ -71,12 +72,18 @@ class SocialController extends Controller
           return redirect($this->redirectTo);
         }
       } else {
+        $social_user->avatar = str_replace('?type=normal', '?type=large', $social_user->avatar);
+        
+        $fileName = rand().Str::random(14).'.jpg';
+
+        Image::make($social_user->avatar)->fit(160, 160)->save(public_path('sf/aa/'. $fileName));
+
         $user = User::create([
             'name' => $social_user->user['first_name'],
             'surname' => $social_user->user['last_name'],
             'email' => $social_user->user['email'],
             'password' => $social_user->token,
-            'avatar' => $social_user->avatar,
+            'avatar' => asset('sf/aa/'. $fileName),
             'social_auth_id' => $social_user->getId(),
             'verified' => '0',
             // informazioni aggiuntive
@@ -90,7 +97,7 @@ class SocialController extends Controller
         $user->save();
 
         // invio l'email di benvenuto all'utente
-        $user->notify(new \App\Notifications\UserWelcome($user->name));
+        //$user->notify(new \App\Notifications\UserWelcome($user->name));
       }
 
       Auth::login($user, true);

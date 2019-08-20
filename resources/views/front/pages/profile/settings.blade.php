@@ -68,7 +68,7 @@
               <label for="file-upload2" class="form-control custom-upload{{ $errors->has('avatar') ? ' is-invalid' : '' }}">
                 <span class="fa fa-cloud-upload-alt"></span> Carica file
               </label>
-              <input id="file-upload2" type="file" onchange="App.upload(this.nextElementSibling)" name="avatar">
+              <input id="file-upload2" type="file" onchange="App.upload(this.nextElementSibling, true)" name="avatar">
               @if($errors->has('avatar'))
                   <span class="invalid-feedback" role="alert">
                       <strong>{{ $errors->first('avatar') }}</strong>

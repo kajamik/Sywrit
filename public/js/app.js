@@ -45,8 +45,26 @@ App.loadData = function(a, f){
   });
 }
 
-App.upload = function(b){
-  $(b).html("<div class='preview_body'><div class='image-wrapper' id='preview-wrapper'><img id='image_"+$(b).attr('id')+"' src="+URL.createObjectURL(event.target.files[0])+"></div></div>");
+App.upload = function(b, d = false){
+  var template = "<div class='preview_body'><div class='image-wrapper' id='preview-wrapper'><img id='image_"+$(b).attr('id')+"' src="+URL.createObjectURL(event.target.files[0])+"></div></div>";
+  $(b).append(template);
+  if(d) {
+    $.getScript("js/image.js").done(function() {
+      var $image = $("#image_"+$(b).attr('id'));
+      $image.cropper({
+        dragMode: 'move',
+        aspectRatio: 16 / 9,
+        autoCropArea: 0.65,
+        restore: false,
+        guides: false,
+        center: false,
+        highlight: false,
+        cropBoxMovable: false,
+        cropBoxResizable: false,
+        toggleDragModeOnDblclick: false,
+      });
+    });
+  }
 }
 
 function setNode(e, params, element){

@@ -675,17 +675,23 @@ class FilterController extends Controller
         return redirect('/');
     }
 
+    /*
+      @return: image url
+    */
     public function uploadFile($img, $details)
     {
       if(File::isDirectory($details['path'])) {
-        $image = Image::make($img)->fit($details['width'], $details['height'])
-                                  ->save( $details['path'].$details['name'] );
+        $image = Image::make($img)->fit($details['width'], $details['height'])->save( $details['path'].$details['name'] );
       } else {
         File::makeDirectory($details['path'], 0777, true);
-        $this->uploadFile($img, $details);
+        return $this->uploadFile($img, $details);
       }
+      return $details['name'];
     }
 
+    /*
+      @description: delete file if exist
+    */
     public function deleteFile($filePath)
     {
         if(File::exists($filePath)){
@@ -698,19 +704,26 @@ class FilterController extends Controller
         $img = preg_match_all('/[<]img src=[^>]+/', $source, $output);
         foreach($output[0] as $value) {
           $src = preg_split('/src="*|"/', $value);
-          if( preg_match('/data:image\/[a-zA-Z]+;base64,(.*)/', $src[1]) ) {
+          if( preg_match('/data:[a-z]+\/[a-zA-Z]+;base64,(.*)/', $src[1]) ) {
+            $info = explode('/', preg_split('/data:|;base64,(.*)/', $src[1])[1]);
+            $type = $info[0];
+            $mimetype = $info[1];
             $base64[0][] = $src[1];
-            /***************************************************************/
-            $img = file_get_contents($src[1]);
-            $name = $file['name'].'.'.explode('/', getimagesizefromstring($img)['mime'])[1];
-            $this->uploadFile($img, array(
-              'name' => $name,
-              'path' => $file['path'],
-              'width' => getimagesizefromstring($img)[0],
-              'height' => getimagesizefromstring($img)[1]
-            ));
-            /***************************************************************/
-            $base64[1][] = asset('sf/ct/'. $name);
+            if($type == "image" && in_array($mimetype, ['png','jpeg','jpg'])) {
+              /***************************************************************/
+              $img = file_get_contents($src[1]);
+              $name = $file['name'].'.'.explode('/', getimagesizefromstring($img)['mime'])[1];
+              $this->uploadFile($img, array(
+                'name' => $name,
+                'path' => $file['path'],
+                'width' => getimagesizefromstring($img)[0],
+                'height' => getimagesizefromstring($img)[1]
+              ));
+              /***************************************************************/
+              $base64[1][] = asset('sf/ct/'. $name);
+            } else {
+              $base64[1][] = '';
+            }
           } elseif( !$this->equals('/[a-z:]*\/\/[ww*.*]*|\/(.*)/', $src[1], \URL::to('/')) ) {
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, $src[1]);

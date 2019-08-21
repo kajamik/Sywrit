@@ -70,10 +70,10 @@
 
   <div class="sw-ft">
     <div class="links d-inline">
-      <a href="{{ url('page/about/privacy') }}">Privacy</a>
-      <a href="{{ url('page/legal/terms') }}">Termini e condizioni</a>
+      <a href="{{ url('page/about/privacy') }}">{{ __('label.footer.privacy') }}</a>
+      <a href="{{ url('page/legal/terms') }}">{{ __('label.footer.terms') }}</a>
     </div>
-    <p>Sito creato da Pietro Paolo Carpentras.&copy; 2019 - {{ \Carbon\Carbon::now()->format('Y') }}. Tutti i diritti riservati</p>
+    <p>{{ __('label.footer.copyright', ['developer' => 'Pietro Paolo Carpentras', 'start' => '2019', 'now' => \Carbon\Carbon::now()->format('Y')]) }}</p>
     {{-- <div class="">
       <h2>Seguici su:</h2>
       <p><i class="fab fa-facebook"></i></p>
@@ -89,7 +89,7 @@
 
   @auth
     {{-- $.each(data.query, function(index, item){
-      notify(item.titolo, "Pubblicato da " + item.user_name, "read/"+item.article_slug);
+      notify(item.titolo, "{{ __('label.article.published_by') }} " + item.user_name, "read/"+item.article_slug);
     }); --}}
 
   <script type="text/javascript">

@@ -37,10 +37,10 @@
     </div>
     <nav class="publisher-nav">
       <ul id='nav'>
-        <li><a href="{{ url($query->slug) }}">Profilo</a></li>
-        <li><a href="{{ url($query->slug.'/about') }}">Contatti</a></li>
+        <li><a href="{{ url($query->slug) }}">{{ __('label.menu.profile') }}</a></li>
+        <li><a href="{{ url($query->slug.'/about') }}">{{ __('label.menu.contact') }}</a></li>
         @if(\Auth::user() && \Auth::user()->id == $query->id)
-        <li><a href="{{ url($query->slug.'/archive') }}">Articoli Salvati</a></li>
+        <li><a href="{{ url($query->slug.'/archive') }}">{{ __('label.menu.saved_articles') }}</a></li>
         @endif
       </ul>
     </nav>
@@ -56,7 +56,7 @@
         @if(Auth::user() && Auth::user()->id != $query->id)
         <div class="col-md-12">
           <a id="report" href="#report">
-            Segnala utente
+            {{ __('label.report.user') }}
           </a>
         </div>
         <script>
@@ -65,21 +65,21 @@
             "ui": {
               "header":{"action": "{{route('article/action/report')}}", "method": "GET"},
               "data":{"id": "{{$query->id}}", "selector": "#selOption:checked", "text": "#reasonText"},
-              "title": 'Segnala utente',
+              "title": '{{ __("label.report.user")}}',
               "content": [
-                {"type": ["input","radio"], "id": "selOption", "name": "option", "value": "0", "class": "col-md-1", "label": "Contenuto di natura sessuale", "required": true},
-                {"type": ["input","radio"], "id": "selOption", "name": "option", "value": "1", "class": "col-md-1", "label": "Contenuti violenti o che incitano all\'odio", "required": true},
-                {"type": ["input","radio"], "id": "selOption", "name": "option", "value": "2", "class": "col-md-1", "label": "Promuove il terrorismo o attività criminali", "required": true},
-                {"type": ["input","radio"], "id": "selOption", "name": "option", "value": "3", "class": "col-md-1", "label": "Violazione del diritto d\'autore", "required": true},
-                {"type": ["textarea"], "id":"reasonText", "name": "reason", "value": "", "class": "form-control", "placeholder": "Motiva la segnalazione (opzionale)"},
-                {"type": ["button","submit"], "name": "radio", "class": "btn btn-danger", "text": "invia segnalazione"}
+                {"type": ["input","radio"], "id": "selOption", "name": "option", "value": "0", "class": "col-md-1", "label": "{{ __('form.report_user_type_0') }}", "required": true},
+                {"type": ["input","radio"], "id": "selOption", "name": "option", "value": "1", "class": "col-md-1", "label": "{{ __('form.report_user_type_1') }}", "required": true},
+                {"type": ["input","radio"], "id": "selOption", "name": "option", "value": "2", "class": "col-md-1", "label": "{{ __('form.report_user_type_2') }}", "required": true},
+                {"type": ["input","radio"], "id": "selOption", "name": "option", "value": "3", "class": "col-md-1", "label": "{{ __('form.report_user_type_3') }}", "required": true},
+                {"type": ["textarea"], "id":"reasonText", "name": "reason", "value": "", "class": "form-control", "placeholder": "{{ __('form.motivation_report') }}"},
+                {"type": ["button","submit"], "name": "radio", "class": "btn btn-danger", "text": "{{ __('button.send_report') }}"}
               ],
               "done": function(){
                 App.getUserInterface({
                   "ui": {
-                    "title": "Segnalazione",
+                    "title": "{{ __('label.report.title') }}",
                     "content": [
-                      {"type": ["h5"], "text": "Grazie per la segnalazione."}
+                      {"type": ["h5"], "text": "{{ __('label.report.thanks_for_report') }}"}
                     ]
                   }
                 });
@@ -156,7 +156,7 @@
             </div>
             </div>
             @else
-              <p>Nessun contatto</p>
+              <p>{{ __('label.notice.user_no_contact') }}</p>
             @endif
           </div>
     </div>

@@ -7,7 +7,7 @@
 
       <form method="POST" action="{{ url('account_delete') }}">
         @csrf
-        <h3>Se deciderai di eliminare l'account avrai 30 giorni per recuperarlo, prima che tutti i contenuti vengano eliminati definitivamente.</h3>
+        <h3>{{ __('label.deleting_notice', ['days' => '30']) }}</h3>
 
         <div class="row">
 
@@ -16,7 +16,7 @@
               <div class="card-header">Contenuto</div>
               <div class="card-body">
                 <div class="d-flex">
-                  <p>Verranno eliminati tutti i tuoi contenuti, ad esclusione degli articoli di redazione. Attualmente hai <strong>{{ $articoli->count() }}</strong> articoli e <strong>{{ $feedback->count() }}</strong> commenti.</p>
+                  <p>{!! __('label.deleting_info', ['articles' => $articoli->count(), 'comments' => $feedback->count()]) !!}</p>
                   <div class="float-right pl-5">
                     <i class="fas fa-box fa-5x"></i>
                   </div>
@@ -29,7 +29,7 @@
 
           <div class="group-row">
             <div class="col-md-12">
-              <button type="submit" class="btn btn-danger">Elimina Account</button>
+              <button type="submit" class="btn btn-danger">{{ __('button.delete_account') }}</button>
             </div>
           </div>
         </div>

@@ -8,7 +8,7 @@
 
 @section('main')
 <div class="publisher-body">
-  <a href="{{ url('read/archive/'.$query->slug) }}">Annulla modifiche</a>
+  <a href="{{ url('read/archive/'.$query->slug) }}">{{ __('label.article.cancel_changes') }}</a>
   <form method="post" action="" enctype="multipart/form-data">
     @csrf
 
@@ -22,7 +22,7 @@
       <div class="form-group row">
         <div class="col-md-12">
           <label for="file-upload" class="form-control custom-upload">
-            <i class="fa fa-cloud-upload-alt"></i> Carica copertina
+            <i class="fa fa-cloud-upload-alt"></i> {{ __('label.article.upload_cover') }}
           </label>
           <input id="file-upload" type="file" onchange="App.upload(this.nextElementSibling, false)" name="image">
           <div id="image_preview" class="preview_body"></div>
@@ -38,10 +38,10 @@
       </div>
 
       <div class="form-group row">
-        <label for="_ct_sel_" class="col-md-4 col-form-label">Selezione categoria</label>
+        <label for="_ct_sel_" class="col-md-4 col-form-label">{{ __('label.select_category') }}</label>
           <div class="col-md-12">
             <select id="_ct_sel_" class="form-control" name="_ct_sel_">
-              <option selected>Seleziona una categoria</option>
+              <option selected>{{ __('form.select_a_category') }}</option>
               @foreach($categories as $value)
               <option value="{{ $value->id }}" @if($value->id == $query->topic_id) selected @endif>{{ $value->name }}</option>
               @endforeach
@@ -50,7 +50,7 @@
       </div>
 
       <div class="form-group row">
-        <label for="_l_sel_" class="col-md-4 col-form-label">Tipo di licenza <span class="fa fa-info-circle" data-script="info" data-text="Esistono due tipi di licenza:<br/><br/>Sywrit Standard: Consente di impostare una licenza proprietaria sul tuo articolo;<br/><br/>Creative Commons BY SA: Permette agli altri di distribuire, modificare e sviluppare anche commercialmente l'opera, licenziandola con gli stessi termini dell'opera originale, riconoscendo sempre l'autore;"></span></label>
+        <label for="_l_sel_" class="col-md-4 col-form-label">{{ __('label.article.license_type') }} <span class="fa fa-info-circle" data-script="info" data-text="{!! __('label.notice.license_info') !!}"></span></label>
           <div class="col-md-12">
             <select id="_l_sel_" class="form-control" name="_l_sel_">
               <option value="1" @if($query->license == '1') selected @endif>Sywrit Standard</option>
@@ -60,7 +60,7 @@
       </div>
 
       <div class="form-group row">
-        <label for="tags" class="col-md-4 col-form-label"><span class="fa fa-tag"></span> Etichette</label>
+        <label for="tags" class="col-md-4 col-form-label"><span class="fa fa-tag"></span> Tags</label>
           <div class="col-md-12">
             <input type="text" class="form-control" name="tags" value="{!! str_replace(',', ' ', $query->tags) !!}" placeholder="&quot;globalwarming climatestrike&quot; risulterà come #globalwarming #climatestrike" />
           </div>
@@ -69,7 +69,7 @@
       <div class="form-group row">
         <div class="col-md-6 offset-md-4">
             <button type="submit" class="btn btn-primary">
-                {{ __('Salva modifiche') }}
+                {{ __('button.save_changes') }}
             </button>
         </div>
       </div>

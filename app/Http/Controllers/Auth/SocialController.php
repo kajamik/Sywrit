@@ -73,7 +73,7 @@ class SocialController extends Controller
         }
       } else {
         $social_user->avatar = str_replace('?type=normal', '?type=large', $social_user->avatar);
-        
+
         $fileName = rand().Str::random(14).'.jpg';
 
         Image::make($social_user->avatar)->fit(160, 160)->save(public_path('sf/aa/'. $fileName));
@@ -91,6 +91,7 @@ class SocialController extends Controller
             'points' => '0',
             'followers_count' => '0',
             'notifications_count' => '0',
+            'language' => session()->get('locale'),
         ]);
 
         $user->slug = $user->id.'-'.str_slug($social_user->user['first_name'].$social_user->user['last_name'], '');

@@ -8,7 +8,7 @@
 
 @section('main')
     <div class="publisher-body">
-      <a href="{{url('read/'.$query->slug)}}">Annulla modifiche</a>
+      <a href="{{url('read/'.$query->slug)}}">{{ __('label.article.cancel_changes') }}</a>
       <form method="post" action="" enctype="multipart/form-data">
         @csrf
 
@@ -22,7 +22,7 @@
           <div class="form-group row">
             <div class="col-md-12">
               <label for="file-upload" class="form-control custom-upload">
-                <i class="fa fa-cloud-upload-alt"></i> Carica copertina
+                <i class="fa fa-cloud-upload-alt"></i> {{ __('label.article.upload_cover') }}
               </label>
               <input id="file-upload" type="file" onchange="App.upload(this.nextElementSibling, false)" name="image">
               <div id="image_preview" class="preview_body"></div>
@@ -38,7 +38,7 @@
           </div>
 
           <div class="form-group row">
-            <label for="tags" class="col-md-4 col-form-label"><span class="fa fa-tag"></span> Etichette</label>
+            <label for="tags" class="col-md-4 col-form-label"><span class="fa fa-tag"></span> Tags</label>
               <div class="col-md-12">
                 <input type="text" class="form-control" name="tags" value="{!! str_replace(',', ' ', $query->tags) !!}" placeholder="&quot;globalwarming climatestrike&quot; risulterà come #globalwarming #climatestrike" value="{{ old('tags') }}" />
               </div>
@@ -47,7 +47,7 @@
           <div class="form-group row">
             <div class="col-md-6 offset-md-4">
                 <button type="submit" class="btn btn-primary">
-                    {{ __('Modifica') }}
+                    {{ __('button.save_changes') }}
                 </button>
             </div>
           </div>

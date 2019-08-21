@@ -33,9 +33,9 @@
             <h1 class="text-uppercase">{{ $query->titolo }}</h1>
           </div>
           @if($query->id_gruppo > 0)
-          <p>Pubblicato da <a href="{{ url($editore->slug) }}">{{ $editore->name }}</a></p>
+          <p>{{ __('label.article.published_by') }} <a href="{{ url($editore->slug) }}">{{ $editore->name }}</a></p>
           @endif
-          <p>Scritto da <a href="{{ url($autore->slug) }}">{{ $autore->name }} {{ $autore->surname }}</a></p>
+          <p>{{ __('label.article.written_by') }} <a href="{{ url($autore->slug) }}">{{ $autore->name }} {{ $autore->surname }}</a></p>
           <div class="date-info">
             <span class="date"><i class="far fa-calendar-alt"></i> {{ $date }}</span>
             <span class="time"><i class="far fa-clock"></i> {{ $time }}</span><br/>

@@ -16,7 +16,7 @@ return [
     'password' => 'Passwords must be at least six characters and match the confirmation.',
     'reset' => 'La tua password è stata resettata',
     'sent' => 'Ti abbiamo inviato un email con il link di reset.',
-    'token' => 'This password reset token is invalid.',
+    'token' => 'La chiave di ripristino non è valida.',
     'user' => "Non riusciamo a trovare nessun utente con questo indirizzo email",
 
 ];

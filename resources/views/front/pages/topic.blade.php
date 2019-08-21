@@ -20,7 +20,7 @@
                 <div class="card-body">
                   <h5 class="card-title" title="{{ $value->article_title }}">{{ str_limit($value->article_title, 33) }}</h5>
                   <p>{!! str_limit(preg_replace('/(<.*?>)|(&.*?;)/', '', $value->article_text), 100) !!}</p>
-                  Pubblicato da
+                  {{ __('label.article.published_by') }}
                   @if($value->id_editore)
                   <a href="{{ url($value->publisher_slug) }}">
                     <span>{{ $value->publisher_name }}</span>
@@ -40,8 +40,8 @@
         <div class="col-lg-4 col-sm-8 col-xs-12">
         <a href="{{ url('write?_topic='.$topic->slug)}}">
           <div class="card">
-            <div class="card-header">Crea un nuovo articolo</div>
-            <img class="card-img-top" src="{{ asset('upload/topics/'.$topic->slug.'.jpg') }}" alt="Crea nuovo articolo">
+            <div class="card-header">{{ __('label.notice.new_article') }}</div>
+            <img class="card-img-top" src="{{ asset('upload/topics/'.$topic->slug.'.jpg') }}" alt="{{ __('label.notice.new_article') }}">
           </div>
         </a>
       </div>

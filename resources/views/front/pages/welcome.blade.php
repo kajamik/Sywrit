@@ -15,7 +15,7 @@
           {{-- Solo nuovi utenti--}}
           <div class="d-flex bg-sw p-2 mb-3">
             <a href="{{ url('write') }}">
-              Crea il tuo primo articolo.
+              {{ __('label.notice.first_article') }}
             </a>
           </div>
 
@@ -63,7 +63,7 @@
         <div class="col-lg-4 col-sm-12 col-xs-12">
           <a href="{{ url('write')}}">
             <div class="card">
-              <div class="card-header">Crea un nuovo articolo</div>
+              <div class="card-header">{{ __('label.notice.new_article') }}</div>
               <img class="card-img-top" src="{{ asset('upload/no-image.jpg') }}" alt="Crea nuovo articolo">
             </div>
           </a>
@@ -75,7 +75,7 @@
         <div class="col-lg-3 col-md-5 col-sm-12">
           <div class="sw-lnav">
             {{--<div class="sw-component">
-              <div class="sw-component-header bg-sw">Articoli popolari</div>
+              <div class="sw-component-header bg-sw">{{ __('label.popul_articles') }}</div>
                 @foreach($popular_articles as $value)
                 <a href="{{ url('read/'.$value->article_slug) }}">
                   <div class="sw-item" style="background-image: url('{{ $value->getBackground() }}');background-repeat: no-repeat;background-size:100%;background-size:contain;">
@@ -99,7 +99,7 @@
                 @endforeach
             </div>--}}
             <div class="sw-component">
-              <div class="sw-component-header bg-sw">Seguici su</div>
+              <div class="sw-component-header bg-sw">{{ __('label.follow_us_on') }}</div>
               <div class="sw-item text-center">
                 <div class="sw-icon-large">
                   <a href="https://facebook.com/sywrit">

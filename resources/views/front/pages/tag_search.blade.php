@@ -3,7 +3,7 @@
 @section('main')
   <div class="publisher-home">
     <div class="publisher-body">
-      <h3>Sono stati trovati {{ $query->count() }} risultati con il tag '{{$slug}}'</h3>
+      <h3>{{ __('label.search.found_tag_by', ['count' => $query->count(), 'name' => $slug]) }}</h3>
       <div class="col-lg-12">
         @if($query->count())
         <div class="row">
@@ -21,9 +21,9 @@
                   <p>{!! str_limit(preg_replace('/(<.*?>)|(&.*?;)/', '', $value->article_text), 100) !!}</p>
                   <p>
                     @if($value->bot_message == '1')
-                      Messaggio generato dal sistema
+                      {{ __('label.article.bot_message') }}
                     @else
-                      Pubblicato da
+                      {{ __('label.article.published_by') }}
                       @if($value->id_editore)
                       <a href="{{ url($value->publisher_slug) }}">
                         <span>{{ $value->publisher_name }}</span>

@@ -41,9 +41,9 @@
         </script>
         @else
         @if(Auth::user() && Auth::user()->id == $query->id)
-        <p>Pubblica il tuo primo articolo</p>
+        <p>{{ __('label.first_article') }}</p>
         @else
-        <p>Questo utente non ha ancora iniziato a pubblicare</p>
+        <p>{{ __('label.user_no_content') }}</p>
         @endif
         <p>
         @endif

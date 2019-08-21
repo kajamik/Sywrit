@@ -54,7 +54,6 @@ class RegisterController extends Controller
 
         $this->middleware('guest');
     }
-
     /**
      * Get a validator for an incoming registration request.
      *
@@ -69,30 +68,6 @@ class RegisterController extends Controller
             'password' => ['required', 'string', 'min:6', 'confirmed'],
         ]);
     }
-
-    /**
-     * Handle a registration request for the application.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    /*public function register(Request $request)
-    {
-        $user = User::where('email', $request->email)->first();
-        if($user) {
-          return redirect('recover/code?email='. urlencode($user->email));
-        } else {
-          $this->validator($request->all())->validate();
-
-          event(new Registered($user = $this->create($request->all())));
-
-          $this->guard()->login($user);
-
-          return $this->registered($request, $user)
-                          ?: redirect($this->redirectPath());
-        }
-    }*/
-
     /**
      * Create a new user instance after a valid registration.
      *
@@ -128,6 +103,7 @@ class RegisterController extends Controller
             'points' => '0',
             'followers_count' => '0',
             'notifications_count' => '0',
+            'language' => session()->get('locale')
         ]);
 
         $user->slug = $user->id.'-'.str_slug($data['name'].$data['surname'], '');

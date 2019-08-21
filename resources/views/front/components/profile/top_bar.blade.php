@@ -28,10 +28,10 @@
     </div>
     <nav class="publisher-nav">
       <ul id='nav'>
-        <li><a href="{{ url($query->slug) }}">Profilo</a></li>
-        <li><a href="{{ url($query->slug.'/about') }}">Contatti</a></li>
+        <li><a href="{{ url($query->slug) }}">{{ __('label.menu.profile') }}</a></li>
+        <li><a href="{{ url($query->slug.'/about') }}">{{ __('label.menu.contact') }}</a></li>
         @if(\Auth::user() && \Auth::user()->id == $query->id)
-        <li><a href="{{ url($query->slug.'/archive') }}">Articoli Salvati</a></li>
+        <li><a href="{{ url($query->slug.'/archive') }}">{{ __('label.menu.saved_articles') }}</a></li>
         @endif
       </ul>
     </nav>
@@ -39,7 +39,7 @@
       <div class="publisher-body">
         <div class="publisher-info">
           @yield('profile::bio')
-          <div class="col-md-12">
+          {{--<div class="col-md-12">
             @if(!$query->id_gruppo)
             <p>Editore individuale</p>
             @else
@@ -49,15 +49,11 @@
                 @endforeach
             </p>
             @endif
-          </div>
+          </div>--}}
           <div class="col-md-12">
             <span class="fa fa-newspaper"></span> {{ $count }}
           </div>
-          <div class="col-md-12">
-            @if($score->count() > 0)
-            <p>Media punteggio articoli: {{ $score->sum('score') / $score->count() }} / 5</p>
-            @endif
-          </div>
+          {{--
           @if(\Auth::user() && \Auth::user()->id != $query->id)
           <div class="col-md-12">
             @if(Auth::user()->haveGroup() && Auth::user()->hasFoundedGroup() && !Auth::user()->suspended)
@@ -89,10 +85,11 @@
             @endif
           </div>
         @endif
+        --}}
         @if(Auth::user() && Auth::user()->id != $query->id && !Auth::user()->suspended)
         <div class="col-md-12">
           <button id="report" class="btn btn-link">
-            Segnala utente
+            {{ __('label.report.user') }}
           </button>
         </div>
         <script>
@@ -101,21 +98,21 @@
             "ui": {
               "header":{"action": "{{ route('user/action/report') }}", "method": "GET"},
               "data":{"id": "{{$query->id}}", "selector": "#selOption:checked", "text": "#reasonText"},
-              "title": 'Segnala utente',
+              "title": '{{ __("label.report.user") }}',
               "content": [
-                {"type": ["input","radio"], "id": "selOption", "name": "option", "value": "0", "class": "col-md-1", "label": "Furto d'identità", "required": true},
-                {"type": ["input","radio"], "id": "selOption", "name": "option", "value": "2", "class": "col-md-1", "label": "Privacy", "required": true, "data-script": "info", "data-text": "rr"},
-                {"type": ["input","radio"], "id": "selOption", "name": "option", "value": "1", "class": "col-md-1", "label": "Promuove contenuti inappropriati", "required": true},
-                {"type": ["input","radio"], "id": "selOption", "name": "option", "value": "2", "class": "col-md-1", "label": "Spam o truffa", "required": true},
-                {"type": ["textarea"], "id":"reasonText", "name": "reason", "value": "", "class": "form-control", "placeholder": "Motiva la segnalazione (opzionale)"},
-                {"type": ["button","submit"], "name": "radio", "class": "btn btn-danger", "text": "invia segnalazione"}
+                {"type": ["input","radio"], "id": "selOption", "name": "option", "value": "0", "class": "col-md-1", "label": "{{ __('form.report_type_0') }}", "required": true},
+                {"type": ["input","radio"], "id": "selOption", "name": "option", "value": "1", "class": "col-md-1", "label": "{{ __('form.report_type_1') }}", "required": true, "data-script": "info", "data-text": "rr"},
+                {"type": ["input","radio"], "id": "selOption", "name": "option", "value": "2", "class": "col-md-1", "label": "{{ __('form.report_type_2') }}", "required": true},
+                {"type": ["input","radio"], "id": "selOption", "name": "option", "value": "3", "class": "col-md-1", "label": "{{ __('form.report_type_3') }}", "required": true},
+                {"type": ["textarea"], "id":"reasonText", "name": "reason", "value": "", "class": "form-control", "placeholder": "{{ __('form.motivation_report') }}"},
+                {"type": ["button","submit"], "name": "radio", "class": "btn btn-danger", "text": "{{ __('button.send_report') }}"}
               ],
               "done": function(){
                 App.getUserInterface({
                   "ui": {
-                    "title": "Segnalazione",
+                    "title": "{{ __('label.report.title') }}",
                     "content": [
-                      {"type": ["h5"], "text": "Grazie per la segnalazione."}
+                      {"type": ["h5"], "text": "{{ __('label.report.thanks_for_report') }}"}
                     ]
                   }
                 });
@@ -130,7 +127,7 @@
       @if($query->suspended)
       <div class="col-md-12">
         <div class="alert alert-dark">
-          <h3>Questo account è stato sospeso da un operatore per violazione delle <a href="{{ url('page/standards') }}" style="color:#007bff">norme della community</a>.</h3>
+          <h3>{{ __('label.notice.account_suspended') }}</h3>
         </div>
       </div>
       @endif

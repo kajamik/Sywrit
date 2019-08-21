@@ -37,15 +37,15 @@
     </div>
     <nav class="publisher-nav">
       <ul id='nav'>
-        <li><a href="{{ url(Auth::user()->slug) }}">Profilo</a></li>
-        <li><a href="{{ url(Auth::user()->slug.'/about') }}">Contatti</a></li>
-        <li><a href="{{ url(Auth::user()->slug.'/archive') }}">Articoli Salvati</a></li>
+        <li><a href="{{ url(Auth::user()->slug) }}">{{ __('label.menu.profile') }}</a></li>
+        <li><a href="{{ url(Auth::user()->slug.'/about') }}">{{ __('label.menu.contact') }}</a></li>
+        <li><a href="{{ url(Auth::user()->slug.'/archive') }}">{{ __('label.menu.saved_articles') }}</a></li>
       </ul>
     </nav>
     <div class="publisher-body">
       <hr/>
         <div class="publisher-content">
-          <h1>Archivio</h1>
+          <h1>{{ __('label.archive') }}</h1>
           <div class="py-3">
             @if($query->count())
             <div class="col-lg-12">
@@ -65,7 +65,7 @@
               </div>
             </div>
             @else
-              <p>Non hai nessun articolo salvato</p>
+              <p>{{ __('label.no_saved_articles') }}</p>
             @endif
           </div>
         </div>

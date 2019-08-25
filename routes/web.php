@@ -87,22 +87,32 @@ Route::group(['middleware' => 'auth'], function(){
 Route::get('load-comments', 'AjaxController@loadComments');
 Route::get('load-answers', 'AjaxController@loadAnswers');
 
-///////////
 Route::group(['prefix' => 'write', 'middleware' => ['auth','isSuspended']], function(){
   Route::get('/', 'FrontController@getWrite');
   Route::post('/', 'FilterController@postWrite');
 });
 
 Route::get('/', 'FrontController@index');
+
 Route::group(['middleware' => ['auth', 'isSuspended']], function(){
-  Route::get('notifications', 'FrontController@getNotifications');
   //Route::get('achievement', 'FrontController@getAchievement');
-  Route::get('settings', ['uses' => 'FrontController@getSettings', 'as' => 'settings']);
-  Route::post('settings', 'FilterController@postSettings');
-  Route::post('change_username', ['uses' => 'FilterController@postChangeUsername', 'as' => 'settings/username']);
-  Route::post('change_password', ['uses' => 'FilterController@postChangePassword', 'as' => 'settings/password']);
-  Route::get('account_delete', 'FrontController@getAccountDelete');
-  Route::post('account_delete', 'FilterController@postAccountDelete');
+  Route::group(['prefix' => 'settings'], function() {
+    Route::get('/', 'SettingController@index');
+    Route::group(['prefix' => 'account'], function() {
+      Route::get('/', 'SettingController@getAccount');
+      Route::get('name', 'SettingController@getAccountName');
+      Route::post('name', 'SettingController@postAccountName');
+      /*Route::get('username', 'SettingController@getAccountUsername');
+      Route::post('username', 'SettingController@postAccountUsername');*/
+    });
+    Route::get('change_language', 'SettingController@getChangeLanguage');
+    Route::post('change_language', 'SettingController@postChangeLanguage');
+    Route::get('change_password', 'SettingController@getChangePassword');
+    Route::post('change_password', 'SettingController@postChangePassword');
+  });
+  Route::get('notifications', 'FrontController@getNotifications');
+  /*Route::get('account_delete', 'FrontController@getAccountDelete');
+  Route::post('account_delete', 'FilterController@postAccountDelete');*/
 });
 
 Route::get('action/support', 'AjaxController@getSupportRequest');
@@ -147,9 +157,11 @@ Route::get('auth/facebook/callback', 'Auth\SocialController@handleProviderCallba
 Route::post('recover/code', ['uses' => 'Auth\SecurityCodeController@postCheckCode', 'as' => 'sCode']);*/
 
 // Ajax Controller
-
 Route::group(['prefix' => 'ajax'], function() {
     Route::get('auth', 'AjaxController@getAuth');
+    Route::group(['prefix' => 'account'], function() {
+      Route::get('add_social_address', 'AjaxController@getAddSocialAddress');
+    });
 });
 
 Route::fallback(function(){

@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'password' => 'Passwords must be at least six characters and match the confirmation.',
+    'password' => 'Le password devono contenere almeno sei caratteri e devono essere uguali.',
     'reset' => 'La tua password è stata resettata',
     'sent' => 'Ti abbiamo inviato un email con il link di reset.',
     'token' => 'La chiave di ripristino non è valida.',

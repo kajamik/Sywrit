@@ -13,12 +13,12 @@ return [
     |
     */
 
-    'accepted' => 'The :attribute must be accepted.',
-    'active_url' => 'The :attribute is not a valid URL.',
-    'after' => 'The :attribute must be a date after :date.',
-    'after_or_equal' => 'The :attribute must be a date after or equal to :date.',
-    'alpha' => 'The :attribute may only contain letters.',
-    'alpha_dash' => 'The :attribute may only contain letters, numbers, dashes and underscores.',
+    'accepted' => ':attribute deve essere accettato.',
+    'active_url' => ':attribute non è un URL valido.',
+    'after' => ':attribute deve essere una data successiva a :date.',
+    'after_or_equal' => ':attribute deve essere una data successiva o uguale a :date.',
+    'alpha' => ':attribute deve contenere solo lettere.',
+    'alpha_dash' => ':attribute deve contenere solo caratteri non numerici, numberi, trattini e sottolineature.',
     'alpha_num' => 'The :attribute may only contain letters and numbers.',
     'array' => 'The :attribute must be an array.',
     'before' => 'The :attribute must be a date before :date.',
@@ -111,7 +111,7 @@ return [
     'starts_with' => 'The :attribute must start with one of the following: :values',
     'string' => 'The :attribute must be a string.',
     'timezone' => 'The :attribute must be a valid zone.',
-    'unique' => 'The :attribute has already been taken.',
+    'unique' => ':attribute è già stato preso.',
     'uploaded' => 'The :attribute failed to upload.',
     'url' => 'The :attribute format is invalid.',
     'uuid' => 'The :attribute must be a valid UUID.',

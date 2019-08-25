@@ -16,7 +16,7 @@
 @if($feeds->count())
 <hr/>
 <div class="feeds">
-  <h3>{{ __('label.article.similar') }}</h3>
+  <h3>@lang('label.article.similar')</h3>
   <div class="col-lg-12 col-md-12 col-sm-12">
     <div class="row">
       @foreach($feeds as $value)
@@ -28,7 +28,7 @@
 
             <h4 class="card-title">{{ $value->titolo }}</h4>
             <div class="author">
-              {{ __('label.article.published_by') }}
+              @lang('label.article.published_by')
               @if(!empty($value->id_gruppo))
               <a href="{{ url($value->getRedazione->slug) }}"><span><span>{{ $value->getRedazione->name }}</span></a>
               @else

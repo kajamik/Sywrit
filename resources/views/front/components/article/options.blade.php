@@ -1,8 +1,8 @@
   <ul class="d-flex bg-sw p-2 mb-3">
-    <li><a id="edt" href="{{ url('post/'.$query->slug.'/edit') }}">{{ __('label.article.edit') }}</a></li>
-    <li><a id="dlt" class="ml-2" href="#" onclick="link(this,'{{ route('article/action/delete') }}')">{{ __('label.article.delete') }}</a></li>
+    <li><a id="edt" href="{{ url('post/'.$query->slug.'/edit') }}">@lang('label.article.edit')</a></li>
+    <li><a id="dlt" class="ml-2" href="#" onclick="link(this,'{{ route('article/action/delete') }}')">@lang('label.article.delete')</a></li>
     @if(get_class($query) == 'App\Models\SavedArticles')
-    <li><a id="pub" class="ml-2" href="#" onclick="link(this, '{{ route('article/action/publish') }}')">{{ __('label.article.publish') }}</a></li>
+    <li><a id="pub" class="ml-2" href="#" onclick="link(this, '{{ route('article/action/publish') }}')">@lang('label.article.publish')</a></li>
     @endif
   </ul>
 <script>

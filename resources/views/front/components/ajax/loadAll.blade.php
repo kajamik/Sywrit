@@ -13,10 +13,10 @@
         <h5 class="card-title" title="{{ $value->article_title }}">{{ str_limit($value->article_title, 33) }}</h5>
         <p>{!! str_limit(preg_replace('/(<.*?>)|(&.*?;)/', '', $value->article_text), 100) !!}</p>
         @if($value->bot_message == '1')
-        <p>{{ __('label.article.bot_message') }}</p>
+        <p>@lang('label.article.bot_message')</p>
         @else
         <div class="author">
-          {{ __('label.article.published_by') }}
+          @lang('label.article.published_by')
           @if($value->id_editore)
           <a href="{{ url($value->publisher_slug) }}">
             <span>{{ $value->publisher_name }}</span>

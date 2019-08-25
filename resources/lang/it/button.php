@@ -8,18 +8,22 @@ return [
   |--------------------------------------------------------------------------
   */
 
-  'login' => 'Accedi',
-  'register' => 'Registrati',
-  'login_with_facebook' => 'Accedi con facebook',
-  'send' => 'Invia',
-  'send_message' => 'Invia messaggio',
-  'send_report' => 'Invia segnalazione',
-  'send_anwser' => 'Invia risposta',
-  'save_settings' => 'Salva impostazioni',
-  'save_changes' => 'Salva modifiche',
-  'password_changes' => 'Cambia password',
+  'add_social_link' => 'Aggiungi indirizzo social',
+  'already_registered' => 'Hai già un account? Accedi',
   'delete_account' => 'Elimina account',
   'forgot_password' => 'Hai dimenticato i dati di accesso?',
+  'login' => 'Accedi',
+  'login_with_facebook' => 'Accedi con facebook',
   'no_account' => 'Non hai ancora un account? Creane uno',
-  'already_registered' => 'Hai già un account? Accedi',
+  'password_changes' => 'Cambia password',
+  'register' => 'Registrati',
+  'save_changes' => 'Salva modifiche',
+  'save_settings' => 'Salva impostazioni',
+  'send' => 'Invia',
+  'send_anwser' => 'Invia risposta',
+  'send_message' => 'Invia messaggio',
+  'send_report' => 'Invia segnalazione',
+  'password_changes' => 'Cambia password',
+  'upload_file' => 'Carica file',
+
 ];

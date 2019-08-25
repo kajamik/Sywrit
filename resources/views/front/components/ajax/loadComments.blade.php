@@ -23,13 +23,13 @@
           <i class="fas fa-ellipsis-v"></i>
         </a>
         <div class="dropdown-menu">
-          <a id="report_comment_d{{ $value->id }}" class="dropdown-item" href="#report">{{ __('label.report.comment') }}</a>
+          <a id="report_comment_d{{ $value->id }}" class="dropdown-item" href="#report">@lang('label.report.comment')</a>
         </div>
       </div>
     </div>
       <hr/>
       <div class="col-md-12">
-        <button id="reply_{{ $value->id }}" class="btn btn-link">{{ __('label.reply')}}</button>
+        <button id="reply_{{ $value->id }}" class="btn btn-link">@lang('label.reply')</button>
       </div>
       <script>
       $("#report_comment_d{{ $value->id }}").click(function(){
@@ -39,20 +39,20 @@
           "data":{"id": "{{ $value->id }}", "selector": "#selOption:checked", "text": "#reasonText"},
           "title": 'Segnala commento',
           "content": [
-            {"type": ["input","radio"], "id":"selOption", "name": "option", "value": "0", "class": "col-md-1", "label": "{{ __('form.report_comment_type_0') }}", "required": true},
-            {"type": ["input","radio"], "id":"selOption", "name": "option", "value": "1", "class": "col-md-1", "label": "{{ __('form.report_comment_type_1') }}", "required": true},
-            {"type": ["input","radio"], "id":"selOption", "name": "option", "value": "2", "class": "col-md-1", "label": "{{ __('form.report_comment_type_2') }}", "required": true},
-            {"type": ["input","radio"], "id":"selOption", "name": "option", "value": "3", "class": "col-md-1", "label": "{{ __('form.report_comment_type_3') }}", "required": true},
-            {"type": ["input","radio"], "id":"selOption", "name": "option", "value": "4", "class": "col-md-1", "label": "{{ __('form.report_comment_type_4') }}", "required": true},
-            {"type": ["textarea"], "id":"reasonText", "name": "reason", "value": "", "class": "form-control", "placeholder": "{{ __('form.motivation_report') }}"},
-            {"type": ["button","submit"], "name": "radio", "class": "btn btn-danger", "text": "{{ __('button.send_report')}}"}
+            {"type": ["input","radio"], "id":"selOption", "name": "option", "value": "0", "class": "col-md-1", "label": "@lang('form.report_comment_type_0')", "required": true},
+            {"type": ["input","radio"], "id":"selOption", "name": "option", "value": "1", "class": "col-md-1", "label": "@lang('form.report_comment_type_1')", "required": true},
+            {"type": ["input","radio"], "id":"selOption", "name": "option", "value": "2", "class": "col-md-1", "label": "@lang('form.report_comment_type_2')", "required": true},
+            {"type": ["input","radio"], "id":"selOption", "name": "option", "value": "3", "class": "col-md-1", "label": "@lang('form.report_comment_type_3')", "required": true},
+            {"type": ["input","radio"], "id":"selOption", "name": "option", "value": "4", "class": "col-md-1", "label": "@lang('form.report_comment_type_4')", "required": true},
+            {"type": ["textarea"], "id":"reasonText", "name": "reason", "value": "", "class": "form-control", "placeholder": "@lang('form.motivation_report')"},
+            {"type": ["button","submit"], "name": "radio", "class": "btn btn-danger", "text": "@lang('button.send_report')"}
           ],
           "done": function(){
             App.getUserInterface({
               "ui": {
-                "title": "{{ __('label.report.title')}}",
+                "title": "@lang('label.report.title')",
                 "content": [
-                  {"type": ["h5"], "text": "{{ __('label.report.thanks_for_report') }}"}
+                  {"type": ["h5"], "text": "@lang('label.report.thanks_for_report')"}
                 ]
               }
             });
@@ -94,7 +94,7 @@
         $(".replycomment").remove();
       }
       $("#comment_{{ $value->id }}").append('<div id="reply" class="replycomment"><div class="card-body"><div class="d-flex"><img style="height:4em" class="p-2" src="{{ Auth::user()->getAvatar() }}" />\
-      <div class="d-flex flex-grow-1"><textarea class="form-control" placeholder="{{ __("form.write_comment") }}" autofocus></textarea></div></div><div class="py-2 col-md-12"><button type="button" class="btn btn-sw btn-block">{{ __("button.send_anwser")}}</button></div></div></div>');
+      <div class="d-flex flex-grow-1"><textarea class="form-control" placeholder="@lang("form.write_comment")" autofocus></textarea></div></div><div class="py-2 col-md-12"><button type="button" class="btn btn-sw btn-block">@lang("button.send_anwser")</button></div></div></div>');
       $("html, body").animate({ scrollTop: $('#reply').offset().top }, 1000);
       $("button[type=button]").click(function() {
         App.query("get","{{ url('send-answers') }}", { id: {{ $value->id }}, post: $(".replycomment textarea").val() }, false, function(data) {
@@ -112,7 +112,7 @@
 
   @if($count > 6)
   <div class="offset-md-5">
-    <button id="loadAnswers_{{ $value->id }}" class="btn btn-light mb-5">{{ __('label.social.more_anwsers') }}</button>
+    <button id="loadAnswers_{{ $value->id }}" class="btn btn-light mb-5">@lang('label.social.more_anwsers')</button>
   </div>
   @endif
 

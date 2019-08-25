@@ -7,7 +7,7 @@
 
       <form method="POST" action="{{ url('account_delete') }}">
         @csrf
-        <h3>{{ __('label.deleting_notice', ['days' => '30']) }}</h3>
+        <h3>@lang('label.deleting_notice', ['days' => '30'])</h3>
 
         <div class="row">
 
@@ -16,7 +16,7 @@
               <div class="card-header">Contenuto</div>
               <div class="card-body">
                 <div class="d-flex">
-                  <p>{!! __('label.deleting_info', ['articles' => $articoli->count(), 'comments' => $feedback->count()]) !!}</p>
+                  <p>@lang('label.deleting_info', ['articles' => $articoli->count(), 'comments' => $feedback->count()])</p>
                   <div class="float-right pl-5">
                     <i class="fas fa-box fa-5x"></i>
                   </div>
@@ -29,7 +29,7 @@
 
           <div class="group-row">
             <div class="col-md-12">
-              <button type="submit" class="btn btn-danger">{{ __('button.delete_account') }}</button>
+              <button type="submit" class="btn btn-danger">@lang('button.delete_account')</button>
             </div>
           </div>
         </div>

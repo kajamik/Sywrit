@@ -43,6 +43,9 @@
         }
     },
     "autoload": {
+        "files": [
+          "app/ext.php"
+        ],
         "psr-4": {
             "App\\": "app/"
         },

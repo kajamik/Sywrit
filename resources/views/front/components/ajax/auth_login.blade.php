@@ -1,7 +1,7 @@
 <a href="{{ url('auth/facebook/redirect') }}">
   <button type="button" class="btn btn-facebook btn-block">
       <i class="fab fa-facebook-f"></i>
-      {{ __('button.login_with_facebook') }}
+      @lang('button.login_with_facebook')
   </button>
 </a>
 
@@ -9,7 +9,7 @@
     @csrf
 
     <div class="form-group row">
-        <label for="email" class="col-md-12 col-form-label text-center">{{ __('label.account.email_address') }}</label>
+        <label for="email" class="col-md-12 col-form-label text-center">@lang('label.account.email_address')</label>
 
         <div class="col-md-12">
             <input id="email" type="email" class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" name="email" value="{{ old('email') }}" required autofocus>
@@ -23,7 +23,7 @@
     </div>
 
     <div class="form-group row">
-        <label for="email" class="col-md-12 col-form-label text-center">{{ __('label.account.password') }}</label>
+        <label for="email" class="col-md-12 col-form-label text-center">@lang('label.account.password')</label>
 
         <div class="col-md-12">
             <input id="password" type="password" class="form-control{{ $errors->has('password') ? ' is-invalid' : '' }}" name="password" value="{{ old('password') }}" required autofocus>
@@ -42,7 +42,7 @@
                 <input class="form-check-input" type="checkbox" name="remember" id="remember" checked>
 
                 <label class="form-check-label" for="remember">
-                    {{ __('label.account.remember_me') }}
+                    @lang('label.account.remember_me')
                 </label>
             </div>
         </div>
@@ -51,12 +51,12 @@
     <div class="form-group row">
         <div class="col-md-12">
             <button type="submit" class="btn btn-sw btn-block">
-                {{ __('button.login') }}
+                @lang('button.login')
             </button>
 
             @if (Route::has('password.request'))
                 <a class="btn btn-primary btn-block" href="{{ route('password.request') }}">
-                    {{ __('button.forgot_password') }}
+                    @lang('button.forgot_password')
                 </a>
             @endif
         </div>
@@ -65,7 +65,7 @@
     <div class="form-group row">
         <div class="col-md-12">
           <button id="scene" type="button" class="btn btn-link">
-            {{ __('button.no_account') }}
+            @lang('button.no_account')
           </button>
         </div>
       </div>

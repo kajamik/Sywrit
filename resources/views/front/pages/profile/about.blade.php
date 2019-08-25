@@ -37,10 +37,10 @@
     </div>
     <nav class="publisher-nav">
       <ul id='nav'>
-        <li><a href="{{ url($query->slug) }}">{{ __('label.menu.profile') }}</a></li>
-        <li><a href="{{ url($query->slug.'/about') }}">{{ __('label.menu.contact') }}</a></li>
+        <li><a href="{{ url($query->slug) }}">@lang('label.menu.profile')</a></li>
+        <li><a href="{{ url($query->slug.'/about') }}">@lang('label.menu.contact')</a></li>
         @if(\Auth::user() && \Auth::user()->id == $query->id)
-        <li><a href="{{ url($query->slug.'/archive') }}">{{ __('label.menu.saved_articles') }}</a></li>
+        <li><a href="{{ url($query->slug.'/archive') }}">@lang('label.menu.saved_articles')</a></li>
         @endif
       </ul>
     </nav>
@@ -56,7 +56,7 @@
         @if(Auth::user() && Auth::user()->id != $query->id)
         <div class="col-md-12">
           <a id="report" href="#report">
-            {{ __('label.report.user') }}
+            @lang('label.report.user')
           </a>
         </div>
         <script>
@@ -65,21 +65,21 @@
             "ui": {
               "header":{"action": "{{route('article/action/report')}}", "method": "GET"},
               "data":{"id": "{{$query->id}}", "selector": "#selOption:checked", "text": "#reasonText"},
-              "title": '{{ __("label.report.user")}}',
+              "title": '@lang("label.report.user")',
               "content": [
-                {"type": ["input","radio"], "id": "selOption", "name": "option", "value": "0", "class": "col-md-1", "label": "{{ __('form.report_user_type_0') }}", "required": true},
-                {"type": ["input","radio"], "id": "selOption", "name": "option", "value": "1", "class": "col-md-1", "label": "{{ __('form.report_user_type_1') }}", "required": true},
-                {"type": ["input","radio"], "id": "selOption", "name": "option", "value": "2", "class": "col-md-1", "label": "{{ __('form.report_user_type_2') }}", "required": true},
-                {"type": ["input","radio"], "id": "selOption", "name": "option", "value": "3", "class": "col-md-1", "label": "{{ __('form.report_user_type_3') }}", "required": true},
-                {"type": ["textarea"], "id":"reasonText", "name": "reason", "value": "", "class": "form-control", "placeholder": "{{ __('form.motivation_report') }}"},
-                {"type": ["button","submit"], "name": "radio", "class": "btn btn-danger", "text": "{{ __('button.send_report') }}"}
+                {"type": ["input","radio"], "id": "selOption", "name": "option", "value": "0", "class": "col-md-1", "label": "@lang('form.report_user_type_0')", "required": true},
+                {"type": ["input","radio"], "id": "selOption", "name": "option", "value": "1", "class": "col-md-1", "label": "@lang('form.report_user_type_1')", "required": true},
+                {"type": ["input","radio"], "id": "selOption", "name": "option", "value": "2", "class": "col-md-1", "label": "@lang('form.report_user_type_2')", "required": true},
+                {"type": ["input","radio"], "id": "selOption", "name": "option", "value": "3", "class": "col-md-1", "label": "@lang('form.report_user_type_3')", "required": true},
+                {"type": ["textarea"], "id":"reasonText", "name": "reason", "value": "", "class": "form-control", "placeholder": "@lang('form.motivation_report')"},
+                {"type": ["button","submit"], "name": "radio", "class": "btn btn-danger", "text": "@lang('button.send_report')"}
               ],
               "done": function(){
                 App.getUserInterface({
                   "ui": {
-                    "title": "{{ __('label.report.title') }}",
+                    "title": "@lang('label.report.title')",
                     "content": [
-                      {"type": ["h5"], "text": "{{ __('label.report.thanks_for_report') }}"}
+                      {"type": ["h5"], "text": "@lang('label.report.thanks_for_report')"}
                     ]
                   }
                 });
@@ -156,7 +156,7 @@
             </div>
             </div>
             @else
-              <p>{{ __('label.notice.user_no_contact') }}</p>
+              <p>@lang('label.notice.user_no_contact')</p>
             @endif
           </div>
     </div>

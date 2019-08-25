@@ -20,6 +20,7 @@ use App\Models\PublisherRequest;
 use App\Models\ArticleComments;
 use App\Models\AnswerComments;
 use App\Models\ArticleLikes;
+use App\Models\SocialService;
 
 // Achievements
 use App\Achievements\FirstComment;
@@ -39,32 +40,6 @@ class AjaxController extends Controller
 
   public function rate(Request $request)
   {
-    /*if(!empty($article->id_gruppo)) {
-
-      $editore = \DB::table('editori')->where('id', $article->id_gruppo)->first();
-      $components = collect(explode(',',$editore->componenti))->filter(function ($value, $key) {
-        return ($value != "" && $value != Auth::user()->id);
-      });
-
-      foreach($components as $value) {
-        $noty = new Notifications();
-        $noty->sender_id = Auth::user()->id;
-        $noty->target_id = $value;
-        $noty->content_id = $article->id;
-        $noty->type = '2';
-        $noty->read = '0';
-        $noty->save();
-      }
-    } else {
-        $noty = new Notifications();
-        $noty->sender_id = Auth::user()->id;
-        $noty->target_id = $article->id_autore;
-        $noty->content_id = $article->id;
-        $noty->type = '2';
-        $noty->read = '0';
-        $noty->save();
-    }*/
-
       $article_id = $request->id;
 
       $liked = ArticleLikes::where('user_id', Auth::user()->id)->where('article_id', $article_id);
@@ -327,6 +302,12 @@ class AjaxController extends Controller
       }
       $callback = $request->callback;
       return view('front.components.ajax.'. $callback);
+  }
+
+  public function getAddSocialAddress()
+  {
+      $apps = SocialService::orderBy('name', 'asc')->get();
+      return view('front.components.social_links', compact('apps'));
   }
 
 }

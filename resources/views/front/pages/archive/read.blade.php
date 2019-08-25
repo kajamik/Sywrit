@@ -35,7 +35,7 @@
         @endif
         <p>Scritto da <a href="{{ url($autore->slug) }}">{{ $autore->name }} {{ $autore->surname }}</a></p>
         <div class="date-info">
-          <span>{{ __('label.article.no_published') }}</span>
+          <span>@lang('label.article.no_published')</span>
         </div>
         <hr/>
         <div class="block-body">
@@ -47,7 +47,7 @@
           @if($query->license == "1")
           <p>&copy; Sywrit Standard</p>
           @else
-          <img src="{{ asset('upload/icons/cc.png') }}" title="{{ __('Creative Commons BY SA') }}" alt="Creative Commons BY SA" />
+          <img src="{{ asset('upload/icons/cc.png') }}" title="@lang('Creative Commons BY SA') }}" alt="Creative Commons BY SA" />
           @endif
         </div>
         @if(!empty($query->tags))
@@ -62,7 +62,7 @@
         @endif
       <div class="block-footer">
         @if($query->created_at != $query->updated_at)
-        <span>{{ __('label.article.last_modified', ['time' => $query->updated_at->diffForHumans()]) }}</span>
+        <span>@lang('label.article.last_modified', ['time' => $query->updated_at->diffForHumans()])</span>
         @endif
       </div>
     </article>

@@ -7,7 +7,7 @@
     <div class="d-flex">
       <img style="height:6em" class="p-2" src="{{ Auth::user() ? Auth::user()->getAvatar() : '' }}" />
         <div class="d-flex flex-grow-1">
-          <textarea class="form-control" placeholder="{{ __('form.write_comment') }}"></textarea>
+          <textarea class="form-control" placeholder="@lang('form.write_comment')"></textarea>
         </div>
     </div>
     <div class="py-2 col-md-12">
@@ -19,7 +19,7 @@
     <div class="d-flex">
       <img style="height:6em" class="p-2" src="{{ Auth::user()->getAvatar() }}" />
         <div class="d-flex flex-grow-1 bg-sw">
-          <p class="mt-3 offset-1">{{ __('label.notice.account_suspended_short') }}</p>
+          <p class="mt-3 offset-1">@lang('label.notice.account_suspended_short')</p>
         </div>
     </div>
     @endif
@@ -71,6 +71,6 @@
 
 @if($count > 6)
 <div class="offset-md-5">
-  <button id="loadComments" class="btn btn-light mb-5">{{ __('label.social.more_comments') }}</button>
+  <button id="loadComments" class="btn btn-light mb-5">@lang('label.social.more_comments')</button>
 </div>
 @endif

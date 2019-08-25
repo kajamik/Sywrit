@@ -540,19 +540,6 @@ class FrontController extends Controller
       return view('front.pages.profile.achievement', compact('ach'));
     }
 
-    public function getSettings()
-    {
-      // SEO ///////////////////////////////////////////////////
-
-        SEOMeta::setTitle('Impostazioni - Sywrit', false)
-                  ->setDescription(config('app.name').': la nuova piattaforma multi-genere di scrittura online.')
-                  ->setCanonical(\Request::url());
-
-      //-------------------------------------------------------//
-
-      return view('front.pages.profile.settings');
-    }
-
     public function getPages($slug, $slug2 = '')
     {
       // SEO ///////////////////////////////////////////////////

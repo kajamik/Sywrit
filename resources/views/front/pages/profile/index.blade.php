@@ -41,9 +41,9 @@
         </script>
         @else
         @if(Auth::user() && Auth::user()->id == $query->id)
-        <p>{{ __('label.first_article') }}</p>
+        <p>@lang('label.first_article')</p>
         @else
-        <p>{{ __('label.user_no_content') }}</p>
+        <p>@lang('label.user_no_content')</p>
         @endif
         <p>
         @endif

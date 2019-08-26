@@ -102,12 +102,12 @@
               <div class="sw-component-header bg-sw">{{ __('label.follow_us_on') }}</div>
               <div class="sw-item text-center">
                 <div class="sw-icon-large">
-                  <a href="https://facebook.com/sywrit">
+                  <a href="https://facebook.com/sywrit" target="_blank">
                     <i class="fab fa-facebook"></i>
                   </a>
                 </div>
                 <div class="sw-icon-large">
-                  <a href="https://instagram.com/sywrit">
+                  <a href="https://instagram.com/sywrit" target="_blank">
                     <i class="fab fa-instagram"></i>
                   </a>
                 </div>

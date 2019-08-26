@@ -68,7 +68,7 @@
 
     <div class="form-group">
       <div class="col-md-12">
-        <label>@lang('label.terms_message')</label>
+        <label>@lang('label.terms_message', ['terms' => url("page/legal/terms"), 'cookies' => url("page/about/cookies")])</label>
       </div>
     </div>
 

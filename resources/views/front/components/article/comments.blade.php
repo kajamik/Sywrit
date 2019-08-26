@@ -12,7 +12,7 @@
     </div>
     <div class="py-2 col-md-12">
       <button id="sendMsg" type="button" class="btn btn-sw btn-block">
-        Invia
+        @lang('button.send')
       </button>
     </div>
     @elseif(Auth::user() && !Auth::user()->suspended)

@@ -2,7 +2,7 @@
   @include('front.pages.profile.settings.account.'.$slug2)
 @else
 @php
-  SEOMeta::setTitle('Modifica account - Sywrit', false);
+  SEOMeta::setTitle(trans('label.title.edit_profile'). ' - Sywrit', false);
 @endphp
   <div class="col-lg-12">
     <div class="card">

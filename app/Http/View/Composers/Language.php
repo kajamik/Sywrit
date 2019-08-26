@@ -1,14 +1,13 @@
 <?php
 
-
 namespace App\Http\View\Composers;
 
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class Language {
     const SESSION_KEY = 'locale';
-    const LOCALES = ['it', 'en', 'fr'];
     /**
      * Bind data to the view.
      *
@@ -17,17 +16,19 @@ class Language {
      */
     public function compose(View $view)
     {
-      if (auth()->user()) {
-        $lang = explode('_', auth()->user()->language)[0];
-        if (in_array($lang, self::LOCALES)) {
+      if(auth()->user()) {
+        $lang = auth()->user()->language;
+        if(!empty($lang) && in_array($lang, config('lang.locales'))) {
           session()->put(self::SESSION_KEY, $lang);
         } else {
-          session()->put(self::SESSION_KEY, 'en');
+          session()->put(self::SESSION_KEY, request()->getPreferredLanguage(config('lang.locales')));
+          $query = DB::table('utenti')->where('id', auth()->user()->id)
+                      ->update(['language' => request()->getPreferredLanguage(config('lang.locales'))]);
         }
       } elseif(!session()->has(self::SESSION_KEY)) {
-          session()->put(self::SESSION_KEY, request()->getPreferredLanguage(self::LOCALES));
+          session()->put(self::SESSION_KEY, request()->getPreferredLanguage(config('lang.locales')));
       }
-      app()->setLocale(session()->get(self::SESSION_KEY));
+      app()->setLocale(explode(config('lang.trans.split'), session(config('lang.trans.session.name')))[0]);
     }
 
 

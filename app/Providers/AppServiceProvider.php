@@ -20,8 +20,6 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         \Carbon\Carbon::setUTF8(true);
-        setlocale(LC_TIME, 'it', 'it_IT', 'italian');
-        \Carbon\Carbon::setLocale('it');
         \Schema::defaultStringLength(191);
         Validator::resolver(function($translator, $data, $rules, $messages) {
           return new HashValidator($translator, $data, $rules, $messages);

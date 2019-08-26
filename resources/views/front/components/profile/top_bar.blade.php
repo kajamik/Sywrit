@@ -127,7 +127,7 @@
       @if($query->suspended)
       <div class="col-md-12">
         <div class="alert alert-dark">
-          <h3>@lang('label.notice.account_suspended')</h3>
+          <h3>@lang('label.notice.account_suspended', ['standards' => url("page/standards")])</h3>
         </div>
       </div>
       @endif

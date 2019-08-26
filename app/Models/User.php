@@ -47,11 +47,13 @@ class User extends Authenticatable
       $this->notify(new VerifyEmailNotification);
     }*/
 
-    public function isOperator() {
+    public function isOperator()
+    {
       return ($this->permission > 1);
     }
 
-    public function getRole() {
+    public function getRole()
+    {
       if($this->permission == 1)
         return "Utente";
       elseif($this->permission == 2)
@@ -64,35 +66,40 @@ class User extends Authenticatable
         return "";
     }
 
-    public function getBackground() {
+    public function getBackground()
+    {
       if($this->copertina) {
         return $this->copertina;
       }
       return asset('upload/bg.jpg');
     }
 
-    public function getAvatar() {
+    public function getAvatar()
+    {
       if($this->avatar) {
         return $this->avatar;
       }
       return asset('upload/default.png');
     }
 
-    public function haveGroup() {
+    public function haveGroup()
+    {
       $components = collect(explode(',', $this->id_gruppo))->filter(function ($value, $key) {
         return $value != "";
       });
       return $components->isNotEmpty();
     }
 
-    public function hasFoundedGroup() {
+    public function hasFoundedGroup()
+    {
       if(\DB::table('editori')->where('direttore', $this->id)->count()) {
         return true;
       }
       return false;
     }
 
-    public function getPublishersInfo() {
+    public function getPublishersInfo()
+    {
       if($this->haveGroup()) {
         $collection = collect();
         $components = collect(explode(',', $this->id_gruppo))->filter(function ($value, $key) {
@@ -106,7 +113,8 @@ class User extends Authenticatable
       }
     }
 
-    public function hasMemberOf($id) {
+    public function hasMemberOf($id)
+    {
       if($this->haveGroup()) {
         foreach($this->getPublishersInfo() as $value) {
           if($value->id == $id) {
@@ -117,7 +125,8 @@ class User extends Authenticatable
       return false;
     }
 
-    public function getRealName() {
+    public function getRealName()
+    {
       $str = $this->name .' '. $this->surname. ' ';
       if($this->verified) {
         $str .= '<div class="sw-ico">';
@@ -127,26 +136,17 @@ class User extends Authenticatable
       return $str;
     }
 
-    /*public function getRankName() {
-      $name = '';
-
-      if($this->rank < 20){
-        $name = 'principiante';
-      }elseif($this->rank < 50){
-        $name = 'intermedio';
-      }elseif($this->rank < 101){
-        $name = 'avanzato';
-      }else{
-        $name = 'maestro';
-      }
-
-      return $name;
+    public function getSocialLinks()
+    {
+        $my_apps = \DB::table('user_links')
+                    ->where('user_id', $this->id)
+                    ->join('social_service', 'user_links.service_id', '=', 'social_service.id')
+                    ->orderBy('social_service.name', 'asc')
+                    ->get();
+        $contacts = collect();
+        foreach($my_apps as $value) {
+          $contacts->push(['icon' => 'fa-2x fab fa-'.$value->name, 'name' => $value->url, 'url' => $value->prefix.$value->url]);
+        }
+        return $contacts;
     }
-
-    public function UnlinkOldImage($file) {
-      if(File::exists($this->storage.'/'.$file)){
-        File::delete($this->storage.'/'.$file);
-      }
-    }*/
-
 }

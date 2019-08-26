@@ -31,9 +31,9 @@
           <h1 class="text-uppercase">{{ $query->titolo }}</h1>
         </div>
         @if($query->id_gruppo > 0)
-        <p>Pubblicato da <a href="{{ url($editore->slug) }}">{{ $editore->name }}</a></p>
+        <p>@lang('label.article.published_by', ['name' => $editore->name, 'url' => url($editore->slug)])</p>
         @endif
-        <p>Scritto da <a href="{{ url($autore->slug) }}">{{ $autore->name }} {{ $autore->surname }}</a></p>
+        <p>@lang('label.article.written_by', ['name' => $autore->name.' '.$autore->surname, 'url' => url($autore->slug)])</a></p>
         <div class="date-info">
           <span>@lang('label.article.no_published')</span>
         </div>

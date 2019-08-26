@@ -16,21 +16,20 @@ use App\Models\UserLinks;
 
 class SettingController extends Controller
 {
-    public $LOCALES = ['en','fr','it'];
     public $SETTINGS = 'front.pages.profile.settings';
 
     public function __construct()
     {
         // SEO ///////////////////////////////////////////////////
 
-          SEOMeta::setDescription(config('app.name').': la nuova piattaforma multi-genere di scrittura online.')
+          SEOMeta::setDescription(trans('label.meta.web_description', ['name' => config('app.name')]))
                     ->setCanonical(\Request::url());
 
         //-------------------------------------------------------//
     }
     public function index()
     {
-        SEOMeta::setTitle('Impostazioni - Sywrit', false);
+        SEOMeta::setTitle(trans('label.title.settings'). ' - Sywrit', false);
         return view($this->SETTINGS);
     }
 
@@ -53,6 +52,8 @@ class SettingController extends Controller
 
     public function getChangePassword()
     {
+        SEOMeta::setTitle(trans('label.title.password'). ' - Sywrit', false);
+
         if(empty(Auth::user()->social_auth_id)) {
           return view($this->SETTINGS)->with('slug', 'change_password');
         } else {
@@ -62,7 +63,9 @@ class SettingController extends Controller
 
     public function getChangeLanguage()
     {
-        $lang = $this->LOCALES;
+        SEOMeta::setTitle(trans('label.title.language'). ' - Sywrit', false);
+
+        $lang = config('lang.locales');
         return view($this->SETTINGS, compact('lang'))->with('slug', 'change_language');
     }
 
@@ -74,9 +77,9 @@ class SettingController extends Controller
           'name' => 'required|string|min:3|max:12',
           'surname' => 'required|string|min:3|max:12'
         ]);
-        $query = User::find(\Auth::user()->id);
-        $query->name = $request->name;
-        $query->surname = $request->surname;
+        $user = User::find(\Auth::user()->id);
+        $user->name = $request->name;
+        $user->surname = $request->surname;
         if($a = $request->cover){
           $this->validate($request,[
             'cover' => 'image|mimes:jpeg,jpg,png,gif',
@@ -103,7 +106,7 @@ class SettingController extends Controller
           $image = Image::make($a)->resize(1110, 350)->encode('jpg', 100)
                                   ->save( $path );*/
 
-          $query->copertina = asset('sf/aa/'. $fileName);
+          $user->copertina = asset('sf/aa/'. $fileName);
         }
         if($a = $request->avatar){
           $this->validate($request,[
@@ -138,11 +141,11 @@ class SettingController extends Controller
             $image = Image::make($a)->resize(160, 160)->encode('jpg', 100)
                             ->save( $path );*/
           }
-          $query->avatar = asset('sf/aa/'. $fileName);
+          $user->avatar = asset('sf/aa/'. $fileName);
         }
         // Socials
         if(!empty($request->bio)) {
-          $query->biography = $request->bio;
+          $user->biography = $request->bio;
         }
         if(!empty($request->social_account_name)) {
           $contact = collect();
@@ -180,7 +183,7 @@ class SettingController extends Controller
           }
         }
 
-        $query->save();
+        $user->save();
         return redirect()->back()->with('successful_changes', true);
     }
 
@@ -231,19 +234,9 @@ class SettingController extends Controller
     public function postChangeLanguage(Request $request)
     {
         $lang = $request->lang;
-        switch($lang) {
-          case "en":
-            $lang = "en_US";
-            break;
-          case "fr":
-            $lang = "fr_FR";
-            break;
-          case "it":
-            $lang = "it_IT";
-            break;
-        }
+        $iso = config('lang.locales.'. $lang);
         $query = User::find(Auth::user()->id);
-        $query->language = $lang;
+        $query->language = $iso;
         $query->save();
         return redirect()->back();
     }

@@ -1,7 +1,6 @@
 @extends('front.layout.app')
 
 @section('main')
-
   <style>
   #nav > li {
     display: inline-block;

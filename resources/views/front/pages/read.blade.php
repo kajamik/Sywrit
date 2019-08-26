@@ -33,9 +33,9 @@
             <h1 class="text-uppercase">{{ $query->titolo }}</h1>
           </div>
           @if($query->id_gruppo > 0)
-          <p>{{ __('label.article.published_by') }} <a href="{{ url($editore->slug) }}">{{ $editore->name }}</a></p>
+          <p>@lang('label.article.published_by', ['name' => $editore->name, 'url' => url($editore->slug)])</p>
           @endif
-          <p>{{ __('label.article.written_by') }} <a href="{{ url($autore->slug) }}">{{ $autore->name }} {{ $autore->surname }}</a></p>
+          <p>@lang('label.article.written_by', ['name' => $autore->name.' '.$autore->surname, 'url' => url($autore->slug)])</p>
           <div class="date-info">
             <span class="date"><i class="far fa-calendar-alt"></i> {{ $date }}</span>
             <span class="time"><i class="far fa-clock"></i> {{ $time }}</span><br/>
@@ -95,30 +95,18 @@
 
               <div class="text-center">
                 <img src="{{ $autore->getAvatar() }}" alt="Avatar di {{ $autore->name }} {{ $autore->surname }}" />
-                <h4>Autore</h4>
                 <hr/>
                 @if(!empty($autore->biography))
-                  <h5>Biografia:</h5>
                   <p>{!! $autore->biography !!}</p>
                 @endif
-
-                @if(!empty($autore->facebook))
-                  <a href="https://facebook.com/{{ $autore->facebook }}" target="_blank" title="Facebook">
-                    <i class="fab fa-facebook fa-2x"></i>
-                  </a>
-                @endif
-                @if(!empty($autore->instagram))
-                  <a href="https://instagram.com/{{ $autore->instagram }}" target="_blank" title="Instagram">
-                    <i class="fab fa-instagram fa-2x"></i>
-                  </a>
-                @endif
-                @if(!empty($autore->linkedin))
-                  <a href="https://linkedin.com/in/{{ $autore->linkedin }}" target="_blank" title="Linkedin">
-                    <i class="fab fa-linkedin fa-2x"></i>
-                  </a>
-              @endif
-
               </div>
+              @if($autore->getSocialLinks()->isNotEmpty())
+                @foreach($autore->getSocialLinks() as $value)
+                <li><a href="{{ url($value['url']) }}" target="_blank">
+                  <i class="{{ $value['icon'] }}"></i> {{ $value['name'] }}
+                </a></li>
+                @endforeach
+              @endif
             </div>
           </div>
         </div>
@@ -136,8 +124,8 @@
     $("#report").click(function(){
       App.getUserInterface({
       "ui": {
-        "header":{"action": "{{route('article/action/report')}}", "method": "GET"},
-        "data":{"id": "{{$query->id}}", "selector": "#selOption:checked", "text": "#reasonText"},
+        "header":{"action": "{{ route('article/action/report') }}", "method": "GET"},
+        "data":{"id": "{{ $query->id }}", "selector": "#selOption:checked", "text": "#reasonText"},
         "title": 'Segnala articolo',
         "content": [
           {"type": ["input","radio"], "id": "selOption", "name": "option", "value": "0", "class": "col-md-1", "label": "Notizia Falsa", "required": true},

@@ -43,7 +43,7 @@
         @if(Auth::user() && Auth::user()->id == $query->id)
         <p>@lang('label.first_article')</p>
         @else
-        <p>@lang('label.user_no_content')</p>
+        <p>@lang('label.notice.user_no_content')</p>
         @endif
         <p>
         @endif

@@ -31,6 +31,6 @@
 @endforeach
 @else
   <div class="container p-2">
-    Nessuna notifica da visualizzare
+    @lang('label.notifications.no_content')
   </div>
 @endif

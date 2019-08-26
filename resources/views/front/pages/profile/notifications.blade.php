@@ -60,14 +60,14 @@
     </div>
     <nav class="publisher-nav">
       <ul id="nav">
-        <li><a href="{{ url(Auth::user()->slug) }}">@lang('label.a_profile')</a></li>
-        <li><a href="{{ url(Auth::user()->slug.'/about') }}">@lang('label.a_contact')</a></li>
-        <li><a href="{{ url(Auth::user()->slug.'/archive') }}">@lang('label.saved_articles')</a></li>
+        <li><a href="{{ url(Auth::user()->slug) }}">@lang('label.menu.profile')</a></li>
+        <li><a href="{{ url(Auth::user()->slug.'/about') }}">@lang('label.menu.contact')</a></li>
+        <li><a href="{{ url(Auth::user()->slug.'/archive') }}">@lang('label.menu.saved_articles')</a></li>
       </ul>
     </nav>
       <div class="publisher-body">
         <hr/>
-        <h2>@lang('label.notifications_header')</h2>
+        <h2>@lang('label.notifications.title')</h2>
         @if($query->count())
         <a href="#" onclick="delAll()">@lang('label.delete_all ')</a>
         <div class="notifications">
@@ -153,7 +153,7 @@
           </div>
           {{ $query->links() }}
           @else
-          <p>@lang('label.notifications_no_content')</p>
+          <p>@lang('label.notifications.no_content')</p>
           @endif
         </div>
     </div>

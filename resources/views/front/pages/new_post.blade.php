@@ -87,7 +87,7 @@
     </div>
 
     <div class="form-group row">
-      <label for="_l_sel_" class="col-md-4 col-form-label">{{ __('label.license_type') }} <span class="fa fa-info-circle" data-script="info" data-text="{!! __('label.license_info') !!}"></span></label>
+      <label for="_l_sel_" class="col-md-4 col-form-label">{{ __('label.notice.license_type') }} <span class="fa fa-info-circle" data-script="info" data-text="{!! __('label.notice.license_info') !!}"></span></label>
         <div class="col-md-12">
           <select id="_l_sel_" class="form-control" name="_l_sel_">
             <option value="1">Sywrit Standard</option>
@@ -97,19 +97,19 @@
     </div>
 
     <div class="form-group row">
-      <label for="tags" class="col-md-4 col-form-label"><span class="fa fa-tag"></span> Etichette</label>
+      <label for="tags" class="col-md-4 col-form-label"><span class="fa fa-tag"></span> @lang('label.article.tag')</label>
         <div class="col-md-12">
-          <input type="text" class="form-control" name="tags" placeholder="&quot;globalwarming climatestrike&quot; risulterà come #globalwarming #climatestrike" value="{{ old('tags') }}"/>
+          <input type="text" class="form-control" name="tags" placeholder="@lang('form.tag_placeholder', ['name' => 'globalwarming climatestrike', 'name2' => '#globalwarming #climatestrike'])" value="{{ old('tags') }}"/>
         </div>
     </div>
 
     <div class="form-group row">
         <div class="col-md-6 offset-md-4">
             <button type="submit" class="btn btn-primary">
-                {{ __('Pubblica') }}
+                @lang('button.publish')
             </button>
             <button type="submit" class="btn btn-primary" name="save" value="1">
-                {{ __('Salva') }}
+                @lang('button.save')
             </button>
         </div>
     </div>

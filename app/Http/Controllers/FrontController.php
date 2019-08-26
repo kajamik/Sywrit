@@ -36,13 +36,12 @@ use App\Achievements\FirstArticle;
 
 class FrontController extends Controller
 {
-
     public function index(Request $request)
     {
       // SEO ///////////////////////////////////////////////////
 
         SEOMeta::setTitle('Sywrit', false)
-                  ->setDescription(config('app.name').': la nuova piattaforma multi-genere di scrittura online.')
+                  ->setDescription(trans('label.meta.web_description', ['name' => config('app.name')]))
                   ->setCanonical(\Request::url());
 
       //-------------------------------------------------------//
@@ -108,11 +107,11 @@ class FrontController extends Controller
       // SEO ///////////////////////////////////////////////////
 
         SEOMeta::setTitle($query->name.' '.$query->surname.' - Sywrit', false)
-                  ->setDescription('Accedi alla pagina profilo di '.$query->name.' '.$query->surname)
+                  ->setDescription(trans('label.meta.profile_description', ['name' => $query->name.' '.$query->surname]))
                   ->setCanonical(\Request::url());
 
         OpenGraph::setTitle($query->name.' '.$query->surname.' - Sywrit', false)
-                  ->setDescription('Accedi alla pagina profilo di '.$query->name.' '.$query->surname)
+                  ->setDescription(trans('label.meta.profile_description', ['name' => $query->name.' '.$query->surname]))
                   ->setType('profile')
                   ->setUrl(\Request::url())
                   ->addImage(asset($query->getAvatar()));
@@ -159,11 +158,11 @@ class FrontController extends Controller
       // SEO ///////////////////////////////////////////////////
 
         SEOMeta::setTitle($query->name.' '.$query->surname.' - Sywrit', false)
-                  ->setDescription('Accedi alla pagina profilo di '.$query->name.' '.$query->surname)
+                  ->setDescription(trans('label.meta.profile_description', ['name' => $query->name.' '.$query->surname]))
                   ->setCanonical(\Request::url());
 
         OpenGraph::setTitle($query->name.' '.$query->surname.' - Sywrit', false)
-                  ->setDescription('Accedi alla pagina profilo di '.$query->name.' '.$query->surname)
+                  ->setDescription(trans('label.meta.profile_description', ['name' => $query->name.' '.$query->surname]))
                   ->setType('profile')
                   ->setUrl(\Request::url())
                   ->addImage(asset($query->getAvatar()));
@@ -192,7 +191,7 @@ class FrontController extends Controller
     {
       // SEO ///////////////////////////////////////////////////
 
-        SEOMeta::setTitle('Cancellazione Account - Sywrit', false)
+        SEOMeta::setTitle(trans('label.title.account_deletion'). ' - Sywrit', false)
                   ->setCanonical(\Request::url());
 
       //-------------------------------------------------------//
@@ -210,7 +209,7 @@ class FrontController extends Controller
     {
       // SEO ///////////////////////////////////////////////////
 
-        SEOMeta::setTitle('Nuova Redazione - Sywrit', false)
+        SEOMeta::setTitle(trans('label.title.new_group'). ' - Sywrit', false)
                   ->setCanonical(\Request::url());
 
       //-------------------------------------------------------//
@@ -225,11 +224,11 @@ class FrontController extends Controller
       // SEO ///////////////////////////////////////////////////
 
         SEOMeta::setTitle($query->name.' - Sywrit', false)
-                  ->setDescription('Accedi alla pagina della redazione '.$query->name)
+                  ->setDescription(trans('label.meta.group_description', ['name' => $query->name]))
                   ->setCanonical(\Request::url());
 
         OpenGraph::setTitle($query->name.' - Sywrit', false)
-                  ->setDescription('Accedi alla pagina della redazione '.$query->name)
+                  ->setDescription(trans('label.meta.group_description', ['name' => $query->name]))
                   ->setType('publisher')
                   ->setUrl(\Request::url())
                   ->addImage(asset($query->getAvatar()));
@@ -270,11 +269,11 @@ class FrontController extends Controller
       // SEO ///////////////////////////////////////////////////
 
         SEOMeta::setTitle($query->name.' - Sywrit', false)
-                  ->setDescription('Accedi alla pagina della redazione '.$query->name)
+                  ->setDescription(trans('label.meta.group_description', ['name' => $query->name]))
                   ->setCanonical(\Request::url());
 
         OpenGraph::setTitle($query->name.' - Sywrit', false)
-                  ->setDescription('Accedi alla pagina della redazione '.$query->name)
+                  ->setDescription(trans('label.meta.group_description', ['name' => $query->name]))
                   ->setType('publisher')
                   ->setUrl(\Request::url())
                   ->addImage(asset($query->getAvatar()));
@@ -317,10 +316,10 @@ class FrontController extends Controller
         if(!$tab)
           return redirect($slug.'/settings/edit');
 
-          SEOMeta::setTitle('Impostazioni - '.$query->name.' - Sywrit', false)
+          SEOMeta::setTitle(trans('label.title.settings').' - '.$query->name.' - Sywrit', false)
                     ->setCanonical(\Request::url());
 
-        return view('front.pages.group.settings',compact('query','tab'));
+        return view('front.pages.group.settings', compact('query','tab'));
       } else {
         return redirect($slug);
       }
@@ -335,8 +334,8 @@ class FrontController extends Controller
 
       // SEO ///////////////////////////////////////////////////
 
-        SEOMeta::setTitle('Nuovo Articolo', false)
-                  ->setDescription(config('app.name').': la nuova piattaforma multi-genere di scrittura online.')
+        SEOMeta::setTitle(trans('label.title.new_article'), false)
+                  ->setDescription(trans('label.meta.web_description', ['name' => config('app.name')]))
                   ->setCanonical(\Request::url());
 
       //-------------------------------------------------------//
@@ -397,7 +396,7 @@ class FrontController extends Controller
         }
 
         $tags = explode(',',$query->tags);
-        $date = Carbon::parse($query->created_at)->formatLocalized('%A %d %B %Y');
+        $date = Carbon::parse($query->created_at)->translatedFormat('l j F Y');
         $time = Carbon::parse($query->created_at)->format('H:i');
 
         $likes = \DB::table('article_likes')->where('article_id', $query->id)->count();
@@ -406,7 +405,7 @@ class FrontController extends Controller
         return view('front.pages.read',compact('query','date','time','tags','options','likes','liked'));
       } else {
         $tags = explode(',',$query->tags);
-        $date = Carbon::parse($query->created_at)->formatLocalized('%A %d %B %Y');
+        $date = Carbon::parse($query->created_at)->translatedFormat('l j F Y');
         $time = Carbon::parse($query->created_at)->format('H:i');
         return view('front.pages.read_bot_message', compact('query','date','time','tags'));
       }
@@ -445,7 +444,7 @@ class FrontController extends Controller
     {
       // SEO ///////////////////////////////////////////////////
 
-        SEOMeta::setTitle('Modifica Articolo', false)
+        SEOMeta::setTitle(trans('label.title.edit_article'), false)
                   ->setCanonical(\Request::url());
 
       //-------------------------------------------------------//
@@ -475,12 +474,12 @@ class FrontController extends Controller
 
       // SEO ///////////////////////////////////////////////////
 
-        SEOMeta::setTitle($topic->name.' - Sywrit', false)
-                  ->setDescription('Articoli della sezione '.$topic->name)
+        SEOMeta::setTitle(trans('label.categories.'.$topic->slug).' - Sywrit', false)
+                  ->setDescription(trans('label.meta.topic_name', ['name' => $topic->name]))
                   ->setCanonical(\Request::url());
 
-        OpenGraph::setTitle($topic->name.' - Sywrit', false)
-                  ->setDescription('Articoli della sezione '.$topic->name)
+        OpenGraph::setTitle(trans('label.categories.'.$topic->slug).' - Sywrit', false)
+                  ->setDescription(trans('label.meta.topic_name', ['name' => $topic->name]))
                   ->setType('section')
                   ->setUrl(\Request::url())
                   ->addImage(asset('upload/topics/'.$topic->slug.'.jpg'));
@@ -516,8 +515,8 @@ class FrontController extends Controller
 
       // SEO ///////////////////////////////////////////////////
 
-        SEOMeta::setTitle('Notifiche - Sywrit', false)
-                  ->setDescription(config('app.name').': la nuova piattaforma multi-genere di scrittura online.')
+        SEOMeta::setTitle(trans('label.title.notifications'). ' - Sywrit', false)
+                  ->setDescription(trans('label.meta.web_description', ['name' => config('app.name')]))
                   ->setCanonical(\Request::url());
 
       //-------------------------------------------------------//
@@ -530,8 +529,8 @@ class FrontController extends Controller
     {
       // SEO ///////////////////////////////////////////////////
 
-        SEOMeta::setTitle('I miei obiettivi - Sywrit', false)
-                  ->setDescription(config('app.name').': la nuova piattaforma multi-genere di scrittura online.')
+        SEOMeta::setTitle(trans('label.title.my_objectives'). ' - Sywrit', false)
+                  ->setDescription(trans('label.meta.web_description', ['name' => config('app.name')]))
                   ->setCanonical(\Request::url());
 
       //-------------------------------------------------------//
@@ -544,7 +543,7 @@ class FrontController extends Controller
     {
       // SEO ///////////////////////////////////////////////////
 
-        SEOMeta::setDescription(config('app.name').': la nuova piattaforma multi-genere di scrittura online.')
+        SEOMeta::setDescription(trans('label.meta.web_description', ['name' => config(app.name)]))
                   ->setCanonical(\Request::url());
 
       //-------------------------------------------------------//

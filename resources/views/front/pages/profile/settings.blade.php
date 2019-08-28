@@ -9,7 +9,7 @@
     font-size: 20px;
   }
   #nav > li:not(:last-child)::after {
-    content: '\00a0|';
+    content: ' |\00a0';
   }
   #nav > li.active a {
     color: #fff;
@@ -33,7 +33,7 @@
       </div>
     </div>
     <nav class="publisher-nav">
-      <ul id="nav">
+      <ul id="nav" class="row">
         <li @if(!isset($slug)) class="active" @endif><a href="{{ url('settings') }}">@lang('label.menu.settings')</a></li>
         <li @if(isset($slug) && $slug == "account") class="active" @endif><a href="{{ url('settings/account') }}">@lang('label.setting.account')</a></li>
         @if(empty(Auth::user()->social_auth_id))

@@ -1,7 +1,3 @@
-@php
-  SEOMeta::setTitle('Informazioni personali - Sywrit', false);
-@endphp
-
 @if(Session::get("successful_changes"))
 <div class="alert alert-success">
   <p class="fa fa-check"> @lang("label.notice.successful_changes")</p>

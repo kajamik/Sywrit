@@ -7,8 +7,6 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 
 class AdminComposer {
-
-
     /**
      * Bind data to the view.
      *

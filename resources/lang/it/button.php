@@ -17,6 +17,7 @@ return [
   'no_account' => 'Non hai ancora un account? Creane uno',
   'password_changes' => 'Cambia password',
   'register' => 'Registrati',
+  'save' => 'Salva',
   'save_changes' => 'Salva modifiche',
   'save_settings' => 'Salva impostazioni',
   'send' => 'Invia',
@@ -24,6 +25,6 @@ return [
   'send_message' => 'Invia messaggio',
   'send_report' => 'Invia segnalazione',
   'password_changes' => 'Cambia password',
+  'publish' => 'Pubblica',
   'upload_file' => 'Carica file',
-
 ];

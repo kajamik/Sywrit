@@ -32,7 +32,7 @@
       </div>
     </div>
     <nav class="publisher-nav">
-      <ul id="nav">
+      <ul id="nav" class="row">
         <li><a href="{{ url(Auth::user()->slug) }}">Home</a></li>
         <li><a href="{{ url(Auth::user()->slug.'/about') }}">Informazioni</a></li>
         <li><a href="{{ url(Auth::user()->slug.'/archive') }}">Articoli Salvati</a></li>

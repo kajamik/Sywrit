@@ -430,16 +430,17 @@ ul {
 }
 
 .publisher-home > .publisher-header {
+  width: 100%;
+  height: auto;
   background-size: cover;
   background-repeat: no-repeat;
   background-position: top center;
   border: 4px solid rgb(191, 184, 235);
-  width: 100%;
-  height: 325px;
 }
 
 .publisher-home > .publisher-header .publisher-logo {
   width: 100%;
+  margin-top: 140px;
   position: relative;
   bottom: 0;
 }
@@ -636,6 +637,9 @@ article span[style^='background'] {
 @media (max-width: 992px) {
   .fix-container {
     max-width: 100%;
+  }
+  .publisher-home > .publisher-header .publisher-logo {
+    margin-top: 100px;
   }
 }
 

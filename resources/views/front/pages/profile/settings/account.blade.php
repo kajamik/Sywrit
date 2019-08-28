@@ -1,9 +1,6 @@
 @if(isset($slug2))
   @include('front.pages.profile.settings.account.'.$slug2)
 @else
-@php
-  SEOMeta::setTitle(trans('label.title.edit_profile'). ' - Sywrit', false);
-@endphp
   <div class="col-lg-12">
     <div class="card">
       <a href="{{ url('settings/account/name') }}">
@@ -25,4 +22,15 @@
       </a>
     </div>
   </div>--}}
+
+  <div class="col-lg-12">
+    <div class="card">
+      <a href="{{ url('account_delete') }}">
+        <div class="card-body">
+          <h5 class="card-title">@lang('label.setting.account_deletion')</h4>
+          <p>@lang('label.setting.account_deletion_description')</p>
+        </div>
+      </a>
+    </div>
+  </div>
 @endif

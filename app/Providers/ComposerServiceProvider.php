@@ -13,8 +13,8 @@ class ComposerServiceProvider extends ServiceProvider {
      */
     public function boot(ViewFactory $view)
     {
-        $view->composer('*', 'App\Http\View\Composers\Language');
         $view->composer('*', 'App\Http\View\Composers\AdminComposer');
+        $view->composer('*', 'App\Http\View\Composers\Language');
     }
 
     public function register()

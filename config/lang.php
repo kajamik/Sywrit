@@ -3,7 +3,7 @@
 return [
 
   'locales' => [
-    'en' => 'en_US',
+    //'en' => 'en_US',
     //'fr' => 'fr_FR',
     'it' => 'it_IT',
   ],

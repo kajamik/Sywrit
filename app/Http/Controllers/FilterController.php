@@ -355,7 +355,7 @@ class FilterController extends Controller
 
         $fileName = '__492x340'.Str::random(64).'.jpg';
 
-        $this->uploadFile($a, array(
+        uploadFile($a, array(
           'name' => $fileName,
           'path' => public_path('sf/ct/'),
           'width' => '492',
@@ -407,8 +407,8 @@ class FilterController extends Controller
         $query = SavedArticles::find($request->id);
         if(!$query->suspended && (Auth::user()->id == $query->id_autore || Auth::user()->hasMemberOf($query->id_gruppo))) {
           if($query->testo) {
-            if(preg_match('/;base64,/', $testo)) {
-              $testo = $this->Base64ToUrl($testo, 'articles', Str::random(8).'.'.Str::random(16).'.jpg');
+            if(preg_match('/<img*/', $testo)) {
+              $testo = $this->convertImages($testo, array('name' => Str::random(16).'.'.Str::random(32),'path' => public_path('sf/ct/')));
             }
             $query2 = new Articoli();
             $query2->topic_id = $query->topic_id;
@@ -475,11 +475,11 @@ class FilterController extends Controller
               'image.mimes'  => 'Formato immagine non valido',
             ]);
 
-            $this->deleteFile( public_path('sf/ct/'. $query->copertina) );
+            deleteFile( public_path('sf/ct/'. $query->copertina) );
 
             $fileName = '__492x340'.Str::random(64).'.jpg';
 
-            $this->uploadFile($a, array(
+            uploadFile($a, array(
               'name' => $fileName,
               'path' => public_path('sf/ct/'),
               'width' => '492',
@@ -524,11 +524,11 @@ class FilterController extends Controller
             'image.mimes'  => 'Formato immagine non valido',
           ]);
 
-          $this->deleteFile( public_path('sf/ct/'. $query->copertina) );
+          deleteFile( public_path('sf/ct/'. $query->copertina) );
 
           $fileName = '__492x340'.Str::random(64).'.jpg';
 
-          $this->uploadFile($a, array(
+          uploadFile($a, array(
             'name' => $fileName,
             'path' => public_path('sf/ct/'),
             'width' => '492',

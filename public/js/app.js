@@ -27,7 +27,7 @@ App.follow = function(element,data,cache){
     });
 }
 
-App.insl = function(id){
+App.insl = function(id) {
   var page = 1;
   document.addEventListener('scroll', function () {
     if ($(window).scrollTop() == $(document).height() - $(window).height()) {
@@ -45,29 +45,11 @@ App.loadData = function(a, f){
   });
 }
 
-App.upload = function(b, d = false){
-  var template = "<div class='preview_body'><div class='image-wrapper' id='preview-wrapper'><img id='image_"+$(b).attr('id')+"' src="+URL.createObjectURL(event.target.files[0])+"></div></div>";
-  $(b).append(template);
-  if(d) {
-    $.getScript("js/image.js").done(function() {
-      var $image = $("#image_"+$(b).attr('id'));
-      $image.cropper({
-        dragMode: 'move',
-        aspectRatio: 16 / 9,
-        autoCropArea: 0.65,
-        restore: false,
-        guides: false,
-        center: false,
-        highlight: false,
-        cropBoxMovable: false,
-        cropBoxResizable: false,
-        toggleDragModeOnDblclick: false,
-      });
-    });
-  }
+App.upload = function(e) {
+  $(e).html("<div class='preview_body'><div class='image-wrapper' id='preview-wrapper'><img id='image_"+$(e).attr("id")+"' src="+URL.createObjectURL(event.target.files[0])+"></div></div>");
 }
 
-function setNode(e, params, element){
+function setNode(e, params, element) {
   var parent = document.getElementById(e.id);
   var child = document.createElement(element);
   var a = new Array();

@@ -29,6 +29,7 @@ return [
   'select_a_category' => 'Seleziona una categoria',
   'select_feedback' => 'Feedback',
   'select_support' => 'Supporto',
+  'tag_placeholder' => ':name risulterà come :name2',
   'write_comment' => 'Scrivi un commento',
   'write_message' => 'Scrivi un messaggio',
 ];

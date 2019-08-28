@@ -6,29 +6,32 @@
   font-size: 20px;
 }
 #nav > li:not(:last-child)::after {
-  content: '\00a0|';
+  content: ' |\00a0';
+}
+#nav > li.active a {
+  color: #fff;
 }
 </style>
-  <div class="publisher-home">
-    <div class="publisher-header" style="background-image: url( {{ $query->getBackground() }} );border-radius:4px 4px 0 0;">
-      <div class="container">
-        <div class="publisher-logo">
-          <div class="row">
-            <div class="col-lg-2 col-12">
-              <img src="{{ $query->getAvatar() }}" alt="Avatar">
-            </div>
-            <div class="ml-2 mt-2 info">
-              <span>
-                {!! $query->getRealName() !!}
-              </span>
-            </div>
+<div class="publisher-home">
+  <div class="publisher-header" style="background-image: url({{ $query->getBackground() }})">
+    <div class="container">
+      <div class="publisher-logo">
+        <div class="row">
+          <div class="d-inline">
+            <img src="{{ Auth::user()->getAvatar() }}" alt="Logo">
+          </div>
+          <div class="ml-2 mt-2 info">
+            <span>
+              {!! $query->getRealName() !!}
+            </span>
           </div>
         </div>
       </div>
     </div>
+  </div>
     <nav class="publisher-nav">
-      <ul id='nav'>
-        <li><a href="{{ url($query->slug) }}">@lang('label.menu.profile')</a></li>
+      <ul id='nav' class="row">
+        <li @if(!isset($slug)) class="active" @endif><a href="{{ url($query->slug) }}">@lang('label.menu.profile')</a></li>
         <li><a href="{{ url($query->slug.'/about') }}">@lang('label.menu.contact')</a></li>
         @if(\Auth::user() && \Auth::user()->id == $query->id)
         <li><a href="{{ url($query->slug.'/archive') }}">@lang('label.menu.saved_articles')</a></li>

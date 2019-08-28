@@ -104,6 +104,7 @@ Route::group(['middleware' => ['auth', 'isSuspended']], function(){
       Route::post('name', 'SettingController@postAccountName');
       /*Route::get('username', 'SettingController@getAccountUsername');
       Route::post('username', 'SettingController@postAccountUsername');*/
+      Route::get('manage', 'SettingController@getAccountManage');
     });
     Route::get('change_language', 'SettingController@getChangeLanguage');
     Route::post('change_language', 'SettingController@postChangeLanguage');
@@ -111,8 +112,8 @@ Route::group(['middleware' => ['auth', 'isSuspended']], function(){
     Route::post('change_password', 'SettingController@postChangePassword');
   });
   Route::get('notifications', 'FrontController@getNotifications');
-  /*Route::get('account_delete', 'FrontController@getAccountDelete');
-  Route::post('account_delete', 'FilterController@postAccountDelete');*/
+  Route::get('account_delete', 'FrontController@getAccountDelete');
+  Route::post('account_delete', 'FilterController@postAccountDelete');
 });
 
 Route::get('action/support', 'AjaxController@getSupportRequest');

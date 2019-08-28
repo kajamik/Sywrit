@@ -9,13 +9,10 @@
   font-size: 20px;
 }
 #nav > li:not(:last-child)::after {
-  content: '\00a0|';
+  content: ' |\00a0';
 }
-._ou {
-  cursor: pointer;
-}
-#customMsg {
-  min-height: 200px;
+#nav > li.active a {
+  color: #fff;
 }
 </style>
   <div class="publisher-home">
@@ -36,10 +33,10 @@
       </div>
     </div>
     <nav class="publisher-nav">
-      <ul id='nav'>
+      <ul id='nav' class="row">
         <li><a href="{{ url(Auth::user()->slug) }}">@lang('label.menu.profile')</a></li>
         <li><a href="{{ url(Auth::user()->slug.'/about') }}">@lang('label.menu.contact')</a></li>
-        <li><a href="{{ url(Auth::user()->slug.'/archive') }}">@lang('label.menu.saved_articles')</a></li>
+        <li class="active"><a href="{{ url(Auth::user()->slug.'/archive') }}">@lang('label.menu.saved_articles')</a></li>
       </ul>
     </nav>
     <div class="publisher-body">

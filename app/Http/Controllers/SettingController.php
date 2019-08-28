@@ -35,11 +35,13 @@ class SettingController extends Controller
 
     public function getAccount()
     {
+        SEOMeta::setTitle(trans('label.title.edit_profile'). ' - Sywrit', false);
         return view($this->SETTINGS)->with('slug', 'account');
     }
 
     public function getAccountName()
     {
+        SEOMeta::setTitle(trans('label.title.edit_info'). ' - Sywrit', false);
         $apps = SocialService::orderBy('name', 'asc')->get();
         $my_apps = UserLinks::where('user_id', Auth::user()->id)->get();
         return view($this->SETTINGS, compact('apps','my_apps'))->with(['slug' => 'account', 'slug2' => 'name']);
@@ -48,6 +50,12 @@ class SettingController extends Controller
     /*public function getAccountUsername()
     {
         return view($this->SETTINGS)->with(['slug' => 'account', 'slug2' => 'username']);
+    }*/
+
+    /*public function getAccountManage()
+    {
+        SEOMeta::setTitle(trans('label.title.account_managment'). ' - Sywrit', false);
+        return view($this->SETTINGS)->with(['slug' => 'account', 'slug2' => 'manage']);
     }*/
 
     public function getChangePassword()
@@ -88,11 +96,11 @@ class SettingController extends Controller
             'cover.mimes'  => 'Formato immagine non valido',
           ]);
 
-          $this->deleteFile( public_path('sf/aa/'.Auth::user()->copertina) );
+          deleteFile( public_path('sf/aa/'.Auth::user()->copertina) );
 
           $fileName = rand().Str::random(14).'.jpg';
 
-          $this->uploadFile($a, array(
+          uploadFile($a, array(
             'name' => $fileName,
             'path' => public_path('sf/aa/'),
             'width' => '1100',
@@ -116,7 +124,7 @@ class SettingController extends Controller
             'avatar.mimes'  => 'Formato immagine non valido',
           ]);
 
-          $this->deleteFile( public_path('sf/aa/'.Auth::user()->avatar) );
+          deleteFile( public_path('sf/aa/'.Auth::user()->avatar) );
 
           if($a->getClientOriginalExtension() == 'gif'){
             $fileName = 'ac-'.rand().'.gif';
@@ -126,7 +134,7 @@ class SettingController extends Controller
 
             $fileName = rand().Str::random(14).'.jpg';
 
-            $this->uploadFile($a, array(
+            uploadFile($a, array(
               'name' => $fileName,
               'path' => public_path('sf/aa/'),
               'width' => '160',

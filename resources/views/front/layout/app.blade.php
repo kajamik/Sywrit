@@ -95,7 +95,7 @@
   <script type="text/javascript">
     var message_count = 0;
     $(function(){
-      //notifications();
+      notifications();
       $("#notifications").click(function(){
         fetch_live_notifications();
       });

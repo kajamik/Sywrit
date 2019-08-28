@@ -149,4 +149,9 @@ class User extends Authenticatable
         }
         return $contacts;
     }
+
+    public function getPublications()
+    {
+        return \DB::table('articoli')->where('id_autore', $this->id)->get();
+    }
 }

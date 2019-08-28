@@ -103,6 +103,7 @@ class RegisterController extends Controller
             'points' => '0',
             'followers_count' => '0',
             'notifications_count' => '0',
+            'notifications_to_read' => 'false',
             'language' => session()->get('locale')
         ]);
 

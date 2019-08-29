@@ -57,11 +57,11 @@ Route::group(['prefix' => 'read'], function() {
 Route::group(['middleware' => 'auth'], function(){
   Route::group(['middleware' => 'isSuspended'], function(){
     // Group Actions
-    /*Route::get('group/action/invite', 'AjaxController@inviteGroup');
+    Route::get('group/action/invite', 'AjaxController@inviteGroup');
     Route::get('group/action/leave', 'AjaxController@leaveGroup');
     Route::post('group/{id}/delete', 'FilterController@deleteGroup');
     Route::get('group/user/promote', 'FilterController@promoteUser');
-    Route::get('group/user/fired', 'FilterController@firedUser');*/
+    Route::get('group/user/fired', 'FilterController@firedUser');
     // User action
     Route::get('user/report', ['uses' => 'FilterController@UserReport', 'as' => 'user/action/report']);
     ///////
@@ -128,22 +128,22 @@ Route::group(['prefix' => '{slug}'], function() {
 });
 
 // Publishers
-/*Route::group(['prefix' => 'publisher'], function() {
+Route::group(['prefix' => 'groups'], function() {
 
-  Route::get('{slug}', 'FrontController@getPublisherIndex');
-  Route::get('{slug}/about', 'FrontController@getPublisherAbout');
-  Route::get('{slug}/archive', 'FrontController@getPublisherArchive')->middleware('auth','isSuspended');
+  Route::get('{id}', 'GroupController@getGroupIndex');
+  Route::get('{id}/about', 'GroupController@getPublisherAbout');
+  Route::get('{id}/write', 'GroupController@getGroupArticle');
 
-  Route::group(['prefix' => '{slug}/settings', 'middleware' => ['auth','isSuspended']], function() {
+  /*Route::group(['prefix' => '{slug}/settings', 'middleware' => ['auth','isSuspended']], function() {
     Route::get('/', 'FrontController@getPublisherSettings');
     Route::get('{tab}', 'FrontController@getPublisherSettings');
     Route::post('{tab}', 'FilterController@postPublisherSettings');
-  });
-});*/
+  });*/
+});
 
 // CREATE GROUP
-/*Route::get('publisher/create', 'FrontController@getNewPublisher')->middleware('auth','isSuspended');
-Route::post('publisher/create', 'FilterController@postNewPublisher')->middleware('auth','isSuspended');*/
+Route::get('group/create', 'GroupController@getNewGroup')->middleware('auth','isSuspended');
+Route::post('group/create', 'GroupController@postNewGroup')->middleware('auth','isSuspended');
 
 // Pages
 Route::get('page/{slug}', 'FrontController@getPages');
@@ -159,9 +159,17 @@ Route::post('recover/code', ['uses' => 'Auth\SecurityCodeController@postCheckCod
 
 // Ajax Controller
 Route::group(['prefix' => 'ajax'], function() {
+
     Route::get('auth', 'AjaxController@getAuth');
+
     Route::group(['prefix' => 'account'], function() {
       Route::get('add_social_address', 'AjaxController@getAddSocialAddress');
+    });
+
+    Route::group(['prefix' => 'groups'], function() {
+      Route::get('loadMessages', 'AjaxController@loadGroupMessage');
+      Route::get('sendMessage', 'AjaxController@sendGroupMessage');
+      Route::get('writeArticle', 'AjaxController@writeGroupArticle');
     });
 });
 

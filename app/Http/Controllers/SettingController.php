@@ -20,12 +20,8 @@ class SettingController extends Controller
 
     public function __construct()
     {
-        // SEO ///////////////////////////////////////////////////
-
           SEOMeta::setDescription(trans('label.meta.web_description', ['name' => config('app.name')]))
                     ->setCanonical(\Request::url());
-
-        //-------------------------------------------------------//
     }
     public function index()
     {

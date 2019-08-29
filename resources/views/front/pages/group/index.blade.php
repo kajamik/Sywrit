@@ -1,56 +1,133 @@
 @extends('front.layout.app')
 
-@section('group::bio')
-  @if(!empty($query->biography))
-  <h2>Descrizione</h2>
-  <div class="col-lg-12">
-    <p>{!! $query->biography !!}</p>
-  </div>
-  <hr/>
-  @endif
-@endsection
-
 @section('main')
+<style>
+.tab li {
+  padding: 6px;
+  display: inline-block;
+}
+.tab li.tab-active a {
+  color: #fff;
+}
+.tab-font-md li {
+  font-size: 18px;
+}
+</style>
   @include('front.components.group.top_bar')
   <div class="publisher-content">
-    <div class="py-3">
-      @if($articoli->count())
-      <div class="col-lg-12">
-        <div class="row" id="articles">
-          @foreach($articoli as $value)
-          <div class="col-lg-3 col-sm-6 col-xs-12">
-          <a href="{{ url('read/'.$value->article_slug)}}">
-            <div class="card-header">{{ $value->created_at->diffForHumans() }}</div>
-            <div class="card">
-              <img class="card-img-top" src="{{ $value->getBackground() }}" alt="Copertina Articolo">
-              <div class="card-body">
-                @if($value->topic_id)
-                  <span>{{ $value->topic_name }}</span>
-                @endif
-                </a>
-                <h5 class="card-title">{{ $value->article_title }}</h5>
-                <p>{!! str_limit(preg_replace('/(<.*?>)|(&.*?;)/', '', $value->article_text), 100) !!}</p>
-                <p>
-                  Scritto da
-                    <a href="{{ url($value->user_slug) }}">
-                      <span>{{ $value->user_name }} {{ $value->user_surname }}</span>
-                    </a>
-                </p>
+    <div class="py-3 container">
+      <div class="row">
+
+        <div class="offset-lg-2 col-lg-7">
+          {{-- inizia a conversare --}}
+          @if((Auth::check() && Auth::user()->hasMemberOf($query->id)) || $query->public)
+
+                  <div class="col-md-12">
+                    <ul class="tab tab-font-md bg-sw">
+                      <li class="tab-active" tab="#state"><a href="#">Conversazione</a></li>
+                      <li tab="#article"><a href="#">Articolo</a></li>
+                    </ul>
+                    <div class="tab-content">
+                      <div id="state">
+                        <form method="POST">
+                            @csrf
+                            <div class="form-group row">
+                              <div class="col-md-12">
+                                <textarea class="form-control" placeholder="Inizia a conversare"></textarea>
+                              </div>
+                            </div>
+                            <div class="form-group row mb-0">
+                                <div class="col-md-12">
+                                    <button type="button" class="btn btn-sw btn-block">
+                                        Pubblica
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                      </div>
+                      <div id="article">
+                        <a href="{{ url('groups/'. $query->id .'/write') }}">
+                          <button type="button" class="form-control">
+                           Crea un nuovo articolo
+                          </button>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+
+                  <hr/>
+
+                  <div id="conversations" class="py-3 col-md-12">
+
+                    <script>
+                    var q = 1;
+
+                    $(function(){
+                      updateConversations();
+                    });
+
+                    $("button").click(function(){
+                      updateConversations();
+                      App.query("get","{{ url('ajax/groups/sendMessage') }}",{ id: {{ $query->id }}, post: $("textarea").val() },false,function(data){
+                          $(data).prependTo($("#conversations"));
+                      });
+                    });
+
+                    function updateConversations() {
+                      App.query("get","{{ url('ajax/groups/loadMessages') }}",{ id: {{ $query->id }}, q: this.q },false,function(data){
+                        if(data) {
+                          $("#conversations").append(data);
+                          q++;
+                        } else {
+                          $("#loadComments").remove();
+                        }
+                      });
+                    }
+
+                    // TAB
+
+                    $(".tab > li").each(function(i, items) {
+                      var tab = $(items).attr("tab");
+                      if($(items).attr("class") != "tab-active") {
+                        $(".tab-content > div" + tab).css('display', 'none');
+                      }
+                    });
+                    $(".tab").on('click', 'li', function() {
+                      if($(this).attr('class') != "tab-active") {
+                        $('.tab > li').removeClass('tab-active');
+                        $(this).addClass('tab-active');
+                        $(".tab-content > div").css('display', 'none');
+                        $(".tab-content > div" + $(this).attr("tab")).css('display', 'block');
+                      }
+                      return false;
+                    });
+
+                    </script>
+
+                  </div>
+                </div>
+
+            <div class="col-lg-3">
+
+              <div class="sw-component">
+                <div class="sw-component-header bg-sw">Membri</div>
+                <div class="sw-item text-center">
+                </div>
+                <div class="sw-component-header bg-sw">Descrizione</div>
+                <div class="sw-item text-center">
+                  {!! $query->description !!}
+                </div>
               </div>
+
             </div>
-          </a>
-        </div>
-        @endforeach
+
+            @else
+            <p>Questo gruppo è privato.</p>
+            @endif
+          </div>
         </div>
       </div>
-      <script>
-        App.insl("articles");
-      </script>
-      @else
-        <p>Questa redazione non ha ancora pubblicato alcun articolo</p>
-      @endif
-      </div>
-    </div>
+
     {{-- close top_bar --}}
   </div>
   </div>

@@ -4,8 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ArticleScore extends Model
+class GroupArticle extends Model
 {
-    protected $table = 'article_score';
+    protected $table = 'editori';
 
 }

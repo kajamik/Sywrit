@@ -11,11 +11,7 @@ use App\Http\Requests\UpdatePassword;
 use App\Models\User;
 use App\Models\SavedArticles;
 use App\Models\Articoli;
-use App\Models\Editori;
-use App\Models\BackupAccountsImages;
-use App\Models\BackupGroupsImages;
 use App\Models\Notifications;
-use App\Models\PublisherRequest;
 
 use App\Models\ArticleComments;
 use App\Models\AnswerComments;
@@ -51,43 +47,6 @@ class FilterController extends Controller
       Auth::logout();
     }
     return redirect('/');
-  }
-
-  // GROUP
-
-  public function deleteGroup($id, Request $request)
-  {
-    $query = Editori::find($id);
-    if($query->direttore == Auth::user()->id){
-      if(!$query->suspended){
-        // elimino tutti gli articoli scritti dalla redazione
-        $articoli = Articoli::where('id_gruppo', $query->id);
-        foreach($articoli->get() as $value) {
-
-        }
-        $articoli->delete();
-
-        $pub_request = PublisherRequest::where('publisher_id', $query->id);
-        foreach($pub_request->get() as $value) {
-          Notifications::where('type', '1')->where('content_id', $value->id)->delete();
-        }
-        $pub_request->delete();
-
-        $components = collect(explode(',', $query->componenti));
-        // elimino tutti i membri dal gruppo
-        foreach($components as $value){
-          $query2 = User::find($value);
-          $collection = collect(explode(',', $query2->id_gruppo));
-          $query2->id_gruppo = $collection->reject(function($val) use ($query) {
-            return $val == $query->id;
-          })->implode(',');
-          $query2->save();
-        }
-        $query->delete();
-      }
-      return redirect('/');
-    }
-    return redirect($query->slug);
   }
 
     public function ArticleReport(Request $request)
@@ -150,156 +109,6 @@ class FilterController extends Controller
           $query2->report_text = $request->text;
           $query2->report_token = Str::random(32);
           $query2->save();
-        }
-      }
-    }
-
-    // Publishers
-
-    public function postNewPublisher(Request $request)
-    {
-      $this->validate($request, [
-        'name' => 'required|min:3|max:30|unique:editori',
-        'description' => 'max:160',
-      ], [
-        'name.required' => 'Il nome della redazione è obbligatorio',
-        'name.min' => 'Il nome è troppo corto',
-        'name.max' => 'Il nome è troppo lungo',
-        'name.unique' => 'Questo nome è stato già preso',
-        'description.max' => 'La descrizione è troppo lunga',
-      ]);
-      $query = new Editori();
-      $query->name = $request->name;
-      $query->componenti = Auth::user()->id;
-      if($a = $request->cover){
-        $this->validate($request,[
-          'cover' => 'image|mimes:jpeg,jpg,png',
-        ],[
-          'cover.image' => 'Devi inserire un\'immagine',
-          'cover.image'  => 'Formato immagine non valido',
-        ]);
-        if(Storage::disk('groups')->exists($query->cover)){
-          Storage::disk('groups')->delete($query->cover);
-        }
-        $resize = '__160x160'.Str::random(64).'.jpg';
-        $image = Image::make($a)->resize(1110, 350)->encode('jpg', 100);
-        Storage::disk('groups')->put($resize, $image);
-        $query->cover = Storage::disk('groups')->url('groups/'.$resize);
-      }
-      if($a = $request->avatar){
-        $this->validate($request,[
-          'avatar' => 'image|mimes:jpeg,jpg,png',
-        ],[
-          'avatar.image' => 'Devi inserire un\'immagine',
-          'avatar.image'  => 'Formato immagine non valido',
-        ]);
-        if(Storage::disk('groups')->exists($query->avatar)){
-          Storage::disk('groups')->delete($query->avatar);
-        }
-        $fileName = rand().'.jpg';
-        $image = Image::make($a)->encode('jpg', 100);
-        Storage::disk('groups')->put($fileName, $image);
-        $query->avatar = Storage::disk('groups')->url('groups/'.$fileName);
-      }
-      $query->direttore = Auth::user()->id;
-      $query->followers_count = '0';
-      $query->biography = $request->description;
-      $query->save();
-      $query->slug = Str::slug($query->name,'-');
-      $query->save();
-      $user = User::find(Auth::user()->id);
-      if(!empty($user->id_gruppo)) {
-        $user->id_gruppo = $user->id_gruppo.','.$query->id;
-      } else {
-        $user->id_gruppo = $query->id;
-      }
-      $user->save();
-      return redirect($query->slug);
-    }
-
-    public function postPublisherSettings($slug,Request $request)
-    {
-      $query = Editori::where('slug',$slug)->first();
-      if(!$query->suspended){
-        $query->name = $request->name;
-        if($a = $request->description){
-          $this->validate($request,[
-            'description' => 'max:160',
-          ],[
-            'description.max' => 'La descrizione è troppo lunga',
-          ]);
-          $query->biography = $request->description;
-        }
-        if($a = $request->cover){
-          $this->validate($request,[
-            'cover' => 'image|mimes:jpeg,jpg,png',
-          ],[
-            'cover.image' => 'Devi inserire un\'immagine',
-            'cover.mimes'  => 'Formato immagine non valido',
-          ]);
-          if(Storage::disk('groups')->exists($query->cover)){
-            Storage::disk('groups')->delete($query->cover);
-          }
-          $resize = '__160x160'.Str::random(64).'.jpg';
-          $image = Image::make($a)->resize(1110, 350)->encode('jpg', 100);
-          Storage::disk('groups')->put($resize, $image);
-          $query->cover = Storage::disk('groups')->url('groups/'.$resize);
-        }
-        if($a = $request->avatar){
-          $this->validate($request,[
-            'avatar' => 'image|mimes:jpeg,jpg,png',
-          ],[
-            'cover.image' => 'Devi inserire un\'immagine',
-            'avatar.mimes'  => 'Formato immagine non valido',
-          ]);
-          if(Storage::disk('groups')->exists($query->avatar)){
-            Storage::disk('groups')->delete($query->avatar);
-          }
-          $fileName = rand().'.jpg';
-          $image = Image::make($a)->resize(160, 160)->encode('jpg', 100);
-          Storage::disk('groups')->put($fileName, $image);
-          $query->avatar = Storage::disk('groups')->url('groups/'.$fileName);
-        }
-        $query->save();
-      }
-      return redirect()->back();
-    }
-
-    public function promoteUser(Request $request)
-    {
-      if($request->ajax()) {
-        $query = Editori::find($request->publisher_id);
-        if(!$query->suspended && $query->direttore == Auth::user()->id && $request->id != Auth::user()->id) {
-          $user = User::find($request->id);
-
-          if($user->hasMemberOf($query->id)) {
-            $query->direttore = $user->id;
-            $query->save();
-          }
-        }
-      }
-    }
-
-    public function firedUser(Request $request)
-    {
-      if($request->ajax()) {
-        $query = Editori::find($request->publisher_id);
-        if(!$query->suspended && $query->direttore == Auth::user()->id && $request->id != Auth::user()->id) {
-          $user = User::find($request->id);
-
-          if($user->hasMemberOf($request->publisher_id)) {
-            $collection = collect(explode(',', $user->id_gruppo))->filter(function($value, $key) use ($request) {
-              return $value != "" && $value != $request->publisher_id;
-            });
-
-            $query->componenti = collect(explode(',', $query->componenti))->filter(function($value, $key) use ($user) {
-              return $value != "" && $value != $user->id;
-            })->implode(',');
-            $query->save();
-
-            $user->id_gruppo = $collection->implode(',');
-            $user->save();
-          }
         }
       }
     }

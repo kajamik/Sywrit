@@ -133,27 +133,22 @@ class FrontController extends Controller
 
       $articoli = $articoli->skip($INDEX_LIMIT * ($current_page-1))->take($INDEX_LIMIT)->get();
 
-
-      $score = \DB::table('article_score')->where('article_id', $query->id);
-
-      $gruppi = $query->getPublishersInfo();
-
         if($request->ajax()){
           if($articoli->count()){
             return ['posts' => view('front.components.profile.loadArticles')->with(compact('articoli'))->render()];
           }
         }
 
-      return view('front.pages.profile.index',compact('query','articoli','count','score','gruppi'));
+      return view('front.pages.profile.index',compact('query','articoli','count'));
     }
 
     public function getAbout($slug)
     {
       $query = User::where('slug', $slug)->first();
 
-      if(empty($query)) {
+      /*if(empty($query)) {
         return $this->getPublisherAbout($slug);
-      }
+      }*/
 
       // SEO ///////////////////////////////////////////////////
 
@@ -182,9 +177,9 @@ class FrontController extends Controller
         SEOMeta::setTitle('Articoli Salvati - Sywrit', false)
                   ->setCanonical(\Request::url());
         return view('front.pages.profile.archive',compact('query'));
-      } else {
+      } /*else {
         return $this->getPublisherArchive($slug);
-      }
+      }*/
     }
 
     public function getAccountDelete()
@@ -205,7 +200,7 @@ class FrontController extends Controller
     /*****************/
 
     // GROUP
-    public function getNewPublisher()
+    /*public function getNewPublisher()
     {
       // SEO ///////////////////////////////////////////////////
 
@@ -323,7 +318,7 @@ class FrontController extends Controller
       } else {
         return redirect($slug);
       }
-    }
+    }*/
 
     /*****************/
     /**** ARTICLE ****/

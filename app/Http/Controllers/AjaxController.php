@@ -21,6 +21,9 @@ use App\Models\ArticleComments;
 use App\Models\AnswerComments;
 use App\Models\ArticleLikes;
 use App\Models\SocialService;
+// Groups
+use App\Models\Groups;
+use App\Models\GroupConversation;
 
 // Achievements
 use App\Achievements\FirstComment;
@@ -186,45 +189,83 @@ class AjaxController extends Controller
     }
   }
 
-  /*** Publishers ***/
+  /*** Groups ***/
 
+  public function loadGroupMessage(Request $request)
+  {
+      $current_page = ($request->q) ? $request->q : 1;
+      $LIMIT = 6;
 
-    public function inviteGroup(Request $request)
-    {
-      if($request->ajax()) {
-        $publisher_id = $request->selector;
-        $collection = collect(explode(',', Auth::user()->id_gruppo));
+      $query = Groups::where('id', $request->id)->first();
 
-        $query = User::find($request->user_id);
-        if($query->suspended) {
-          return Response::json(['message' => 'Questo account è stato sospeso da un operatore']);
-        }
-        if(Auth::user()->hasFoundedGroup()) {
-          $editore = \DB::table('editori')->where('id', $publisher_id)->first();
-          if(!collect(explode(',', $editore->componenti))->some($query->id)) {
-            $message = new PublisherRequest();
-            $message->user_id = Auth::user()->id;
-            $message->target_id = $query->id;
-            $message->publisher_id = $publisher_id;
-            $message->token = Str::random(32);
-            $message->expired_at = null;
-            $message->save();
-            $noty = new Notifications();
-            $noty->sender_id = Auth::user()->id;
-            $noty->target_id = $query->id;
-            $noty->content_id = $message->id;
-            $noty->type = '1'; // group request
-            $noty->marked = '0';
-            $noty->save();
-            $query->notifications_count++;
-            $query->save();
-            return Response::json(['message' => 'Richiesta di collaborazione inviata']);
-          } else {
-            return Response::json(['message' => 'Questo utente fa già parte di questa redazione']);
-          }
+      if((Auth::user() && Auth::user()->hasMemberOf($query->id)) || $query->public) {
+        $query2 = GroupConversation::leftJoin('group_article', function($join){
+                                      $join->on('group_conversation.article_id', '=', 'group_article.id');
+                                    })
+                                    ->addSelect('group_article.id as article_id', 'group_article.title as article_title', 'group_article.text as article_text', 'group_article.cover as cover',
+                                                'group_conversation.id as id', 'group_conversation.user_id as user_id', 'group_conversation.article_id as article_id', 'group_conversation.text as text', 'group_conversation.created_at as created_at')
+                                    ->where('group_conversation.group_id', $query->id)
+                                    ->orderBy('created_at','desc')
+                                    ->skip($LIMIT * ($current_page-1))
+                                    ->take($LIMIT)
+                                    ->get();
+        return view('front.components.ajax.group.loadConversation')->with(['group' => $query, 'query' => $query2]);
+      }
+  }
+
+  public function sendGroupMessage(Request $request)
+  {
+      $post = $request->post;
+      $query = Groups::where('id', $request->id)->first();
+
+      if(!empty($post) && Auth::user()->hasMemberOf($query->id)) {
+
+        $query2 = GroupConversation::create([
+          'user_id' => Auth::user()->id,
+          'text' => $post,
+          'group_id' => $query->id
+        ]);
+
+        return view('front.components.ajax.group.uploadConversation')->with(['post' => $query2]);
+      }
+  }
+
+  public function inviteGroup(Request $request)
+  {
+    if($request->ajax()) {
+      $publisher_id = $request->selector;
+      $collection = collect(explode(',', Auth::user()->id_gruppo));
+
+      $query = User::find($request->user_id);
+      if($query->suspended) {
+        return Response::json(['message' => 'Questo account è stato sospeso da un operatore']);
+      }
+      if(Auth::user()->hasFoundedGroup()) {
+        $editore = \DB::table('editori')->where('id', $publisher_id)->first();
+        if(!collect(explode(',', $editore->componenti))->some($query->id)) {
+          $message = new PublisherRequest();
+          $message->user_id = Auth::user()->id;
+          $message->target_id = $query->id;
+          $message->publisher_id = $publisher_id;
+          $message->token = Str::random(32);
+          $message->expired_at = null;
+          $message->save();
+          $noty = new Notifications();
+          $noty->sender_id = Auth::user()->id;
+          $noty->target_id = $query->id;
+          $noty->content_id = $message->id;
+          $noty->type = '1'; // group request
+          $noty->marked = '0';
+          $noty->save();
+          $query->notifications_count++;
+          $query->save();
+          return Response::json(['message' => 'Richiesta di collaborazione inviata']);
+        } else {
+          return Response::json(['message' => 'Questo utente fa già parte di questa redazione']);
         }
       }
     }
+  }
 
   public function acceptGroupRequest(Request $request)
   {

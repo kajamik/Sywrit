@@ -10,7 +10,7 @@
         @csrf
 
         <div class="form-group row">
-          <label for="name" class="col-md-4 col-form-label text-md-right required">Nome Redazione</label>
+          <label for="name" class="col-md-4 col-form-label text-md-right required">@lang('label.group.name')</label>
 
           <div class="col-md-6">
             <input type="text" class="form-control{{ $errors->has('name') ? ' is-invalid' : '' }}" name="name">
@@ -23,7 +23,7 @@
         </div>
 
         <div class="form-group row">
-          <label for="name" class="col-md-4 col-form-label text-md-right">Descrizione</label>
+          <label for="name" class="col-md-4 col-form-label text-md-right">@lang('label.group.description')</label>
 
           <div class="col-md-6">
             <textarea class="form-control{{ $errors->has('description') ? ' is-invalid' : '' }}" name="description"></textarea>
@@ -68,8 +68,19 @@
         </div>
 
         <div class="form-group row">
+          <label for="status" class="col-md-4 col-form-label text-md-right">@lang('label.group.status')</label>
+
+          <div class="col-md-6">
+            <select class="form-control" name="status">
+              <option value="public">@lang('label.group.public_state')</option>
+              <option value="private">@lang('label.group.private_state')</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group row">
           <div class="col-md-6 offset-md-6">
-            <button type="submit" class="btn btn-info">Registra redazione</button>
+            <button type="submit" class="btn btn-info">@lang('button.complete')</button>
           </div>
         </div>
 

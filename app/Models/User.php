@@ -98,7 +98,7 @@ class User extends Authenticatable
       return false;
     }
 
-    public function getPublishersInfo()
+    public function getGroupsInfo()
     {
       if($this->haveGroup()) {
         $collection = collect();
@@ -106,7 +106,7 @@ class User extends Authenticatable
           return $value != "";
         });
         foreach($components as $value) {
-          $query = \DB::table('editori')->where('id', $value)->select('id', 'name', 'slug', 'suspended')->first();
+          $query = \DB::table('groups')->where('id', $value)->select('id', 'name', 'slug', 'suspended')->first();
           $collection->push($query);
         }
         return $collection->toArray();
@@ -116,7 +116,7 @@ class User extends Authenticatable
     public function hasMemberOf($id)
     {
       if($this->haveGroup()) {
-        foreach($this->getPublishersInfo() as $value) {
+        foreach($this->getGroupsInfo() as $value) {
           if($value->id == $id) {
             return true;
           }

@@ -129,20 +129,18 @@
               <a class="dropdown-item" href="{{ url(Auth::user()->slug.'/archive') }}"><i class="fa fa-file-archive"></i> @lang('label.menu.saved_articles')</a>
               <a class="dropdown-item" href="{{ url('settings') }}"><i class="fa fa-cog"></i> @lang('label.menu.settings')</a>
               <hr/>
-              {{--
               @if(Auth::user()->haveGroup())
               @php
-                $gruppi = Auth::user()->getPublishersInfo();
+                $gruppi = Auth::user()->getGroupsInfo();
               @endphp
 
-              @foreach($gruppi as $value)
-                <a class="dropdown-item" href="{{ url($value->slug) }}"><i class="fa fa-newspaper"></i> {{ $value->name }}</a>
-              @endforeach
+                @foreach($gruppi as $value)
+                  <a class="dropdown-item" href="{{ url('groups/'. $value->id) }}"><i class="fa fa-newspaper"></i> {{ $value->name }}</a>
+                @endforeach
 
               <hr/>
               @endif
-              <a class="dropdown-item" href="{{ url('publisher/create') }}"><i class="fa fa-newspaper"></i> Crea redazione</a>
-              --}}
+              <a class="dropdown-item" href="{{ url('group/create') }}"><i class="fa fa-users"></i> Crea gruppo</a>
               @if(Auth::user()->isOperator())
               <a class="dropdown-item" href="{{ url('toolbox')}}" target="_blank"><i class="fa fa-toolbox"></i> Managing</a>
               @endif

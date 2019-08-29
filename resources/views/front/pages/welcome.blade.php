@@ -13,7 +13,7 @@
         <div class="col-lg-9 col-md-7 col-sm-12">
 
           {{-- Solo per gli utenti che non hanno ancora pubblicato un articolo --}}
-          @if(Auth::user()->getPublications()->count() == 0)
+          @if(Auth::user() && Auth::user()->getPublications()->count() == 0)
           <div class="d-flex bg-sw p-2 mb-3">
             <a href="{{ url('write') }}">
               {{ __('label.notice.first_article') }}

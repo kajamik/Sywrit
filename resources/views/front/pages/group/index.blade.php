@@ -18,7 +18,7 @@
     <div class="py-3 container">
       <div class="row">
 
-        <div class="offset-lg-2 col-lg-7">
+        <div class="offset-md-2 col-md-7 col-12">
           {{-- inizia a conversare --}}
           @if((Auth::check() && Auth::user()->hasMemberOf($query->id)) || $query->public)
 
@@ -111,7 +111,12 @@
 
               <div class="sw-component">
                 <div class="sw-component-header bg-sw">Membri</div>
-                <div class="sw-item text-center">
+                <div class="sw-item p-3">
+                  @foreach($query->getMembers(5) as $value)
+                  <a href="{{ url($value->slug) }}">
+                    <img class="u-icon img-circle" src="{{ $value->avatar }}" title="{{ $value->name }}" alt="">
+                  </a>
+                  @endforeach
                 </div>
                 <div class="sw-component-header bg-sw">Descrizione</div>
                 <div class="sw-item text-center">

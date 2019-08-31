@@ -6,6 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class GroupArticle extends Model
 {
-    protected $table = 'editori';
+    protected $table = 'group_article';
 
 }

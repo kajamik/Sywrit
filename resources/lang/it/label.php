@@ -65,6 +65,13 @@ return [
   'deleting_notice' => 'Se deciderai di eliminare l\'account avrai :days giorni per recuperarlo, prima che tutti i contenuti vengano eliminati definitivamente.',
   'deleting_info' => 'Verranno eliminati tutti i tuoi contenuti, ad esclusione degli articoli di redazione. Attualmente hai <strong>:articles</strong> articoli e <strong>:comments</strong> commenti.',
   'follow_us_on' => 'Seguici anche su',
+  'group' => [
+    'name' => 'Nome Gruppo',
+    'description' => 'Descrizione',
+    'private_state' => 'Privato',
+    'public_state' => 'Pubblico',
+    'status' => 'Tipo gruppo'
+  ],
   'lang' => [
     'de' => ['deutsch', 'tedesco'],
     'en' => ['english', 'inglese'],
@@ -117,6 +124,11 @@ return [
     'user' => 'Segnala utente',
     'thanks_for_report' => 'Grazie per la segnalazione.',
   ],
+  'role' => [
+    'administrator' => 'Amministratore',
+    'moderator' => 'Moderatore',
+    'user' => 'Utente',
+  ],
   'search' =>  [
     'found_items_by' => 'Sono stati trovati :count risultati con la parola :name',
     'found_tag_by' => 'Sono stati trovati :count risultati con il tag :name',
@@ -164,7 +176,7 @@ return [
     'language' => 'Preferenza lingua',
     'my_objectives' => 'I miei obiettivi',
     'new_article' => 'Nuovo articolo',
-    'new_group' => 'Nuova redazione',
+    'new_group' => 'Nuovo Gruppo',
     'notifications' => 'Notifiche',
     'password' => 'Modifica password',
     'settings' => 'Impostazioni',

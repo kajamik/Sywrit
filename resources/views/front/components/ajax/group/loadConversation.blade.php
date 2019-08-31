@@ -1,17 +1,14 @@
 @if($query->count())
-@foreach($query as $n => $value)
-@php
-  $count = \DB::table('answer_comments')->where('comment_id', $value->id)->count();
-@endphp
+@foreach($query as $value)
 <div class="card">
   <div class="card-body">
     <div class="d-flex">
 
       <div class="row">
         <img style="height:4em" class="p-2" src="{{ $value->getUserInfo->getAvatar() }}" />
-        <div class="col-9">
-          <h4><a href="{{ $value->getUserInfo->slug }}">{!! $value->getUserInfo->getRealName() !!}</a></h4>
-          <span>{{ $value->created_at->diffForHumans() }}</span>
+        <div class="col-md-9 col-12">
+          <h4><a href="{{ url($value->getUserInfo->slug) }}">{!! $value->getUserInfo->getRealName() !!}</a></h4>
+          <span>{{ $value->created_at->diffForHumans() }} {!! $value->permission->tag() !!}</span>
           <hr/>
         </div>
         <div class="ml-3 d-flex col-12">
@@ -84,12 +81,6 @@
     });
 
   </script>
-
-  @if($count > 6)
-  <div class="offset-md-5">
-    <button id="loadAnswers_{{ $value->id }}" class="btn btn-light mb-5">@lang('label.social.more_anwsers')</button>
-  </div>
-  @endif
 
 </div>
 @endforeach

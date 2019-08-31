@@ -138,20 +138,20 @@ class User extends Authenticatable
 
     public function getSocialLinks()
     {
-        $my_apps = \DB::table('user_links')
-                    ->where('user_id', $this->id)
-                    ->join('social_service', 'user_links.service_id', '=', 'social_service.id')
-                    ->orderBy('social_service.name', 'asc')
-                    ->get();
-        $contacts = collect();
-        foreach($my_apps as $value) {
-          $contacts->push(['icon' => 'fa-2x fab fa-'.$value->name, 'name' => $value->url, 'url' => $value->prefix.$value->url]);
-        }
-        return $contacts;
+      $my_apps = \DB::table('user_links')
+                  ->where('user_id', $this->id)
+                  ->join('social_service', 'user_links.service_id', '=', 'social_service.id')
+                  ->orderBy('social_service.name', 'asc')
+                  ->get();
+      $contacts = collect();
+      foreach($my_apps as $value) {
+        $contacts->push(['icon' => 'fa-2x fab fa-'.$value->name, 'name' => $value->url, 'url' => $value->prefix.$value->url]);
+      }
+      return $contacts;
     }
 
     public function getPublications()
     {
-        return \DB::table('articoli')->where('id_autore', $this->id)->get();
+      return \DB::table('articoli')->where('id_autore', $this->id)->get();
     }
 }

@@ -9,6 +9,9 @@ use Auth;
 
 use App\Models\User;
 use App\Models\Groups;
+use App\Models\GroupArticle;
+
+use Carbon\Carbon;
 
 // SEO
 use SEOMeta;
@@ -56,11 +59,25 @@ class GroupController extends Controller
           return view('front.pages.group.about',compact('query','components'));
     }
 
-    public function getGroupArticle($group_id)
+    public function getNewGroupArticle($group_id)
     {
         $query = Groups::find($group_id)->firstOrFail();
 
         return view('front.components.ajax.group.new_article', compact('query'));
+    }
+
+    public function getGroupArticle($group_id, $article_id)
+    {
+        $query = GroupArticle::where('id', $article_id)
+                              ->where('group_id', $group_id)
+                              ->first();
+
+        SEOMeta::setTitle($query->title.' - Sywrit', false);
+
+        $date = Carbon::parse($query->created_at)->translatedFormat('l j F Y');
+        $time = Carbon::parse($query->created_at)->format('H:i');
+
+        return view('front.pages.group.read', compact('query', 'date', 'time'));
     }
 
     // POST DATA

@@ -15,4 +15,9 @@ class GroupConversation extends Model
       return $this->belongsTo('App\Models\User', 'user_id', 'id');
     }
 
+    public function permission()
+    {
+      return $this->belongsTo('App\Models\GroupPermission', 'user_id', 'user_id');
+    }
+
 }

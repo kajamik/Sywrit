@@ -10,6 +10,7 @@ return [
 
   'add_social_link' => 'Aggiungi indirizzo social',
   'already_registered' => 'Hai già un account? Accedi',
+  'complete' => 'Completa creazione',
   'delete_account' => 'Elimina account',
   'forgot_password' => 'Hai dimenticato i dati di accesso?',
   'login' => 'Accedi',

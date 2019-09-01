@@ -6,12 +6,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 use Auth;
+use Carbon\Carbon;
 
 use App\Models\User;
-use App\Models\Groups;
+use App\Models\Group;
+use App\Models\GroupMember;
+use App\Models\GroupConversation;
 use App\Models\GroupArticle;
-
-use Carbon\Carbon;
 
 // SEO
 use SEOMeta;
@@ -31,7 +32,7 @@ class GroupController extends Controller
 
     public function getGroupIndex($group_id, Request $request)
     {
-        $query = Groups::find($group_id)->firstOrFail();
+        $query = Group::find($group_id)->firstOrFail();
 
           SEOMeta::setTitle($query->name.' - Sywrit', false);
 
@@ -61,9 +62,10 @@ class GroupController extends Controller
 
     public function getNewGroupArticle($group_id)
     {
-        $query = Groups::find($group_id)->firstOrFail();
+        $query = Group::find($group_id)->firstOrFail();
+        session(['group_id' => $query->id]);
 
-        return view('front.components.ajax.group.new_article', compact('query'));
+        return view('front.pages.group.new_article', compact('query'));
     }
 
     public function getGroupArticle($group_id, $article_id)
@@ -78,6 +80,15 @@ class GroupController extends Controller
         $time = Carbon::parse($query->created_at)->format('H:i');
 
         return view('front.pages.group.read', compact('query', 'date', 'time'));
+    }
+
+    public function getMembers($group_id)
+    {
+        $query = Group::find($group_id);
+
+        SEOMeta::setTitle($query->name.' - Lista membri - Sywrit', false);
+
+        return view('front.pages.group.members', compact('query'));
     }
 
     // POST DATA
@@ -188,8 +199,70 @@ class GroupController extends Controller
         $user->id_gruppo = $query->id;
       }
 
+      GroupMember::create([
+        'user_id' => Auth::user()->id,
+        'group_id' => $query->id
+      ]);
+
       $user->save();
       return redirect('groups/'. $query->slug);
+    }
+
+    public function postNewGroupArticle(Request $request)
+    {
+        $group_id = session('group_id');
+        $testo = $request->document__text;
+
+        if(preg_match('/<img*/', $testo)) {
+          $testo = $this->convertImages($testo, array('name' => Str::random(16).'.'.Str::random(32),'path' => public_path('sf/ct/')));
+        }
+
+        $this->validate($request,[
+          'document__title' => 'required|max:191',
+          'document__text' => 'required'
+        ],[
+          'document__title.required' => 'Il titolo dell\'articolo è obbligatorio',
+          'document__text.required' => 'Non è consentito pubblicare un articolo senza contenuto',
+          'document__text.max' => 'Titolo troppo lungo',
+        ]);
+
+        $query = new GroupArticle();
+        $query->title = $request->document__title;
+        $query->text = $testo;
+
+        // Copertina
+        if($a = $request->image) {
+          $this->validate($request,[
+            'image' => 'image|mimes:jpeg,jpg,png',
+          ],[
+            'image.image' => 'Devi inserire un\'immagine',
+            'image.mimes'  => 'Formato immagine non valido',
+          ]);
+
+          $fileName = '__492x340'.Str::random(64).'.jpg';
+
+          uploadFile($a, array(
+            'name' => $fileName,
+            'path' => public_path('sf/ct/'),
+            'width' => '492',
+            'height' => '340',
+            'mimetype' => 'jpg',
+            'quality' => '100'
+          ));
+          $query->cover = asset('sf/ct/'. $fileName);
+        }
+
+        $query->author_id = \Auth::user()->id;
+        $query->group_id = $group_id;
+        $query->save();
+
+        $chat = GroupConversation::create([
+          'user_id' => Auth::user()->id,
+          'article_id' => $query->id,
+          'group_id' => $group_id
+        ]);
+
+        return redirect('groups/'. $group_id. '/article/'. $chat->id);
     }
 
     public function postGroupSettings($slug,Request $request)
@@ -238,45 +311,6 @@ class GroupController extends Controller
         $query->save();
       }
       return redirect()->back();
-    }
-
-    public function promoteUser(Request $request)
-    {
-      if($request->ajax()) {
-        $query = Editori::find($request->publisher_id);
-        if(!$query->suspended && $query->direttore == Auth::user()->id && $request->id != Auth::user()->id) {
-          $user = User::find($request->id);
-
-          if($user->hasMemberOf($query->id)) {
-            $query->direttore = $user->id;
-            $query->save();
-          }
-        }
-      }
-    }
-
-    public function firedUser(Request $request)
-    {
-      if($request->ajax()) {
-        $query = Editori::find($request->publisher_id);
-        if(!$query->suspended && $query->direttore == Auth::user()->id && $request->id != Auth::user()->id) {
-          $user = User::find($request->id);
-
-          if($user->hasMemberOf($request->publisher_id)) {
-            $collection = collect(explode(',', $user->id_gruppo))->filter(function($value, $key) use ($request) {
-              return $value != "" && $value != $request->publisher_id;
-            });
-
-            $query->componenti = collect(explode(',', $query->componenti))->filter(function($value, $key) use ($user) {
-              return $value != "" && $value != $user->id;
-            })->implode(',');
-            $query->save();
-
-            $user->id_gruppo = $collection->implode(',');
-            $user->save();
-          }
-        }
-      }
     }
 
 }

@@ -8,7 +8,7 @@ class GroupConversation extends Model
 {
     protected $table = 'group_conversation';
 
-    protected $fillable = ['group_id', 'text', 'user_id'];
+    protected $fillable = ['user_id', 'article_id', 'group_id', 'text'];
 
     public function getUserInfo()
     {

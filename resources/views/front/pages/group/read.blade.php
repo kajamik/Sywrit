@@ -16,6 +16,9 @@
 </style>
   <div class="publisher-home">
     <div class="publisher-body">
+      <a href="{{ url('groups/'. $query->group_id) }}" title="Back to group">
+        <i class="fa fa-2x fa-long-arrow-alt-left"></i>
+      </a>
         @auth
         <div class="publisher-info">
           @if($query->author_id == Auth::user()->id)

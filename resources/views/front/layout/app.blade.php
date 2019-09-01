@@ -95,7 +95,7 @@
   <script type="text/javascript">
     var message_count = 0;
     $(function(){
-      notifications();
+      //notifications();
       $("#notifications").click(function(){
         fetch_live_notifications();
       });
@@ -121,6 +121,15 @@
           $(".badge-notification").remove();
       });
     }
+    $("a.thumbnail").on('mouseenter', function() {
+        var $this = $(this);
+        $.get($this.data("card-url"), function(data) {
+          $this.after("<div class='info-box'>"+data+"</div>");
+        });
+    });
+    $("*").on('mouseenter', function() {
+        $(".info-box").remove();
+    });
   </script>
   @endauth
 

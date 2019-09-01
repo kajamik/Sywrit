@@ -110,11 +110,14 @@
             <div class="col-lg-3">
 
               <div class="sw-component">
-                <div class="sw-component-header bg-sw">Membri</div>
+                <a href="{{ url('groups/'. $query->id. '/members') }}">
+                  <div class="sw-component-header bg-sw">({{ $query->getMembers()->count() }}) Membri</div>
+                </a>
                 <div class="sw-item p-3">
+                  <div class="sw-component-header"></div>
                   @foreach($query->getMembers(5) as $value)
-                  <a href="{{ url($value->slug) }}">
-                    <img class="u-icon img-circle" src="{{ $value->avatar }}" title="{{ $value->name }}" alt="">
+                  <a class="thumbnail" href="{{ url($value->slug) }}" data-card-url="/thumbnail/?id={{ $value->id }}&h=profile">
+                    <img class="u-icon img-circle" src="{{ $value->avatar }}" title="{{ $value->name }} {{ $value->surname }}" alt="">
                   </a>
                   @endforeach
                 </div>

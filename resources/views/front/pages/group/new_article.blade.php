@@ -21,7 +21,7 @@
     <div class="form-group row">
       <div class="col-md-12">
         <label for="file-upload" class="form-control{{ $errors->has('image') ? ' is-invalid' : '' }} custom-upload">
-          <i class="fa fa-cloud-upload-alt"></i> {{ __('label.upload_cover') }}
+          <i class="fa fa-cloud-upload-alt"></i> {{ __('button.upload_file') }}
         </label>
         <input id="file-upload" type="file" onchange="App.upload(this.nextElementSibling, false)" name="image">
         <div id="image_preview" class="preview_body"></div>
@@ -49,10 +49,7 @@
     <div class="form-group row">
         <div class="col-md-6 offset-md-4">
             <button type="submit" class="btn btn-primary">
-                @lang('button.publish')
-            </button>
-            <button type="submit" class="btn btn-primary" name="save" value="1">
-                @lang('button.save')
+                @lang('button.publish') sul gruppo
             </button>
         </div>
     </div>

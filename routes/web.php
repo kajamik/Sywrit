@@ -93,6 +93,8 @@ Route::group(['prefix' => 'write', 'middleware' => ['auth','isSuspended']], func
 });
 
 Route::get('/', 'FrontController@index');
+// User Thumbnail
+Route::get('thumbnail', 'FrontController@getUserThumbnail');
 
 Route::group(['middleware' => ['auth', 'isSuspended']], function(){
   //Route::get('achievement', 'FrontController@getAchievement');
@@ -131,9 +133,12 @@ Route::group(['prefix' => '{slug}'], function() {
 Route::group(['prefix' => 'groups'], function() {
 
   Route::get('{id}', 'GroupController@getGroupIndex');
-  Route::get('{id}/about', 'GroupController@getPublisherAbout');
+  Route::get('{id}/about', 'GroupController@getGroupAbout');
+  Route::get('{id}/article/{post_id}', 'GroupController@getGroupArticle');
+  Route::get('{id}/members', 'GroupController@getMembers');
   Route::get('{id}/write', 'GroupController@getNewGroupArticle');
-  Route::get('{id}/post/{post_id}', 'GroupController@getGroupArticle');
+
+  Route::post('{id}/write', 'GroupController@postNewGroupArticle');
 
   /*Route::group(['prefix' => '{slug}/settings', 'middleware' => ['auth','isSuspended']], function() {
     Route::get('/', 'FrontController@getPublisherSettings');

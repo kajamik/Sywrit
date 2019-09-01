@@ -8,4 +8,6 @@ class GroupArticle extends Model
 {
     protected $table = 'group_article';
 
+    public $timestamps = false;
+
 }

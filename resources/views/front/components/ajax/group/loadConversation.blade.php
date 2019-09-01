@@ -7,7 +7,7 @@
       <div class="row">
         <img style="height:4em" class="p-2" src="{{ $value->getUserInfo->getAvatar() }}" />
         <div class="col-md-9 col-12">
-          <h4><a href="{{ url($value->getUserInfo->slug) }}">{!! $value->getUserInfo->getRealName() !!}</a></h4>
+          <h4><a class="thumbnail" href="{{ url($value->getUserInfo->slug) }}">{!! $value->getUserInfo->getRealName() !!}</a></h4>
           <span>{{ $value->created_at->diffForHumans() }} {!! $value->permission->tag() !!}</span>
           <hr/>
         </div>
@@ -16,11 +16,11 @@
         </div>
         @if(!empty($value->article_id))
         <div class="mt-3 col-12">
-        <a href="{{ url('groups/'. $group->id .'/post/'. $value->article_id) }}">
+        <a href="{{ url('groups/'. $group->id .'/article/'. $value->article_id) }}">
           <div class="card">
             <img class="card-img-top" src="@if($value->cover) {{ $value->cover }} @else {{ asset('upload/no-image.jpg') }} @endif" />
               <div class="card-body">
-                <h5 class="card-title" title="{{ $value->article_title }}">{{ str_limit($value->article_title, 33) }}</h5>
+                <h5 class="card-title" title="{{ $value->article_title }}" data-card-url="/thumbnail/?id={{ $value->id }}&h=profile">{{ str_limit($value->article_title, 33) }}</h5>
               </div>
           </div>
         </a>

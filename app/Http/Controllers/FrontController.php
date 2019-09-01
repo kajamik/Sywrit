@@ -12,7 +12,7 @@ use App\Models\SavedArticles;
 use App\Models\Articoli;
 use App\Models\ArticleHistory;
 use App\Models\ArticleCategory;
-use App\Models\Editori;
+use App\Models\Group;
 use App\Models\BackupArticlesImages;
 use App\Models\Notifications;
 //----------
@@ -50,8 +50,8 @@ class FrontController extends Controller
         $current_page = ($request->page) ? $request->page : 1;
 
         $articoli = Articoli::
-                    leftJoin('utenti', function($join){
-                      $join->on('articoli.id_autore', '=', 'utenti.id');
+                    leftJoin('users', function($join){
+                      $join->on('articoli.id_autore', '=', 'users.id');
                     })
                     ->leftJoin('editori', function($join){
                         $join->on('articoli.id_gruppo', '=', 'editori.id');
@@ -59,7 +59,7 @@ class FrontController extends Controller
                     ->leftJoin('article_category', function($join){
                         $join->on('articoli.topic_id', '=', 'article_category.id');
                       })
-                    ->addSelect('utenti.slug as user_slug', 'utenti.name as user_name', 'utenti.surname as user_surname', 'editori.name as publisher_name', 'editori.slug as publisher_slug',
+                    ->addSelect('users.slug as user_slug', 'users.name as user_name', 'users.surname as user_surname', 'editori.name as publisher_name', 'editori.slug as publisher_slug',
                                 'articoli.titolo as article_title', 'articoli.id_gruppo as id_editore', 'articoli.slug as article_slug', DB::raw('articoli.testo as article_text'), 'articoli.copertina as copertina',
                                 'articoli.bot_message as bot_message', 'articoli.created_at as created_at', 'article_category.id as topic_id', 'article_category.name as topic_name', 'article_category.slug as topic_slug')
                     ->orderBy('created_at', 'desc')
@@ -68,8 +68,8 @@ class FrontController extends Controller
                     ->get();
 
           $popular_articles = Articoli::
-                              leftJoin('utenti', function($join){
-                                $join->on('articoli.id_autore', '=', 'utenti.id');
+                              leftJoin('users', function($join){
+                                $join->on('articoli.id_autore', '=', 'users.id');
                               })
                               ->leftJoin('editori', function($join){
                                   $join->on('articoli.id_gruppo', '=', 'editori.id');
@@ -77,7 +77,7 @@ class FrontController extends Controller
                               ->leftJoin('article_category', function($join){
                                   $join->on('articoli.topic_id', '=', 'article_category.id');
                                 })
-                              ->addSelect('utenti.slug as user_slug', 'utenti.name as user_name', 'utenti.surname as user_surname', 'editori.name as publisher_name', 'editori.slug as publisher_slug',
+                              ->addSelect('users.slug as user_slug', 'users.name as user_name', 'users.surname as user_surname', 'editori.name as publisher_name', 'editori.slug as publisher_slug',
                                           'articoli.titolo as article_title', 'articoli.id_gruppo as id_editore', 'articoli.slug as article_slug', DB::raw('articoli.testo as article_text'), 'articoli.copertina as copertina',
                                           'articoli.bot_message as bot_message', 'articoli.created_at as created_at', 'article_category.id as topic_id', 'article_category.name as topic_name', 'article_category.slug as topic_slug')
                               ->orderBy('created_at', 'desc')
@@ -235,11 +235,11 @@ class FrontController extends Controller
 
       $publisher = array();
 
-      $articoli = Articoli::join('utenti', 'articoli.id_autore', '=', 'utenti.id')
+      $articoli = Articoli::join('users', 'articoli.id_autore', '=', 'users.id')
                   ->leftJoin('article_category', function($join){
                       $join->on('articoli.topic_id', '=', 'article_category.id');
                     })
-                    ->addSelect('utenti.slug as user_slug', 'utenti.name as user_name', 'utenti.surname as user_surname',
+                    ->addSelect('users.slug as user_slug', 'users.name as user_name', 'users.surname as user_surname',
                                 'articoli.titolo as article_title', 'articoli.slug as article_slug', 'articoli.testo as article_text', 'articoli.copertina as copertina',
                                 'articoli.created_at as created_at', 'article_category.id as topic_id', 'article_category.name as topic_name', 'article_category.slug as topic_slug')
                     ->where('articoli.id_gruppo', $query->id)
@@ -484,11 +484,11 @@ class FrontController extends Controller
       $INDEX_LIMIT = 9;
       $current_page = ($request->page) ? $request->page : 1;
 
-      $articoli = Articoli::join('utenti', 'articoli.id_autore', '=', 'utenti.id')
+      $articoli = Articoli::join('users', 'articoli.id_autore', '=', 'users.id')
                   ->leftJoin('editori', function($join){
                     $join->on('articoli.id_gruppo', '=', 'editori.id');
                   })
-                  ->addSelect('utenti.slug as user_slug', 'utenti.name as user_name', 'utenti.surname as user_surname', 'editori.name as publisher_name', 'editori.slug as publisher_slug',
+                  ->addSelect('users.slug as user_slug', 'users.name as user_name', 'users.surname as user_surname', 'editori.name as publisher_name', 'editori.slug as publisher_slug',
                               'articoli.titolo as article_title', 'articoli.id_gruppo as id_editore', 'articoli.slug as article_slug', 'articoli.testo as article_text', 'articoli.copertina as copertina', 'articoli.created_at as created_at')
                   ->where('topic_id', $topic->id)
                   ->orderBy('created_at', 'desc')
@@ -547,6 +547,20 @@ class FrontController extends Controller
         $slug2 = '/'.$slug2;
       }
       return view('front.pages.static.'.$slug.$slug2);
+    }
+
+    public function getUserThumbnail(Request $request)
+    {
+        switch($request->h) {
+          case 'group':
+            $query = Group::where('id', $request->id)->first();
+            break;
+          case 'profile':
+            $query = User::where('id', $request->id)->first();
+            break;
+        }
+
+        return view('front.components.thumbnail', compact('query'))->with('type', $request->h);
     }
 
 }

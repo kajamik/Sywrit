@@ -13,7 +13,7 @@ use App\Support\Database\CacheQueryBuilder;
 
 class User extends Authenticatable
 {
-    protected $table = 'utenti';
+    protected $table = 'users';
 
     use Notifiable;
 

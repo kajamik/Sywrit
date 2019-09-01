@@ -22,7 +22,7 @@ use App\Models\AnswerComments;
 use App\Models\ArticleLikes;
 use App\Models\SocialService;
 // Groups
-use App\Models\Groups;
+use App\Models\Group;
 use App\Models\GroupConversation;
 
 // Achievements
@@ -99,7 +99,7 @@ class AjaxController extends Controller
     if($noty->count() > $count){
       $queries = array();
       foreach($noty->get() as $value){
-        array_push($queries, \DB::table('articoli')->join('utenti', 'articoli.id_autore', '=', 'utenti.id')->addSelect('articoli.titolo as titolo','articoli.slug as article_slug','utenti.name as user_name','utenti.surname as user_surname')->where('articoli.id', $value->content_id)->first());
+        array_push($queries, \DB::table('articoli')->join('users', 'articoli.id_autore', '=', 'users.id')->addSelect('articoli.titolo as titolo','articoli.slug as article_slug','users.name as user_name','users.surname as user_surname')->where('articoli.id', $value->content_id)->first());
       }
       return Response::json(['count' => $noty->count(), 'query' => $queries]);
     }
@@ -196,7 +196,7 @@ class AjaxController extends Controller
       $current_page = ($request->q) ? $request->q : 1;
       $LIMIT = 6;
 
-      $query = Groups::where('id', $request->id)->first();
+      $query = Group::where('id', $request->id)->first();
 
       if((Auth::user() && Auth::user()->hasMemberOf($query->id)) || $query->public) {
         $query2 = GroupConversation::leftJoin('group_article', function($join){
@@ -216,7 +216,7 @@ class AjaxController extends Controller
   public function sendGroupMessage(Request $request)
   {
       $post = $request->post;
-      $query = Groups::where('id', $request->id)->first();
+      $query = Group::where('id', $request->id)->first();
 
       if(!empty($post) && Auth::user()->hasMemberOf($query->id)) {
 

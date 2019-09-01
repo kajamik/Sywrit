@@ -30,14 +30,14 @@ class SearchController extends Controller
 
     $query2 = Articoli::where('titolo', 'like', '%'. $slug .'%')
                       ->orWhere('tags', 'like', '%'. $slug .'%')
-                      ->leftJoin('utenti', 'articoli.id_autore', '=', 'utenti.id')
+                      ->leftJoin('users', 'articoli.id_autore', '=', 'users.id')
                       ->leftJoin('editori', function($join){
                           $join->on('articoli.id_gruppo', '=', 'editori.id');
                         })
                       ->leftJoin('article_category', function($join){
                           $join->on('articoli.topic_id', '=', 'article_category.id');
                         })
-                      ->addSelect('utenti.slug as user_slug', 'utenti.name as user_name', 'utenti.surname as user_surname', 'editori.name as publisher_name', 'editori.slug as publisher_slug',
+                      ->addSelect('users.slug as user_slug', 'users.name as user_name', 'users.surname as user_surname', 'editori.name as publisher_name', 'editori.slug as publisher_slug',
                                   'articoli.bot_message as bot_message', 'articoli.titolo as article_title', 'articoli.id_gruppo as id_editore', 'articoli.slug as article_slug', 'articoli.testo as article_text', 'articoli.copertina as copertina',
                                   'articoli.created_at as created_at', 'article_category.id as topic_id', 'article_category.name as topic_name', 'article_category.slug as topic_slug')
                       ->orderBy('created_at','desc')->get();
@@ -60,14 +60,14 @@ class SearchController extends Controller
     //-------------------------------------------------------//
 
     $query = Articoli::where('tags', 'like', '%'. $slug .'%')
-                      ->leftJoin('utenti', 'articoli.id_autore', '=', 'utenti.id')
+                      ->leftJoin('users', 'articoli.id_autore', '=', 'users.id')
                       ->leftJoin('editori', function($join){
                           $join->on('articoli.id_gruppo', '=', 'editori.id');
                         })
                       ->leftJoin('article_category', function($join){
                           $join->on('articoli.topic_id', '=', 'article_category.id');
                         })
-                        ->addSelect('utenti.slug as user_slug', 'utenti.name as user_name', 'utenti.surname as user_surname', 'editori.name as publisher_name', 'editori.slug as publisher_slug',
+                        ->addSelect('users.slug as user_slug', 'users.name as user_name', 'users.surname as user_surname', 'editori.name as publisher_name', 'editori.slug as publisher_slug',
                                     'articoli.bot_message as bot_message', 'articoli.titolo as article_title', 'articoli.id_gruppo as id_editore', 'articoli.slug as article_slug', 'articoli.testo as article_text', 'articoli.copertina as copertina',
                                     'articoli.created_at as created_at', 'article_category.id as topic_id', 'article_category.name as topic_name', 'article_category.slug as topic_slug')
                       ->orderBy('created_at','desc')

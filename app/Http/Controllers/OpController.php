@@ -18,9 +18,9 @@ class OpController extends Controller
 
   public function home()
   {
-    $users = DB::table('utenti')->count();
+    $users = DB::table('users')->count();
     $user_articles = DB::table('articoli')->whereNull('id_gruppo')->count();
-    $cron_users = DB::table('utenti')->where('cron', '1')->count();
+    $cron_users = DB::table('users')->where('cron', '1')->count();
 
     $archs = DB::table('saved_articles')->count();
     $articles = DB::table('articoli')->where('bot_message', '!=', '1')->count();

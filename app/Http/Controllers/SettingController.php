@@ -195,7 +195,7 @@ class SettingController extends Controller
     {
         $query = User::find(Auth::user()->id);
         $input = [
-          'username' => 'required|min:4|unique:utenti,slug',
+          'username' => 'required|min:4|unique:users,slug',
         ];
         $alert = [
           'username.required' => 'Nome utente richiesto',
@@ -204,7 +204,7 @@ class SettingController extends Controller
           array_push($input, ['password_confirmation' => 'required|min:6|hash:'.$query->password]);
         }
         $this->validate($request, [
-        'username' => 'required|min:4|unique:utenti,slug',
+        'username' => 'required|min:4|unique:users,slug',
       ]);
     }*/
 

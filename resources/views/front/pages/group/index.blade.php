@@ -69,6 +69,7 @@
                     $("button").click(function(){
                       updateConversations();
                       App.query("get","{{ url('ajax/groups/sendMessage') }}",{ id: {{ $query->id }}, post: $("textarea").val() },false,function(data){
+                          $("textarea").val('');
                           $(data).prependTo($("#conversations"));
                       });
                     });
@@ -110,11 +111,18 @@
             <div class="col-lg-3">
 
               <div class="sw-component">
+                {{--<div class="sw-component-header bg-sw">Amministratori</div>
+                <div class="sw-item p-3">
+                  @foreach($query->getAdmins(5) as $value)
+                  <a class="thumbnail" href="{{ url($value->slug) }}" data-card-url="/thumbnail/?id={{ $value->id }}&h=profile">
+                    <img class="u-icon img-circle" src="{{ $value->avatar }}" title="{{ $value->name }} {{ $value->surname }}" alt="">
+                  </a>
+                  @endforeach
+                </div>--}}
                 <a href="{{ url('groups/'. $query->id. '/members') }}">
                   <div class="sw-component-header bg-sw">({{ $query->getMembers()->count() }}) Membri</div>
                 </a>
                 <div class="sw-item p-3">
-                  <div class="sw-component-header"></div>
                   @foreach($query->getMembers(5) as $value)
                   <a class="thumbnail" href="{{ url($value->slug) }}" data-card-url="/thumbnail/?id={{ $value->id }}&h=profile">
                     <img class="u-icon img-circle" src="{{ $value->avatar }}" title="{{ $value->name }} {{ $value->surname }}" alt="">

@@ -13,6 +13,12 @@
 .feeds {
   padding: 15px;
 }
+.add {
+  margin-right: 2px;
+  padding: 3px;
+  background-color: #90EE90;
+  cursor: pointer;
+}
 </style>
   <div class="publisher-home">
     <div class="publisher-body">
@@ -23,6 +29,10 @@
         <div class="publisher-info">
           @if($query->author_id == Auth::user()->id)
             @include('front.components.article.options')
+          @elseif(Auth::user()->groupPermission->hasStaff())
+          <ul class="d-flex bg-sw p-2 mb-3">
+            <li><a href="{{ url('groups/'. $query->group_id.'/article/'. $query->id .'/edit') }}">@lang('label.article.edit')</a></li>
+          </ul>
           @endif
         </div>
         @endauth
@@ -39,7 +49,7 @@
           </div>
           <hr/>
           <div class="block-body">
-            {!! $query->text !!}
+            {!! showCommit($query, $query->text) !!}
           </div>
       </article>
     </div>

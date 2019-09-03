@@ -8,6 +8,8 @@ class GroupPermission extends Model
 {
     protected $table = 'group_permission';
 
+    protected $fillable = ['user_id', 'group_id', 'permission_level'];
+
     public function getRole()
     {
       return $this->permission_level;
@@ -21,6 +23,11 @@ class GroupPermission extends Model
     public function isMod()
     {
       return (!empty($this->getRole()) && $this->getRole() == 'Moderator');
+    }
+
+    public function hasStaff()
+    {
+      return ($this->isMod() || $this->isAdmin());
     }
 
     public function tag()

@@ -95,9 +95,13 @@ App.getUserInterface = function(t, refresh = false, e){
     var done = search_item(t[i], "done");
     // styles
     var style = search_item(t[i], "styles");
+
+    if(search_item(t[i], "fullscreen")) {
+      fullscreen = true;
+    }
   }
 
-  $("<div class='__ui__g'><div class='__ui__g_container'><div class='__ui__g_header'><div class='__ui__g_title'>"+title+"</div><div class='__ui__g_close'>&times;</div></div><div class='__ui__g_body'></div></div></div>").appendTo( $("body") );
+  $("<div class='__ui__g'><div class='__ui__g_container col-lg-3 col-md-6 col-12'><div class='__ui__g_header'><div class='__ui__g_title'>"+title+"</div><div class='__ui__g_close'>&times;</div></div><div class='__ui__g_body'></div></div></div>").appendTo( $("body") );
 
   if(header != null){
     $("<form action='"+header.action+"' method='"+header.method+"'><div class='__ui__g_form_control'></div></form>").appendTo( $(".__ui__g_body") );

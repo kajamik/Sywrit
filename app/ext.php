@@ -82,6 +82,39 @@ function convertImages($source, $file)
     }
 }
 
+function showCommit($query, $result)
+{
+    $commit_all = DB::table('group_article_commit')->where('article_id', $query->id)->get();
+
+    foreach($commit_all as $commit) {
+      $cor = \DB::table('group_article_correction')->where('commit_id', $commit->id)->orderBy('created_at', 'desc')->get();
+
+      foreach($cor as $value) {
+        $result = substr_replace($result, "<span class='add'><a href='$commit->article_id/commit/$commit->id'>". $value->new_word ."</a></span>", $value->start, strlen($value->replaced_word));
+        //$result = substr_replace($result, "<span class='add'><a href='$commit->article_id/commit/$commit->id'>". $value->new_word ."</a></span>", $value->start, strlen($value->replaced_word));
+      }
+    }
+
+    return $result;
+}
+
+function makeCorrection($query, $result)
+{
+    /*$commit_all = DB::table('group_article_commit')->where('article_id', $query->id)->get();
+
+    foreach($commit_all as $commit) {
+      $cor = \DB::table('group_article_correction')->where('commit_id', $commit->id)->orderBy('created_at', 'desc')->get();
+
+      foreach($cor as $value) {
+        $user = \DB::table('users')->where('id', $commit->user_id)->first();
+        $result = substr_replace($result, "<span class='add'><a href='$commit->article_id/commit/$commit->id'>". $value->new_word ."</a></span>", $value->start, strlen($value->replaced_word));
+        //$result = substr_replace($text_without_html, $value->start, strlen($value->replaced_word), "<span class='add'><a href='$commit->article_id/commit/$value->id'>". $value->new_word ."</a></span>", $result);
+      }
+    }
+
+    return $result;*/
+}
+
 function equals($pattern, $first, $second)
 {
     $first = preg_split($pattern, $first)[1];

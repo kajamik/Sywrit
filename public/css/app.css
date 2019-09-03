@@ -10,7 +10,6 @@ body {
 }
 
 a, a:hover {
-  text-decoration: none;
   color: #000;
 }
 
@@ -160,12 +159,17 @@ ul {
   cursor: pointer;
 }
 
+.dropdown-toggle a:hover, a:focus {
+  text-decoration: none !important;
+}
+
 .dropdown-menu a {
   word-wrap: break-word;
   white-space: normal;
 }
 
 .dropdown-menu a:hover {
+  text-decoration: none;
   background-color: rgb(162, 160, 159);
 }
 
@@ -330,6 +334,11 @@ ul {
   position: relative;
   max-width: 32px;
   max-height: 32pX;
+}
+
+.img-medium {
+  max-width: 100px;
+  max-height: 100px;
 }
 
 .img-circle {
@@ -632,6 +641,10 @@ article span[style^='background'] {
   .block-hero {
     min-height: 120px;
   }
+  .__ui__g_container {
+    margin: 0 !important;
+    height: 100%;
+  }
 }
 
 @media (max-width: 992px) {
@@ -648,7 +661,7 @@ article span[style^='background'] {
 .__ui__g {
   display: block;
   position: fixed;
-  z-index: 1234;
+  z-index: 10233;
   left: 0;
   top: 0px;
   width: 100%;
@@ -662,8 +675,6 @@ article span[style^='background'] {
   background-color: #fefefe;
   border: 1px solid #888;
   border-radius: 5px;
-  width: auto;
-  max-width: 380px;
 }
 
 .__ui__g_container .__ui__g_header div {

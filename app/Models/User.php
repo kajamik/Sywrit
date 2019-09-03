@@ -106,7 +106,7 @@ class User extends Authenticatable
           return $value != "";
         });
         foreach($components as $value) {
-          $query = \DB::table('groups')->where('id', $value)->select('id', 'name', 'slug', 'suspended')->first();
+          $query = \DB::table('groups')->where('id', $value)->select('id', 'name', 'suspended')->first();
           $collection->push($query);
         }
         return $collection->toArray();
@@ -153,5 +153,10 @@ class User extends Authenticatable
     public function getPublications()
     {
       return \DB::table('articoli')->where('id_autore', $this->id)->get();
+    }
+
+    public function groupPermission()
+    {
+      return $this->belongsTo('App\Models\GroupPermission', 'id', 'user_id');
     }
 }

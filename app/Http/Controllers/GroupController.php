@@ -11,8 +11,11 @@ use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Group;
 use App\Models\GroupMember;
+use App\Models\GroupPermission;
 use App\Models\GroupConversation;
 use App\Models\GroupArticle;
+use App\Models\GroupArticleCommit;
+use App\Models\GroupArticleCorrection;
 
 // SEO
 use SEOMeta;
@@ -22,15 +25,7 @@ use Twitter;
 class GroupController extends Controller
 {
 
-    public function getNewGroup()
-    {
-          SEOMeta::setTitle(trans('label.title.new_group'). ' - Sywrit', false)
-                    ->setCanonical(\Request::url());
-
-          return view('front.pages.group.create');
-    }
-
-    public function getGroupIndex($group_id, Request $request)
+    public function index($group_id, Request $request)
     {
         $query = Group::find($group_id)->firstOrFail();
 
@@ -44,7 +39,15 @@ class GroupController extends Controller
         return view('front.pages.group.index', compact('query'));
     }
 
-    public function getGroupAbout($group_id)
+    public function getNewGroup()
+    {
+          SEOMeta::setTitle(trans('label.title.new_group'). ' - Sywrit', false)
+                    ->setCanonical(\Request::url());
+
+          return view('front.pages.group.create');
+    }
+
+    public function getAbout($group_id)
     {
         $query = Editori::where('id', $group_id)->first();
 
@@ -60,15 +63,15 @@ class GroupController extends Controller
           return view('front.pages.group.about',compact('query','components'));
     }
 
-    public function getNewGroupArticle($group_id)
+    public function getNewArticle($group_id)
     {
         $query = Group::find($group_id)->firstOrFail();
         session(['group_id' => $query->id]);
 
-        return view('front.pages.group.new_article', compact('query'));
+        return view('front.pages.group.article.new', compact('query'));
     }
 
-    public function getGroupArticle($group_id, $article_id)
+    public function getArticle($group_id, $article_id)
     {
         $query = GroupArticle::where('id', $article_id)
                               ->where('group_id', $group_id)
@@ -79,7 +82,25 @@ class GroupController extends Controller
         $date = Carbon::parse($query->created_at)->translatedFormat('l j F Y');
         $time = Carbon::parse($query->created_at)->format('H:i');
 
-        return view('front.pages.group.read', compact('query', 'date', 'time'));
+        return view('front.pages.group.article.read', compact('query', 'date', 'time'));
+    }
+
+    public function getArticleEdit($group_id, $article_id)
+    {
+        $query = GroupArticle::where('id', $article_id)
+                            ->where('group_id', $group_id)
+                            ->first();
+
+        return view('front.pages.group.article.edit', compact('query'));
+    }
+
+    public function getArticleCommit($group_id, $article_id, $commit_id)
+    {
+        $query = GroupArticleCommit::where('id', $commit_id)->first();
+
+        SEOMeta::setTitle('Commit #'. $query->id .' - Sywrit', false);
+
+        return view('front.pages.group.article.commit', compact('query'));
     }
 
     public function getMembers($group_id)
@@ -140,9 +161,8 @@ class GroupController extends Controller
         'name.unique' => 'Questo nome è stato già preso',
         'description.max' => 'La descrizione è troppo lunga',
       ]);
-      $query = new Groups();
+      $query = new Group();
       $query->name = $request->name;
-      $query->members = Auth::user()->id;
       if($a = $request->cover){
         $this->validate($request,[
           'cover' => 'image|mimes:jpeg,jpg,png',
@@ -188,8 +208,6 @@ class GroupController extends Controller
       }
       $query->description = $request->description;
       $query->save();
-      $query->slug = Str::slug($query->name, '-');
-      $query->save();
 
       $user = User::find(Auth::user()->id);
 
@@ -199,16 +217,23 @@ class GroupController extends Controller
         $user->id_gruppo = $query->id;
       }
 
+      $user->save();
+
       GroupMember::create([
         'user_id' => Auth::user()->id,
         'group_id' => $query->id
       ]);
 
-      $user->save();
-      return redirect('groups/'. $query->slug);
+      GroupPermission::create([
+        'user_id' => Auth::user()->id,
+        'group_id' => $query->id,
+        'permission_level' => 'Administrator'
+      ]);
+
+      return redirect('groups/'. $query->id);
     }
 
-    public function postNewGroupArticle(Request $request)
+    public function postNewArticle(Request $request)
     {
         $group_id = session('group_id');
         $testo = $request->document__text;
@@ -262,10 +287,10 @@ class GroupController extends Controller
           'group_id' => $group_id
         ]);
 
-        return redirect('groups/'. $group_id. '/article/'. $chat->id);
+        return redirect('groups/'. $group_id. '/article/'. $query->id);
     }
 
-    public function postGroupSettings($slug,Request $request)
+    public function postSettings($slug,Request $request)
     {
       $query = Editori::where('slug',$slug)->first();
       if(!$query->suspended){

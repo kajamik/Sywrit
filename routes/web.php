@@ -132,13 +132,15 @@ Route::group(['prefix' => '{slug}'], function() {
 // Publishers
 Route::group(['prefix' => 'groups'], function() {
 
-  Route::get('{id}', 'GroupController@getGroupIndex');
-  Route::get('{id}/about', 'GroupController@getGroupAbout');
-  Route::get('{id}/article/{post_id}', 'GroupController@getGroupArticle');
+  Route::get('{id}', 'GroupController@index');
+  Route::get('{id}/about', 'GroupController@getAbout');
+  Route::get('{id}/article/{post_id}', 'GroupController@getArticle');
+  Route::get('{id}/article/{post_id}/edit', 'GroupController@getArticleEdit');
+  Route::get('{id}/article/{post_id}/commit/{commit_id}', 'GroupController@getArticleCommit');
   Route::get('{id}/members', 'GroupController@getMembers');
-  Route::get('{id}/write', 'GroupController@getNewGroupArticle');
+  Route::get('{id}/write', 'GroupController@getNewArticle');
 
-  Route::post('{id}/write', 'GroupController@postNewGroupArticle');
+  Route::post('{id}/write', 'GroupController@postNewArticle');
 
   /*Route::group(['prefix' => '{slug}/settings', 'middleware' => ['auth','isSuspended']], function() {
     Route::get('/', 'FrontController@getPublisherSettings');

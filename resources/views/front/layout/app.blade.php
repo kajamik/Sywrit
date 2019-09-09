@@ -121,13 +121,21 @@
           $(".badge-notification").remove();
       });
     }
-    $("a.thumbnail").on('mouseenter', function() {
+    $(document).on('mouseenter', 'a.thumbnail', function() {
         var $this = $(this);
+        var $position;
+        $("*").find(".info-box").remove();
         $.get($this.data("card-url"), function(data) {
           $this.after("<div class='info-box'>"+data+"</div>");
+          if($(".info-box").height() < ($this.offset().top - $(document).scrollTop())) {
+            $position = $this.position().top - $(".info-box").height() - 20;
+          } else {
+            $position = $this.position().top + 30;
+          }
+          $(".info-box").css('top', $position + "px");
         });
     });
-    $("*").on('mouseenter', function() {
+    $(document).on('mouseenter', '*', function() {
         $(".info-box").remove();
     });
   </script>

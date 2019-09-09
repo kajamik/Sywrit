@@ -6,12 +6,11 @@
 
       <div class="row">
         <img style="height:4em" class="p-2" src="{{ $value->getUserInfo->getAvatar() }}" />
-        <div class="col-md-9 col-12">
-          <h4><a class="thumbnail" href="{{ url($value->getUserInfo->slug) }}">{!! $value->getUserInfo->getRealName() !!}</a></h4>
-          <span>{{ $value->created_at->diffForHumans() }} {!! $value->permission->tag() !!}</span>
-          <hr/>
+        <div class="col-md-9 col-9">
+          <h4><a class="thumbnail" href="{{ url($value->getUserInfo->slug) }}" data-card-url="/ajax/thumbnail/?id={{ $value->getUserInfo->id }}&h=profile">{!! $value->getUserInfo->getRealName() !!}</a></h4>
+          <span>{{ $value->created_at->diffForHumans() }} {{-- $value->memberInfo->tag() --}}</span>
         </div>
-        <div class="ml-3 d-flex col-12">
+        <div class="ml-3 py-3 d-flex col-12">
           {{ $value->text }}
         </div>
         @if(!empty($value->article_id))
@@ -26,6 +25,17 @@
         </a>
         </div>
         @endif
+        @if(Auth::user() && $value->user_id != Auth::user()->id)
+        <hr/>
+        <div class="col-md-12">
+          <div class="d-flex">
+            <img style="height:4em" class="p-2" src="{{ Auth::user()->getAvatar() }}" />
+            <div class="dialog_editor">
+              <div class="dialog_editor__editable" contenteditable="true" data-text="Inizia a conversare"></div>
+            </div>
+          </div>
+        </div>
+        @endif
       </div>
 
       <div class="ml-auto">
@@ -33,8 +43,10 @@
           <i class="fas fa-ellipsis-v"></i>
         </a>
         <div class="dropdown-menu">
+          @if(Auth::user() && $value->user_id == Auth::user()->id)
           <button id="delete_msg_{{ $value->id }}" class="dropdown-item">Elimina</button>
-          @if($value->user_id != Auth::user()->id)
+          @endif
+          @if((Auth::user() && $value->user_id != Auth::user()->id) || !Auth::user())
           <button id="report_msg_{{ $value->id }}" class="dropdown-item">Segnala</button>
           @endif
         </div>
@@ -44,6 +56,8 @@
 
   </div>
 
+  <hr/>
+
   {{-- Risposte--}}
 
   <div id="conversations_{{ $value->id }}"></div>
@@ -52,15 +66,16 @@
   updateAnswers();
 
   function updateAnswers() {
-    App.query("get","{{ url('ajax/groups/load-answers') }}", { id: {{ $value->id }} }, false, function(data) {
+    $.get("{{ url('ajax/groups/loadMessages') }}",{ id: {{ $value->id }}, q: this.q, answer: 1 }, function(data) {
       if(data) {
-        $("#comment_{{ $value->id }}").append(data);
+        $("#conversations_{{ $value->id }}").append(data);
+        q++;
       } else {
-        $("#loadAnswers_{{ $value->id }}").remove();
+        $("#loadComments").remove();
       }
     });
   }
-  @if($value->user_id != Auth::user()->id)
+  @if(Auth::user() && $value->user_id != Auth::user()->id)
   $("#report_msg_{{ $value->id }}").click(function(){
     App.getUserInterface({
     "ui": {
@@ -90,22 +105,13 @@
     } // -- End Interface --
   });
   });
-  @else
-  $("#reply_{{ $value->id }}").click(function() {
-    if($(".replycomment").length) {
-      $(".replycomment").remove();
-    }
-    $("#comment_{{ $value->id }}").append('<div id="reply" class="replycomment"><div class="card-body"><div class="d-flex"><img style="height:4em" class="p-2" src="{{ Auth::user()->getAvatar() }}" />\
-    <div class="d-flex flex-grow-1"><textarea class="form-control" placeholder="@lang("form.write_comment")" autofocus></textarea></div></div><div class="py-2 col-md-12"><button type="button" class="btn btn-sw btn-block">@lang("button.send_anwser")</button></div></div></div>');
-    $("html, body").animate({ scrollTop: $('#reply').offset().top }, 1000);
-    $("button[type=button]").click(function() {
-      App.query("get","{{ url('send-answers') }}", { id: {{ $value->id }}, post: $(".replycomment textarea").val() }, false, function(data) {
-        if($("#comment_{{ $value->id }} > .card").length == 0) {
-          $("<div/>").addClass("card").insertBefore(".replycomment");
-        }
-        $("#comment_{{ $value->id }} > .card").append(data);
+
+  $(".dialog_editor__editable").on('keypress', function() {
+    if($(this).text().length > 0 && event.which === 13 && !event.shiftKey) {
+      $.get("{{ url('ajax/groups/sendMessage') }}", { id: {{ $value->id }}, post: $(this).text(), reply: 1 }, function(data) {
+        $("#conversations_{{ $value->id }} > .card-body").after(data);
       });
-    });
+    }
   });
   @endif
   </script>

@@ -4,11 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class GroupConversation extends Model
+class GroupConversationAnswer extends Model
 {
-    protected $table = 'group_conversation';
+    protected $table = 'group_conversation_answer';
 
-    protected $fillable = ['user_id', 'article_id', 'group_id', 'text'];
+    protected $fillable = ['conversation_id', 'user_id', 'text'];
 
     public function getUserInfo()
     {

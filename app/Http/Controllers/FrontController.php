@@ -549,18 +549,4 @@ class FrontController extends Controller
       return view('front.pages.static.'.$slug.$slug2);
     }
 
-    public function getUserThumbnail(Request $request)
-    {
-        switch($request->h) {
-          case 'group':
-            $query = Group::where('id', $request->id)->first();
-            break;
-          case 'profile':
-            $query = User::where('id', $request->id)->first();
-            break;
-        }
-
-        return view('front.components.thumbnail', compact('query'))->with('type', $request->h);
-    }
-
 }

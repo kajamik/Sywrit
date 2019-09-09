@@ -93,8 +93,6 @@ Route::group(['prefix' => 'write', 'middleware' => ['auth','isSuspended']], func
 });
 
 Route::get('/', 'FrontController@index');
-// User Thumbnail
-Route::get('thumbnail', 'FrontController@getUserThumbnail');
 
 Route::group(['middleware' => ['auth', 'isSuspended']], function(){
   //Route::get('achievement', 'FrontController@getAchievement');
@@ -142,6 +140,10 @@ Route::group(['prefix' => 'groups'], function() {
 
   Route::post('{id}/write', 'GroupController@postNewArticle');
 
+  Route::namespace('GroupAdmin')->group(function() {
+    Route::get('{id}/admin/requests', 'RequestController@getJoinRequests');
+  });
+
   /*Route::group(['prefix' => '{slug}/settings', 'middleware' => ['auth','isSuspended']], function() {
     Route::get('/', 'FrontController@getPublisherSettings');
     Route::get('{tab}', 'FrontController@getPublisherSettings');
@@ -170,15 +172,23 @@ Route::group(['prefix' => 'ajax'], function() {
 
     Route::get('auth', 'AjaxController@getAuth');
 
+    Route::get('info', 'AjaxController@getWebData');
+
     Route::group(['prefix' => 'account'], function() {
       Route::get('add_social_address', 'AjaxController@getAddSocialAddress');
     });
 
     Route::group(['prefix' => 'groups'], function() {
       Route::get('loadMessages', 'AjaxController@loadGroupMessage');
+      Route::get('sendJoinRequest', 'AjaxController@joinGroupRequest');
+      Route::get('joinResponse', 'AjaxController@joinGroupResponse');
       Route::get('sendMessage', 'AjaxController@sendGroupMessage');
+      //Route::get('member?n={action}', 'AjaxController@userAction');
       Route::get('writeArticle', 'AjaxController@writeGroupArticle');
     });
+
+    // User Thumbnail
+    Route::get('thumbnail', 'AjaxController@getUserThumbnail');
 });
 
 Route::fallback(function(){

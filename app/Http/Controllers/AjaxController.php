@@ -23,7 +23,10 @@ use App\Models\ArticleLikes;
 use App\Models\SocialService;
 // Groups
 use App\Models\Group;
+use App\Models\GroupMember;
 use App\Models\GroupConversation;
+use App\Models\GroupConversationAnswer;
+use App\Models\GroupJoinRequest;
 
 // Achievements
 use App\Achievements\FirstComment;
@@ -36,9 +39,9 @@ class AjaxController extends Controller
 
   public function __construct(Request $request)
   {
-    if(!$request->ajax()){
+    /*if(!$request->ajax()){
       abort(404);
-    }
+    }*/
   }
 
   public function rate(Request $request)
@@ -132,6 +135,149 @@ class AjaxController extends Controller
     $query->delete();
   }
 
+  public function getUserThumbnail(Request $request)
+  {
+      switch($request->h) {
+        case 'group':
+          $query = Group::where('id', $request->id)->first();
+          break;
+        case 'profile':
+          $query = User::where('id', $request->id)->first();
+          break;
+      }
+
+      return view('front.components.thumbnail', compact('query'))->with('type', $request->h);
+  }
+
+  public function getWebData(Request $request)
+  {
+
+      $domain = explode('.', preg_split('/[a-z:]*\/\/[ww*.*]*|\/(.*)/', $request->url)[1])[0];
+
+      /*if($service == 'youtube' && $type == 'watch') {
+        $privateKey = 'AIzaSyBvxoM_rcPn0Xt4n0T3YliNT5P0UoDuVwU';
+        $id = explode('v=', $request->url)[1];
+        $part = 'snippet';
+        $link = json_decode(file_get_contents('https://www.googleapis.com/youtube/v3/videos?id='.$id.'&key='.$privateKey.'&part=snippet'));
+        $meta = [
+          'title' => $link->items[0]->snippet->title,
+          'domain' => ucfirst(preg_split('/[a-z:]*\/\/[ww*.*]*|\/(.*)/', $request->url)[1]),
+          'url' => $request->url,
+          'description' => $link->items[0]->snippet->description,
+          'image' => $link->items[0]->snippet->thumbnails->high->url,
+        ];
+      } else {*/
+
+        function getDOMDocument($html, $request) {
+            $dom = new \DOMDocument();
+            @$dom->loadHTML($html);
+
+            function searchNode($root, $tagName, $name = null, $content = null) {
+                if($name) {
+                  foreach($root->getElementsByTagName($tagName) as $value) {
+                    if($value->getAttribute($name) == $content) {
+                      return $value->getAttribute('content');
+                    }
+                  }
+                } else {
+                    return $root->getElementsByTagName($tagName)->item(0)->nodeValue;
+                }
+            }
+
+            function searchFirstImage($root) {
+                foreach($root->getElementsByTagName('img') as $value) {
+                    return $value->getAttribute('src');
+                }
+            }
+
+            return [
+              'title' => searchNode($dom, 'title'),
+              'domain' => ucfirst(preg_split('/[a-z:]*\/\/[ww*.*]*|\/(.*)/', $request->url)[1]),
+              'url' => searchNode($dom, 'meta', 'property', 'og:url') ? searchNode($dom, 'meta', 'property', 'og:url') : $request->url,
+              'description' => searchNode($dom, 'meta', 'name', 'description') ? searchNode($dom, 'meta', 'name', 'description') : searchNode($dom, 'title'),
+              'image' => searchNode($dom, 'meta', 'property', 'og:image') ? searchNode($dom, 'meta', 'property', 'og:image') : searchFirstImage($dom),
+              'author' => searchNode($dom, 'meta', 'property', 'article:author'),
+              'published_time' => searchNode($dom, 'meta', 'property', 'article:published_time'),
+            ];
+        }
+
+        try {
+          $cURL = curl_init();
+          curl_setopt($cURL, CURLOPT_URL, $request->url);
+          curl_setopt($cURL, CURLOPT_HEADER, false);
+          curl_setopt($cURL, CURLOPT_RETURNTRANSFER, true);
+          curl_setopt($cURL, CURLOPT_FOLLOWLOCATION, true);
+          $result = curl_exec($cURL);
+          $contentType = curl_getinfo($cURL, CURLINFO_CONTENT_TYPE);
+          $mimetype = explode('/', $contentType)[0];
+          curl_close($cURL);
+
+          if($mimetype == 'image') {
+            header('Content-Type: '. $contentType);
+            echo $result;
+            return;
+          } elseif($mimetype == 'text') {
+              if($domain == 'youtube') {
+                  $type = preg_split('/youtube.[a-zA-Z]*\/|[?]/', $request->url)[1];
+                  if($type == 'watch') {
+                    $privateKey = 'AIzaSyBvxoM_rcPn0Xt4n0T3YliNT5P0UoDuVwU';
+                    $id = explode('v=', $request->url)[1];
+                    $part = 'snippet';
+                    $link = json_decode(file_get_contents('https://www.googleapis.com/youtube/v3/videos?id='.$id.'&key='.$privateKey.'&part=snippet'));
+                    $meta = [
+                      'title' => $link->items[0]->snippet->title,
+                      'domain' => ucfirst(preg_split('/[a-z:]*\/\/[ww*.*]*|\/(.*)/', $request->url)[1]),
+                      'url' => $request->url,
+                      'description' => $link->items[0]->snippet->description,
+                      'image' => $link->items[0]->snippet->thumbnails->high->url,
+                    ];
+                  } else {
+                    $meta = getDOMDocument($result, $request);
+                    $meta['title'] = $meta['description'];
+                  }
+              } else {
+                $meta = getDOMDocument($result, $request);
+              }
+          }
+        } catch(Exception $err) {
+          return;
+        }
+/*
+        $dom = new \DOMDocument();
+        @$dom->loadHTML($result);
+
+        function searchNode($root, $tagName, $name = null, $content = null) {
+            if($name) {
+              foreach($root->getElementsByTagName($tagName) as $value) {
+                if($value->getAttribute($name) == $content) {
+                  return $value->getAttribute('content');
+                }
+              }
+            } else {
+                return $root->getElementsByTagName($tagName)->item(0)->nodeValue;
+            }
+        }
+
+        function searchFirstImage($root) {
+            foreach($root->getElementsByTagName('img') as $value) {
+                return $value->getAttribute('src');
+            }
+        }
+
+        $meta = [
+          'title' => searchNode($dom, 'title'),
+          'domain' => ucfirst(preg_split('/[a-z:]*\/\/[ww*.*]*|\/(.*)/', $request->url)[1]),
+          'url' => searchNode($dom, 'meta', 'property', 'og:url') ? searchNode($dom, 'meta', 'property', 'og:url') : $request->url,
+          'description' => searchNode($dom, 'meta', 'name', 'description') ? searchNode($dom, 'meta', 'name', 'description') : searchNode($dom, 'title'),
+          'image' => searchNode($dom, 'meta', 'property', 'og:image') ? searchNode($dom, 'meta', 'property', 'og:image') : searchFirstImage($dom),
+          'author' => searchNode($dom, 'meta', 'property', 'article:author'),
+          'published_time' => searchNode($dom, 'meta', 'property', 'article:published_time'),
+        ];*/
+    //}
+
+      return view('front.components.ajax.get_info')->with(['url' => $request->url, 'node' => $meta]);
+  }
+
   /*** Commenti ***/
 
   public function loadComments(Request $request)
@@ -194,39 +340,115 @@ class AjaxController extends Controller
   public function loadGroupMessage(Request $request)
   {
       $current_page = ($request->q) ? $request->q : 1;
-      $LIMIT = 6;
 
-      $query = Group::where('id', $request->id)->first();
+      if(!$request->answer) {
+        $query = Group::where('id', $request->id)->first();
+      } else {
+        $query2 = GroupConversation::where('id', $request->id)->orderBy('created_at','asc')->first();
+        $query = Group::where('id', $query2->group_id)->first();
+      }
 
       if((Auth::user() && Auth::user()->hasMemberOf($query->id)) || $query->public) {
-        $query2 = GroupConversation::leftJoin('group_article', function($join){
-                                      $join->on('group_conversation.article_id', '=', 'group_article.id');
-                                    })
-                                    ->addSelect('group_article.id as article_id', 'group_article.title as article_title', 'group_article.text as article_text', 'group_article.cover as cover',
-                                                'group_conversation.id as id', 'group_conversation.user_id as user_id', 'group_conversation.article_id as article_id', 'group_conversation.text as text', 'group_conversation.created_at as created_at')
-                                    ->where('group_conversation.group_id', $query->id)
-                                    ->orderBy('created_at','desc')
-                                    ->skip($LIMIT * ($current_page-1))
-                                    ->take($LIMIT)
-                                    ->get();
-        return view('front.components.ajax.group.loadConversation')->with(['group' => $query, 'query' => $query2]);
+        if(!$request->answer) {
+          $LIMIT = 6;
+          $query2 = GroupConversation::leftJoin('group_article', function($join){
+                                        $join->on('group_conversation.article_id', '=', 'group_article.id');
+                                      })
+                                      ->addSelect('group_article.id as article_id', 'group_article.title as article_title', 'group_article.text as article_text', 'group_article.cover as cover',
+                                                  'group_conversation.id as id', 'group_conversation.user_id as user_id', 'group_conversation.article_id as article_id', 'group_conversation.text as text', 'group_conversation.created_at as created_at')
+                                      ->where('group_conversation.group_id', $query->id)
+                                      ->orderBy('created_at','desc')
+                                      ->skip($LIMIT * ($current_page-1))
+                                      ->take($LIMIT)
+                                      ->get();
+          return view('front.components.ajax.group.loadConversation')->with(['group' => $query, 'query' => $query2]);
+        } else {
+          $LIMIT = 1;
+          $query3 = GroupConversationAnswer::where('conversation_id', $request->id)->orderBy('created_at','desc');
+          $count = $query3->count();
+          $query3 = $query3->skip($LIMIT * ($current_page-1))->take($LIMIT)->get();;
+          return view('front.components.ajax.group.loadConversationAnswer')->with(['group' => $query, 'query' => $query3, 'count' => $count]);
+        }
+      }
+  }
+
+  public function joinGroupRequest(Request $request)
+  {
+      $query = Group::where('id', $request->id)->first();
+
+      if((Auth::user() && !Auth::user()->hasMemberOf($query->id))) {
+        if($query->public) {
+          $user = User::where('id', Auth::user()->id)->first();
+          GroupMember::create([
+            'group_id' => $query->id,
+            'user_id' => Auth::user()->id,
+            'permission_level' => 'User'
+          ]);
+        } else {
+          $join = new GroupJoinRequest();
+          $join->group_id = $query->id;
+          $join->user_id = Auth::user()->id;
+          $join->save();
+          return Response::json(['message' => 'Richiesta di iscrizione al gruppo inviata.']);
+        }
+      }
+  }
+
+  public function joinGroupResponse(Request $request)
+  {
+      $req = GroupJoinRequest::where('id', $request->id)->first();
+
+      $query = GroupMember::where('user_id', Auth::user()->id)
+                          ->where('group_id', $req->group_id)
+                          ->first();
+
+      if(Auth::user() && ($query->permission_level == 'Administrator' || $query->permission_level == 'Moderator')) {
+          if($request->res) {
+            $user = User::where('id', $req->user_id)->first();
+              if(!empty($user->id_gruppo)) {
+                $user->id_gruppo = $query->id_gruppo. ",". $req->group_id;
+              } else {
+                $user->id_gruppo = $req->group_id;
+              }
+            $user->save();
+            GroupMember::create([
+              'group_id' => $req->group_id,
+              'user_id' => $user->id,
+              'permission_level' => 'User'
+            ]);
+            $req->delete();
+          } else {
+            $req->delete();
+          }
       }
   }
 
   public function sendGroupMessage(Request $request)
   {
-      $post = $request->post;
-      $query = Group::where('id', $request->id)->first();
+      if(!$request->reply) {
+        $query = Group::where('id', $request->id)->first();
+        $group_id = $query->id;
+      } else {
+        $query = GroupConversation::where('id', $request->id)->first();
+        $group_id = $query->group_id;
+      }
+      if(!empty($request->post) && Auth::user()->hasMemberOf($group_id)) {
 
-      if(!empty($post) && Auth::user()->hasMemberOf($query->id)) {
-
-        $query2 = GroupConversation::create([
-          'user_id' => Auth::user()->id,
-          'text' => $post,
-          'group_id' => $query->id
-        ]);
-
-        return view('front.components.ajax.group.uploadConversation')->with(['post' => $query2]);
+        if(!$request->reply) {
+          $query2 = GroupConversation::create([
+            'group_id' => $query->id,
+            'user_id' => Auth::user()->id,
+            'text' => $request->post,
+          ]);
+          return view('front.components.ajax.group.uploadConversation')->with(['post' => $query2]);
+        } else {
+          $query2 = GroupConversationAnswer::create([
+            'conversation_id' => $request->id,
+            'user_id' => Auth::user()->id,
+            'text' => $request->post
+          ]);
+          return view('front.components.ajax.group.uploadConversationAnswer')->with(['post' => $query2]);
+        }
       }
   }
 

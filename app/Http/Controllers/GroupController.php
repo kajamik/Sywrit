@@ -16,6 +16,7 @@ use App\Models\GroupConversation;
 use App\Models\GroupArticle;
 use App\Models\GroupArticleCommit;
 use App\Models\GroupArticleCorrection;
+use App\Models\GroupJoinRequest;
 
 // SEO
 use SEOMeta;
@@ -27,9 +28,9 @@ class GroupController extends Controller
 
     public function index($group_id, Request $request)
     {
-        $query = Group::find($group_id)->firstOrFail();
+        $query = Group::where('id', $group_id)->firstOrFail();
 
-          SEOMeta::setTitle($query->name.' - Sywrit', false);
+        SEOMeta::setTitle($query->name.' - Sywrit', false);
 
         $INDEX_LIMIT = 9;
         $current_page = ($request->page) ? $request->page : 1;
@@ -207,6 +208,12 @@ class GroupController extends Controller
         $query->avatar = asset('sf/g/'. $fileName);
       }
       $query->description = $request->description;
+
+      if($request->status == "public") {
+        $query->public = '1';
+      } else {
+        $query->public = '0';
+      }
       $query->save();
 
       $user = User::find(Auth::user()->id);
@@ -220,11 +227,6 @@ class GroupController extends Controller
       $user->save();
 
       GroupMember::create([
-        'user_id' => Auth::user()->id,
-        'group_id' => $query->id
-      ]);
-
-      GroupPermission::create([
         'user_id' => Auth::user()->id,
         'group_id' => $query->id,
         'permission_level' => 'Administrator'

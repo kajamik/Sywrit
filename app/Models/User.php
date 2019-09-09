@@ -155,8 +155,8 @@ class User extends Authenticatable
       return \DB::table('articoli')->where('id_autore', $this->id)->get();
     }
 
-    public function groupPermission()
+    public function groupInfo()
     {
-      return $this->belongsTo('App\Models\GroupPermission', 'id', 'user_id');
+      return $this->belongsTo('App\Models\GroupMember', 'id', 'user_id');
     }
 }

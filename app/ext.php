@@ -82,39 +82,6 @@ function convertImages($source, $file)
     }
 }
 
-function showCommit($query, $result)
-{
-    $commit_all = DB::table('group_article_commit')->where('article_id', $query->id)->get();
-
-    foreach($commit_all as $commit) {
-      $cor = \DB::table('group_article_correction')->where('commit_id', $commit->id)->orderBy('created_at', 'desc')->get();
-
-      foreach($cor as $value) {
-        $result = substr_replace($result, "<span class='add'><a href='$commit->article_id/commit/$commit->id'>". $value->new_word ."</a></span>", $value->start, strlen($value->replaced_word));
-        //$result = substr_replace($result, "<span class='add'><a href='$commit->article_id/commit/$commit->id'>". $value->new_word ."</a></span>", $value->start, strlen($value->replaced_word));
-      }
-    }
-
-    return $result;
-}
-
-function makeCorrection($query, $result)
-{
-    /*$commit_all = DB::table('group_article_commit')->where('article_id', $query->id)->get();
-
-    foreach($commit_all as $commit) {
-      $cor = \DB::table('group_article_correction')->where('commit_id', $commit->id)->orderBy('created_at', 'desc')->get();
-
-      foreach($cor as $value) {
-        $user = \DB::table('users')->where('id', $commit->user_id)->first();
-        $result = substr_replace($result, "<span class='add'><a href='$commit->article_id/commit/$commit->id'>". $value->new_word ."</a></span>", $value->start, strlen($value->replaced_word));
-        //$result = substr_replace($text_without_html, $value->start, strlen($value->replaced_word), "<span class='add'><a href='$commit->article_id/commit/$value->id'>". $value->new_word ."</a></span>", $result);
-      }
-    }
-
-    return $result;*/
-}
-
 function equals($pattern, $first, $second)
 {
     $first = preg_split($pattern, $first)[1];
@@ -124,4 +91,50 @@ function equals($pattern, $first, $second)
     } else {
       return false;
     }
+}
+
+/*
+  return array commited
+*/
+function getDiff($a, $b)
+{
+    $arr3 = array();
+    $k = $q = 0;
+
+    for($i = 0; $i < count($a); $i++) {
+      $a[$i] = strip_tags($a[$i]);
+      $b[$i] = strip_tags($b[$i]);
+      if($a[$i] == $b[$i]) {
+        array_push($arr3, ['str' => $a[$i]]);
+      } else {
+        $prec = explode(' ', $a[$i]);
+        $cur = explode(' ', $b[$i]);
+        $prec = array_pad($prec, max(count($prec), count($cur)), null);
+        $cur = array_pad($cur, max(count($prec), count($cur)), null);
+        foreach($cur as $index => $value) {
+          /*if($value != $prec[$index]) {
+            if(!isset($dif)) {
+              $diff = 1;
+            }
+            if(!empty($prec[$index])) {
+              array_splice($prec, $index, 1, '<medium class="bg-commit-strong-less">'. $prec[$index] . '</medium>');
+            }
+            array_splice($cur, $index, 1, '<medium class="bg-commit-strong-plus">'. $value. '</medium>');
+          }*/
+        }
+        if(isset($diff)) {
+          $a[$i] = implode(' ', $prec);
+          $b[$i] = implode(' ', $cur);
+        }
+        array_push($arr3, ['tag' => 'remove', 'str' => $a[$i]]);
+        array_push($arr3, ['tag' => 'add', 'str' => $b[$i]]);
+      }
+      $k++;
+    }
+
+    for(; $k < count($b); $k++) {
+      array_push($arr3, ['tag' => 'add', 'str' => $b[$k]]);
+    }
+
+    return $arr3;
 }

@@ -13,5 +13,8 @@
       <span>{!! $query->biography !!}</span>
     @endif
     </div>
+    <div class="mt-2">
+    <button class="btn btn-sw btn-block"><i class="fa fa-plus"></i> Segui</button>
+    </div>
   </div>
 </div>

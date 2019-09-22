@@ -18,7 +18,6 @@
                     <span>{{ $value->topic_name }}</span>
                   @endif
                   <h5 class="card-title" title="{{ $value->article_title }}">{{ str_limit($value->article_title, 33) }}</h5>
-                  <p>{!! str_limit(preg_replace('/(<.*?>)|(&.*?;)/', '', $value->article_text), 100) !!}</p>
                   <p>
                     @if($value->bot_message == '1')
                       {{ __('label.article.bot_message') }}

@@ -92,7 +92,20 @@ class GroupController extends Controller
                             ->where('group_id', $group_id)
                             ->first();
 
+        SEOMeta::setTitle('Modifica articolo - Sywrit', false);
+
         return view('front.pages.group.article.edit', compact('query'));
+    }
+
+    public function getArticleCommits($group_id, $article_id)
+    {
+        $article = GroupArticle::where('id', $article_id)->first();
+
+        $query = GroupArticleCommit::where('article_id', $article->id)->orderBy('created_at', 'desc')->paginate(6);
+
+        SEOMeta::setTitle('Correzioni - Sywrit', false);
+
+        return view('front.pages.group.article.commits', compact('query', 'group_id', 'article'));
     }
 
     public function getArticleCommit($group_id, $article_id, $commit_id)
@@ -101,7 +114,7 @@ class GroupController extends Controller
 
         SEOMeta::setTitle('Commit #'. $query->id .' - Sywrit', false);
 
-        return view('front.pages.group.article.commit', compact('query'));
+        return view('front.pages.group.article.commit', compact('query', 'group_id'));
     }
 
     public function getMembers($group_id)
@@ -290,6 +303,66 @@ class GroupController extends Controller
         ]);
 
         return redirect('groups/'. $group_id. '/article/'. $query->id);
+    }
+
+    public function postArticleEdit($group_id, $article_id, Request $request)
+    {
+      $testo = $request->document__text;
+
+      if(preg_match('/<img*/', $testo)) {
+        $testo = $this->convertImages($testo, array('name' => Str::random(16).'.'.Str::random(32),'path' => public_path('sf/ct/')));
+      }
+
+      $query = GroupArticle::where('id', $article_id)->first();
+
+      $this->validate($request, [
+        'document__text' => 'required',
+      ],[
+        'document__text.required' => 'Non è consentito pubblicare un articolo senza contenuto'
+      ]);
+
+      if(!Auth::user()->suspended && ($query->group_id > 0 && Auth::user()->hasMemberOf($query->group_id) || Auth::user()->id == $query->author_id)) {
+
+        $old_text = $query->text;
+        $query->text = $testo;
+
+        if($a = $request->image){
+          $this->validate($request,[
+            'image' => 'image|mimes:jpeg,jpg,png',
+          ],[
+            'image.image' => 'Devi inserire un\'immagine',
+            'image.mimes'  => 'Formato immagine non valido',
+          ]);
+
+          deleteFile( public_path('sf/ct/'. $query->cover) );
+
+          $fileName = '__492x340'.Str::random(64).'.jpg';
+
+          uploadFile($a, array(
+            'name' => $fileName,
+            'path' => public_path('sf/ct/'),
+            'width' => '492',
+            'height' => '340',
+            'mimetype' => 'jpg',
+            'quality' => '100'
+          ));
+
+          $query->cover = asset('sf/ct/'. $fileName);
+        }
+        $query->save();
+
+        if($old_text != $testo) {
+          GroupArticleCommit::create([
+            'article_id' => $article_id,
+            'user_id' => Auth::user()->id,
+            'old_text' => $old_text,
+            'new_text' => $testo,
+            'note' => null
+          ]);
+        }
+
+      }
+      return redirect()->back();
     }
 
     public function postSettings($slug,Request $request)

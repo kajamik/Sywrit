@@ -16,7 +16,8 @@ class Locale {
      */
     public function handle($request, Closure $next)
     {
-        App::setLocale(explode(config('lang.trans.split'), session(config('lang.trans.session.name')))[0]);
+        //App::setLocale(explode(config('lang.trans.split'), session(config('lang.trans.session.name')))[0]);
+        App::setLocale('it');
         return $next($request);
     }
 

@@ -29,9 +29,9 @@
         <div class="publisher-info">
           @if($query->author_id == Auth::user()->id)
             @include('front.components.article.options')
-          @elseif(Auth::user()->groupPermission->hasStaff())
+          @elseif(Auth::user()->groupInfo->hasStaff())
           <ul class="d-flex bg-sw p-2 mb-3">
-            <li><a href="{{ url('groups/'. $query->group_id.'/article/'. $query->id .'/edit') }}">@lang('label.article.edit')</a></li>
+            <li><a href="{{ url('groups/'. $query->group_id .'/article/'. $query->id .'/edit') }}">@lang('label.article.edit')</a></li>
           </ul>
           @endif
         </div>
@@ -49,7 +49,7 @@
           </div>
           <hr/>
           <div class="block-body">
-            {!! showCommit($query, $query->text) !!}
+            {!! $query->text !!}
           </div>
       </article>
     </div>

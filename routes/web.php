@@ -134,11 +134,13 @@ Route::group(['prefix' => 'groups'], function() {
   Route::get('{id}/about', 'GroupController@getAbout');
   Route::get('{id}/article/{post_id}', 'GroupController@getArticle');
   Route::get('{id}/article/{post_id}/edit', 'GroupController@getArticleEdit');
+  Route::get('{id}/article/{post_id}/commits', 'GroupController@getArticleCommits');
   Route::get('{id}/article/{post_id}/commit/{commit_id}', 'GroupController@getArticleCommit');
   Route::get('{id}/members', 'GroupController@getMembers');
   Route::get('{id}/write', 'GroupController@getNewArticle');
 
   Route::post('{id}/write', 'GroupController@postNewArticle');
+  Route::post('{id}/article/{post_id}/edit', 'GroupController@postArticleEdit');
 
   Route::namespace('GroupAdmin')->group(function() {
     Route::get('{id}/admin/requests', 'RequestController@getJoinRequests');
@@ -179,11 +181,13 @@ Route::group(['prefix' => 'ajax'], function() {
     });
 
     Route::group(['prefix' => 'groups'], function() {
+      Route::get('loadMembers', 'AjaxController@loadMembers');
       Route::get('loadMessages', 'AjaxController@loadGroupMessage');
       Route::get('sendJoinRequest', 'AjaxController@joinGroupRequest');
       Route::get('joinResponse', 'AjaxController@joinGroupResponse');
       Route::get('sendMessage', 'AjaxController@sendGroupMessage');
-      //Route::get('member?n={action}', 'AjaxController@userAction');
+      Route::get('member', 'AjaxController@userAction');
+      Route::get('post', 'AjaxController@postAction');
       Route::get('writeArticle', 'AjaxController@writeGroupArticle');
     });
 

@@ -1,7 +1,6 @@
 <div class="col-12">
   <p>{{ $count }} commenti</p>
 </div>
-<hr/>
 @if($query->count())
 @foreach($query as $value)
 <div class="card-body">
@@ -26,10 +25,6 @@
       </div>
       @endif
       @if(Auth::user() && $value->user_id != Auth::user()->id)
-      <hr/>
-      <div class="col-md-12">
-        <button id="reply_{{ $value->id }}" class="btn btn-link">@lang('label.reply')</button>
-      </div>
       <script>
       $("#report_comment_a{{ $value->id }}").click(function(){
         App.getUserInterface({
@@ -63,14 +58,24 @@
     </script>
       @endif
     </div>
-  <hr/>
+
   <div class="col-md-12">
     {{ $value->created_at->diffForHumans() }}
   </div>
 </div>
 @endforeach
 @endif
-
+<hr/>
+<div class="p-0 col-md-12">
+  <div class="d-flex">
+    <img style="height:4em" class="p-2 d-none d-md-block" src="{{ Auth::user()->getAvatar() }}" />
+    <div class="dialog_box">
+      <div class="dialog_editor">
+        <div id="d_325" class="dialog_editor__editable" contenteditable="true" role="textarea" data-placeholder="Invia un commento"></div>
+      </div>
+    </div>
+  </div>
+</div>
 @if($count > 0)
 <button type="button" class="btn btn-sw btn-block">
   Carica altre risposte

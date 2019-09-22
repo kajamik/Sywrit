@@ -15,16 +15,15 @@
 .dialog_box {
   width: 100%;
   height: 100%;
-  border: 1px solid #000;
-  border-radius: 4px;
+  border: 1px solid #eee;
 }
 .dialog_editor {
-  height: 100%;
-  min-height: 40px;
+  padding: 6px;
+  min-height: 100px;
   cursor: text;
 }
 .dialog_editor__editable:empty:before {
-    content: attr(data-text);
+    content: attr(data-placeholder);
     color: gray;
 }
 .dialog_editor__editable {
@@ -34,9 +33,8 @@
   color: #000;
   font-size: 16px;
 }
-.dialog_editor__editable:focus {
-  outline: none;
-  min-height: 70px;
+.dialog_editor__preview {
+  max-height: 120px;
 }
 .dialog_editor__preview_close {
   position: absolute;
@@ -47,6 +45,7 @@
   cursor: pointer;
 }
 </style>
+<script type="module" src="{{ asset('js/syw/view/tag.js') }}"></script>
   @include('front.components.group.top_bar')
   <div class="publisher-content">
     <div class="py-3">
@@ -59,7 +58,7 @@
                   <p><a href="{{ url('groups/'. $query->id. '/admin/requests') }}">Ci sono ({{ $query->requests() }}) nuove richieste di iscrizione.</a></p>
                 @endif
                   <div class="col-md-12">
-                    <ul class="tab tab-font-md bg-sw">
+                    <ul class="tab tab-font-md bg-sw" role="tab">
                       <li class="tab-active" tab="#state"><a href="#">Conversazione</a></li>
                       <li tab="#article"><a href="#">Articolo</a></li>
                     </ul>
@@ -70,18 +69,16 @@
                             <div class="form-group row">
                               <div class="col-md-12">
                                 <div class="dialog_box">
-                                  <div class="dialog_editor form-control">
-                                    <div class="dialog_editor__editable" contenteditable="true" data-text="Inizia a conversare"></div>
+                                  <div class="dialog_editor">
+                                    <div id="d_323" class="dialog_editor__editable" contenteditable="true" data-placeholder="Inizia a conversare"></div>
                                   </div>
                                 </div>
                               </div>
-                            </div>
-                            <div class="form-group row mb-0">
-                                <div class="col-md-12">
-                                    <button type="button" class="btn btn-sw btn-block">
-                                        Pubblica
-                                    </button>
-                                </div>
+                              <div class="col-md-12">
+                                  <button id="pubstate" type="button" class="btn btn-sw btn-block" data-node-submit=".dialog_box.post">
+                                      Pubblica
+                                  </button>
+                              </div>
                             </div>
                         </form>
                       </div>
@@ -96,12 +93,15 @@
                   </div>
 
               @else
-              <button type="button" class="btn btn-sw btn-block">
+              <button type="button" id="sb_gp" class="btn btn-sw btn-block">
                 <i class="fa fa-plus"></i> Iscriviti al gruppo
               </button>
               @endif
 
               <hr/>
+              <div id="load_feeds" class="col-12 text-center">
+                <img src="{{ asset('upload/icons/spinner-large.gif') }}" alt="loading"/>
+              </div>
                 <div id="conversations" class="py-3 col-md-12"></div>
                     <script>
                     var q = 1;
@@ -112,28 +112,41 @@
 
                     @if(Auth::user())
                       @if(Auth::user()->hasMemberOf($query->id))
-                        $("button").click(function() {
-                          $.get("{{ url('ajax/groups/sendMessage') }}", { id: {{ $query->id }}, post: $("textarea").val(), reply: 0 }, function(data) {
-                              $("textarea").val('');
+                        $(document).on('click', '#pubstate', function() {
+                          $.get("{{ url('ajax/groups/sendMessage') }}", { id: {{ $query->id }}, post: $("#d_323").text(), reply: 0 }, function(data) {
+                              $("#d_323").empty();
                               $(data).prependTo($("#conversations"));
                           });
                         });
+                        {{--
+                        $(document).on('keypress', '#d_325', function() {
+                          if($(this).text().length > 0 && event.which === 13 && !event.shiftKey) {
+                            $.get("{{ url('ajax/groups/sendMessage') }}", { id: {{ $value->id }}, post: $(this).text(), reply: 1 }, function(data) {
+                              $(this).empty();
+                              $("#conversations_{{ $value->id }} > .card-body").after(data);
+                            });
+                          }
+                        });
+                        --}}
                       @else
-                      $("button").click(function() {
-                        App.query("get","{{ url('ajax/groups/joinRequest') }}", { id: {{ $query->id }} },false,function(data) {
-                          App.getUserInterface({
-                            "ui": {
-                              "title": "Richiesta inviata",
-                              "content": [
-                                {"type": ["h5"], "text": "Hai inviato la richiesta agli amministratori del gruppo."}
-                              ]
-                            }
-                          });
+                      $("button#sb_gp").click(function() {
+                        App.query("get","{{ url('ajax/groups/sendJoinRequest') }}", { id: {{ $query->id }} },false,function(data) {
+                          window.location.reload();
+                          if(data.message) {
+                            App.getUserInterface({
+                              "ui": {
+                                "title": "Richiesta inviata",
+                                "content": [
+                                  {"type": ["h5"], "text": data.message}
+                                ]
+                              }
+                            });
+                          }
                         });
                       });
                       @endif
                     @else
-                    $("button").click(function() {
+                    $("button#sb_gp").click(function() {
                       $.get("{{ url('ajax/auth') }}", {path: '{{ Request::path() }}', callback: 'auth_login'}, function(data) {
                         App.getUserInterface({
                           "ui": {
@@ -147,6 +160,7 @@
 
                     function updateConversations() {
                       $.get("{{ url('ajax/groups/loadMessages') }}",{ id: {{ $query->id }}, q: this.q, answer: 0 }, function(data) {
+                        $("#load_feeds").css('display','none');
                         if(data) {
                           $("#conversations").append(data);
                           q++;
@@ -156,33 +170,14 @@
                       });
                     }
 
-                    // TAB
-
-                    $(".tab > li").each(function(i, items) {
-                      var tab = $(items).attr("tab");
-                      if($(items).attr("class") != "tab-active") {
-                        $(".tab-content > div" + tab).css('display', 'none');
-                      }
-                    });
-                    $(".tab").on('click', 'li', function() {
-                      if($(this).attr('class') != "tab-active") {
-                        $('.tab > li').removeClass('tab-active');
-                        $(this).addClass('tab-active');
-                        $(".tab-content > div").css('display', 'none');
-                        $(".tab-content > div" + $(this).attr("tab")).css('display', 'block');
-                      }
-                      return false;
-                    });
-
-                    $(".dialog_editor__editable").on('input', function() {
+                    $(document).on('input', '.dialog_editor__editable', function() {
                       var $this = $(this);
                       var $text = $(this).text();
                       var $exp = new RegExp('[a-z:]*\/\/[ww*.*]*|\/(.*)');
                       if($text.match($exp) && $(".dialog_preview").length == 0) {
                         $.get("{{ url('ajax/info') }}", {url: $text}, function(data) {
-                          $this.parent().after("<div class='dialog_preview'><hr/><div class='dialog_preview_close'>&times;</div>"+ data +"</div>");
-
-                          $(".dialog_preview_close").on('click', function() {
+                          $this.parent().after("<div class='dialog_preview'><hr/><div class='dialog_editor__preview_close'>&times;</div>"+ data +"</div>");
+                          $(".dialog_editor__preview_close").on('click', function() {
                             $(".dialog_preview").remove();
                           });
                         });
@@ -196,7 +191,7 @@
               <div class="sw-component">
                 {{--<div class="sw-component-header bg-sw">Amministratori</div>
                 <div class="sw-item p-3">
-                  @foreach($query->getAdministrators(5) as $value)
+                  @foreach($query->getAdministrators(0, 5) as $value)
                   <a class="thumbnail" href="{{ url($value->slug) }}" data-card-url="/ajax/thumbnail/?id={{ $value->id }}&h=profile">
                     <img class="u-icon img-circle" src="{{ $value->avatar }}">
                   </a>
@@ -206,7 +201,7 @@
                   <div class="sw-component-header bg-sw">({{ $query->getMembers()->count() }}) Membri</div>
                 </a>
                 <div class="sw-item p-3">
-                  @foreach($query->getMembers(5) as $value)
+                  @foreach($query->getMembers(0, 5) as $value)
                   <a class="thumbnail" href="{{ url($value->slug) }}" data-card-url="/ajax/thumbnail/?id={{ $value->id }}&h=profile">
                     <img class="u-icon img-circle" src="{{ $value->avatar }}">
                   </a>

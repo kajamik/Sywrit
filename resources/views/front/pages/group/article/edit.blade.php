@@ -34,7 +34,7 @@
           <div class="form-group row">
             <div class="col-md-12">
               <div class="document">
-                {!! readCorrection($query, $query->text) !!}
+                {!! $query->text !!}
               </div>
             </div>
           </div>

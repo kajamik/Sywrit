@@ -25,17 +25,6 @@
         </a>
         </div>
         @endif
-        @if(Auth::user() && $value->user_id != Auth::user()->id)
-        <hr/>
-        <div class="col-md-12">
-          <div class="d-flex">
-            <img style="height:4em" class="p-2" src="{{ Auth::user()->getAvatar() }}" />
-            <div class="dialog_editor">
-              <div class="dialog_editor__editable" contenteditable="true" data-text="Inizia a conversare"></div>
-            </div>
-          </div>
-        </div>
-        @endif
       </div>
 
       <div class="ml-auto">
@@ -64,7 +53,6 @@
 
   <script>
   updateAnswers();
-
   function updateAnswers() {
     $.get("{{ url('ajax/groups/loadMessages') }}",{ id: {{ $value->id }}, q: this.q, answer: 1 }, function(data) {
       if(data) {
@@ -79,7 +67,7 @@
   $("#report_msg_{{ $value->id }}").click(function(){
     App.getUserInterface({
     "ui": {
-      "header":{"action": "{{ route('comment/action/report' )}}", "method": "GET"},
+      "header":{"action": "{{ route('comment/action/report') }}", "method": "GET"},
       "data":{"id": "{{ $value->id }}", "selector": "#selOption:checked", "text": "#reasonText"},
       "title": 'Segnala commento',
       "content": [
@@ -105,13 +93,23 @@
     } // -- End Interface --
   });
   });
-
-  $(".dialog_editor__editable").on('keypress', function() {
-    if($(this).text().length > 0 && event.which === 13 && !event.shiftKey) {
-      $.get("{{ url('ajax/groups/sendMessage') }}", { id: {{ $value->id }}, post: $(this).text(), reply: 1 }, function(data) {
-        $("#conversations_{{ $value->id }} > .card-body").after(data);
-      });
-    }
+  @elseif(Auth::user() && ($value->user_id == Auth::user()->id || Auth::user()->groupInfo->hasStaff()))
+  $("#delete_msg_{{ $value->id }}").click(function(){
+    App.getUserInterface({
+      "ui": {
+        "theme": "",
+        "header":{"action": "{{ url('ajax/groups/post') }}", "method": "GET"},
+        "data":{"id": "{{ $value->id }}", "action": "delete"},
+        "title": "Eliminazione commento",
+        "content": [
+          {"type": ["h5"], "text": "Confermi di eliminare questo commento?"},
+          {"type": ["button"], "class": "btn btn-sw", "text": "Conferma"}
+        ],
+        "done": function(){
+          $(this).fadeOut();
+        }
+      }
+    });
   });
   @endif
   </script>

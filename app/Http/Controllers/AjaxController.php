@@ -242,39 +242,6 @@ class AjaxController extends Controller
         } catch(Exception $err) {
           return;
         }
-/*
-        $dom = new \DOMDocument();
-        @$dom->loadHTML($result);
-
-        function searchNode($root, $tagName, $name = null, $content = null) {
-            if($name) {
-              foreach($root->getElementsByTagName($tagName) as $value) {
-                if($value->getAttribute($name) == $content) {
-                  return $value->getAttribute('content');
-                }
-              }
-            } else {
-                return $root->getElementsByTagName($tagName)->item(0)->nodeValue;
-            }
-        }
-
-        function searchFirstImage($root) {
-            foreach($root->getElementsByTagName('img') as $value) {
-                return $value->getAttribute('src');
-            }
-        }
-
-        $meta = [
-          'title' => searchNode($dom, 'title'),
-          'domain' => ucfirst(preg_split('/[a-z:]*\/\/[ww*.*]*|\/(.*)/', $request->url)[1]),
-          'url' => searchNode($dom, 'meta', 'property', 'og:url') ? searchNode($dom, 'meta', 'property', 'og:url') : $request->url,
-          'description' => searchNode($dom, 'meta', 'name', 'description') ? searchNode($dom, 'meta', 'name', 'description') : searchNode($dom, 'title'),
-          'image' => searchNode($dom, 'meta', 'property', 'og:image') ? searchNode($dom, 'meta', 'property', 'og:image') : searchFirstImage($dom),
-          'author' => searchNode($dom, 'meta', 'property', 'article:author'),
-          'published_time' => searchNode($dom, 'meta', 'property', 'article:published_time'),
-        ];*/
-    //}
-
       return view('front.components.ajax.get_info')->with(['url' => $request->url, 'node' => $meta]);
   }
 
@@ -367,9 +334,17 @@ class AjaxController extends Controller
           $query3 = GroupConversationAnswer::where('conversation_id', $request->id)->orderBy('created_at','desc');
           $count = $query3->count();
           $query3 = $query3->skip($LIMIT * ($current_page-1))->take($LIMIT)->get();;
-          return view('front.components.ajax.group.loadConversationAnswer')->with(['group' => $query, 'query' => $query3, 'count' => $count]);
+          return view('front.components.ajax.group.loadConversationAnswer')->with(['group' => $query, 'chat' => $query2,'query' => $query3, 'count' => $count]);
         }
       }
+  }
+
+  public function loadMembers(Request $request)
+  {
+      $current_page = ($request->q) ? $request->q : 2;
+      $query = Group::find($request->id);
+
+      return view('front.components.ajax.group.get_members', compact('query', 'current_page'));
   }
 
   public function joinGroupRequest(Request $request)
@@ -377,13 +352,20 @@ class AjaxController extends Controller
       $query = Group::where('id', $request->id)->first();
 
       if((Auth::user() && !Auth::user()->hasMemberOf($query->id))) {
+
         if($query->public) {
-          $user = User::where('id', Auth::user()->id)->first();
           GroupMember::create([
             'group_id' => $query->id,
             'user_id' => Auth::user()->id,
             'permission_level' => 'User'
           ]);
+          $user = User::where('id', Auth::user()->id)->first();
+          if(!empty($user->id_gruppo)) {
+            $user->id_gruppo = $query->id_gruppo. ",". $query->id;
+          } else {
+            $user->id_gruppo = $query->id;
+          }
+          $user->save();
         } else {
           $join = new GroupJoinRequest();
           $join->group_id = $query->id;
@@ -449,6 +431,27 @@ class AjaxController extends Controller
           ]);
           return view('front.components.ajax.group.uploadConversationAnswer')->with(['post' => $query2]);
         }
+      }
+  }
+
+  // post?id=&action={delete, report}
+  public function postAction(Request $request)
+  {
+      try {
+        return \Debugbar::info($request);
+        $post_id = $request->id;
+        switch($request->action) {
+          case 'delete':
+            $conversation = GroupConversation::find($request->id);
+            return \Debugbar::info($conversation);
+            if(!empty($conversation->article_id)) {
+              GroupArticle::find($conversation->article->id)->delete();
+            }
+            $conversation->delete();
+          break;
+        }
+      } catch(Exception $e) {
+          return \Debugbar::info('Impossibile cancellare il post');
       }
   }
 

@@ -31,8 +31,17 @@
     </div>
     <nav class="publisher-nav">
       <ul id='nav'>
-        <li><a href="{{ url('groups/'. $query->slug) }}">Bacheca</a></li>
-        <li><a href="{{ url('groups/'. $query->slug.'/about') }}">Informazioni</a></li>
+        <li class="dropdown">
+            <a class="dropdown-toggle" href="#" data-toggle="dropdown">Bacheca</a>
+            <div class="dropdown-menu" role="menu">
+              @if(Auth::user()->groupInfo->isAdmin())
+                <a class="dropdown-item" href="{{ url('groups/'. $query->id. '/admin') }}">Gestione gruppo</a>
+              @endif
+              @if(Auth::user()->hasMemberOf($query->id))
+                <a class="dropdown-item" href="#">Abbandona gruppo</a>
+              @endif
+            </div>
+        </li>
       </ul>
     </nav>
     <hr/>

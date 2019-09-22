@@ -41,12 +41,14 @@ class Group extends Model
       return $collection;
     }
 
-    public function getMembers($limit = -1)
+    public function getMembers($skip = 0, $limit = -1)
     {
       $query = \DB::table('group_member')
                     ->join('users', 'group_member.user_id', '=', 'users.id')
                     ->where('group_member.group_id', $this->id);
-
+      if($skip > 0) {
+        $query = $query->skip($skip);
+      }
       if($limit > 0) {
         $query = $query->limit($limit);
       }

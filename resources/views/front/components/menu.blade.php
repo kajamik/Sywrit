@@ -116,6 +116,9 @@
             </div>
             <div class="notification-content">
               <div class="data-notification">
+                <div id="load_notifications" class="col-12 text-center">
+                  <img src="{{ asset('upload/icons/spinner-small.gif') }}" alt="loading"/>
+                </div>
               </div>
             </div>
           </div>

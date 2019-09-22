@@ -18,7 +18,7 @@ class AdminComposer {
       if(Auth::check() && Auth::user()->permission >= 3) {
         \Debugbar::enable();
       } else {
-        \Debugbar::disable();
+        //\Debugbar::disable();
       }
     }
 

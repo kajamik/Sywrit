@@ -95,25 +95,20 @@
   <script type="text/javascript">
     var message_count = 0;
     $(function(){
-      //notifications();
+      notifications();
       $("#notifications").click(function(){
         fetch_live_notifications();
       });
     });
     function notifications() {
-        $.get("{{ url('ajax/notification') }}",
-          function(a) {
+        $.get("{{ url('ajax/notifications') }}", function(a) {
             if(a.unseen_notification > 0) {
               $(".badge-notification").text(a.unseen_notification);
                 /*$.each(a.f,  function(index, item) {
                   notify("{{ env('APP_NAME', 'Sywrit') }}", "Leggi l'articolo di " + item.user_name + ": "+ item.article_title, "read/"+item.article_slug, item.article_img);
                 });*/
-              } else {
-                $(".badge-notification").text("0");
               }
-          }).always(function(a) {
-            setTimeout(notifications, 9500);
-      });
+          });
     }
     fetch_live_notifications = function(){
       App.query("get","{{ route('live_notif') }}",null,false,function(data){

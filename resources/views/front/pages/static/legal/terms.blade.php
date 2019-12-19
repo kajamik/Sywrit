@@ -3,12 +3,12 @@
  @php
     SEOMeta::setTitle('Termini e condizioni - Sywrit', false);
   @endphp
-  
+
 @section('main')
   <div class="publisher-home">
     <div class="publisher-body">
       <h1>Termini e condizioni</h1>
-      <p>Si prega di leggere attentamente questi Termini e Condizioni ("Termini", "Termini e condizioni") prima di utilizzare il sito https://www.sywrit.com (il "Servizio") gestito da Sywrit ("noi", "noi" o "nostro"). L'accesso e l'utilizzo del Servizio sono subordinati all'accettazione e al rispetto delle presenti Condizioni. Le presenti Condizioni si applicano a tutti i visitatori, utenti e altri che accedono o utilizzano il Servizio. Consultare gli <a href="{{ url('page/standards')}}" target="_blank" style="color:#007bff;">Standard della Community</a> per informazioni approfondite sull’ utilizzo del servizio. </p>
+      <p>Si prega di leggere attentamente questi Termini e Condizioni ("Termini", "Termini e condizioni") prima di utilizzare il sito https://www.sywrit.com (il "Servizio") gestito da Sywrit ("noi", "noi" o "nostro"). L'accesso e l'utilizzo del Servizio sono subordinati all'accettazione e al rispetto delle presenti Condizioni. Le presenti Condizioni si applicano a tutti i visitatori, utenti e altri che accedono o utilizzano il Servizio. Consultare le <a href="{{ url('page/standards')}}" target="_blank" style="color:#007bff;">Linee guida</a> per informazioni approfondite sull’ utilizzo del servizio. </p>
       <p>Accedendo o utilizzando il Servizio accetti di essere vincolato da questi Termini. Se non si è d'accordo con qualsiasi parte dei termini, non si può accedere al servizio.</p>
 
         <h2>Normativa sui dati</h2>

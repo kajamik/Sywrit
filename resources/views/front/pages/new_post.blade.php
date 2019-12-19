@@ -105,15 +105,41 @@
 
     <div class="form-group row">
         <div class="col-md-6 offset-md-4">
-            <button type="submit" class="btn btn-primary">
-                @lang('button.publish')
+          <div class="btn-group">
+            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              @lang('button.publish')
+            </button>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="#save">@lang('button.save')</a>
+              <a class="dropdown-item" href="#publish">@lang('button.publish')</a>
+              <a class="dropdown-item" href="#scheduling" onclick="schedule();">@lang('button.scheduling')</a>
+            </div>
+            <!--<button type="button" class="btn btn-primary">
+                @lang('button.scheduling')
             </button>
             <button type="submit" class="btn btn-primary" name="save" value="1">
                 @lang('button.save')
-            </button>
+            </button>-->
         </div>
     </div>
+  </div>
 
+  <script>
+  function schedule() {
+    App.getUserInterface({
+      "ui": {
+        "header":{"action": "{{-- route('article/action/schedule') --}}", "method": "GET"},
+        "title": 'Schedule',
+        "content": [
+          {"type": ["h5"], "text": "Data di pubblicazione"},
+          {"type": ["input", "date"], "class": "form-control"},
+          {"type": ["input", "time"], "class": "form-control"},
+          {"type": ["button", "submit"], "text": "Schedula", "class": "btn btn-primary"}
+        ]
+      }
+    });
+  }
+  </script>
   </form>
 </div>
 </div>

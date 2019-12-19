@@ -43,15 +43,10 @@
                     <p>Messaggio generato dal sistema</p>
                     @else
                     <div class="author">
-                      Pubblicato da
                       @if($value->id_editore)
-                      <a href="{{ url($value->publisher_slug) }}">
-                        <span>{{ $value->publisher_name }}</span>
-                      </a>
+                        @lang('label.article.published_by', ['name' => $value->publisher_name, 'url' => url($value->publisher_slug)])
                       @else
-                      <a href="{{ url($value->user_slug) }}">
-                        <span>{{ $value->user_name }} {{ $value->user_surname }}</span>
-                      </a>
+                        @lang('label.article.published_by', ['name' => $value->user_name.' '.$value->user_surname, 'url' => url($value->user_slug)])
                       @endif
                     </div>
                     @endif

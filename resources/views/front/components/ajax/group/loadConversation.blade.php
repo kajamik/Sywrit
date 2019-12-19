@@ -20,6 +20,7 @@
             <img class="card-img-top" src="@if($value->cover) {{ $value->cover }} @else {{ asset('upload/no-image.jpg') }} @endif" />
               <div class="card-body">
                 <h5 class="card-title" title="{{ $value->article_title }}" data-card-url="/thumbnail/?id={{ $value->id }}&h=profile">{{ str_limit($value->article_title, 33) }}</h5>
+                <p>Di utente</p>
               </div>
           </div>
         </a>
@@ -106,7 +107,6 @@
           {"type": ["button"], "class": "btn btn-sw", "text": "Conferma"}
         ],
         "done": function(){
-          $(this).fadeOut();
         }
       }
     });

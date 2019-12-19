@@ -164,7 +164,7 @@ App.getUserInterface = function(t, refresh = false, e){
     }
     //Process
     for(var i in data) {
-      !$.isNumeric(data[i]) ? data[i] = $(data[i]).val() : '';
+      !$.isNumeric(data[i]) ? data[i] = data[i] : '';
     }
     App.query(header.method, header.action, data, false, done);
   });
@@ -248,8 +248,9 @@ App.share = function(data) {
 
   var links = {
     // name: [icon, url]
-    'facebook': ['fa-facebook', 'https://www.facebook.com/share.php?u='],
-    'linkedin': ['fa-linkedin', 'https://www.linkedin.com/sharing/share-offsite/?url=']
+    'clipboard': ['far fa-clipboard', { Cmd: '' }],
+    'facebook': ['fab fa-facebook', { UrlTo: 'https://www.facebook.com/share.php?u=' }],
+    'linkedin': ['fab fa-linkedin', { UrlTo: 'https://www.linkedin.com/sharing/share-offsite/?url=' }]
     // more...
   };
 
@@ -265,7 +266,7 @@ App.share = function(data) {
         $(this).addClass("sb-open");
         $("<div class='sb-dialog'></div>").appendTo( $(this) );
         $.each(data.apps, function(f) {
-          $("<a href='"+ links[data.apps[f]][1] + window.location.href + "'><div class='fab "+ links[data.apps[f]][0] +"'></div></a>").appendTo( $(".sb-dialog") );
+          $("<a href='"+ links[data.apps[f]][1] + window.location.href + "'><div class='"+ links[data.apps[f]][0] +"'></div></a>").appendTo( $(".sb-dialog") );
         });
       }
   });

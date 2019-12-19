@@ -11,20 +11,17 @@
           <span>{{ $value->topic_name }}</span>
         @endif
         <h5 class="card-title" title="{{ $value->article_title }}">{{ str_limit($value->article_title, 33) }}</h5>
-        <p>{!! str_limit(preg_replace('/(<.*?>)|(&.*?;)/', '', $value->article_text), 100) !!}</p>
+        {{--
+          <p>{!! str_limit(preg_replace('/(<.*?>)|(&.*?;)/', '', $value->article_text), 100) !!}</p>
+        --}}
         @if($value->bot_message == '1')
-        <p>@lang('label.article.bot_message')</p>
+        <p>Messaggio generato dal sistema</p>
         @else
         <div class="author">
-          @lang('label.article.published_by')
           @if($value->id_editore)
-          <a href="{{ url($value->publisher_slug) }}">
-            <span>{{ $value->publisher_name }}</span>
-          </a>
+            @lang('label.article.published_by', ['name' => $value->publisher_name, 'url' => url($value->publisher_slug)])
           @else
-          <a href="{{ url($value->user_slug) }}">
-            <span>{{ $value->user_name }} {{ $value->user_surname }}</span>
-          </a>
+            @lang('label.article.published_by', ['name' => $value->user_name.' '.$value->user_surname, 'url' => url($value->user_slug)])
           @endif
         </div>
         @endif

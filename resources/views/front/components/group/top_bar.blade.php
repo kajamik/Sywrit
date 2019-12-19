@@ -29,6 +29,7 @@
         </div>
       </div>
     </div>
+    @auth
     <nav class="publisher-nav">
       <ul id='nav'>
         <li class="dropdown">
@@ -44,6 +45,7 @@
         </li>
       </ul>
     </nav>
+    @endauth
     <hr/>
     <div class="publisher-body">
       <div class="publisher-info">

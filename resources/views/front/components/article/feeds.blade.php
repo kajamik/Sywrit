@@ -28,11 +28,10 @@
 
             <h4 class="card-title">{{ $value->titolo }}</h4>
             <div class="author">
-              @lang('label.article.published_by')
-              @if(!empty($value->id_gruppo))
-              <a href="{{ url($value->getRedazione->slug) }}"><span><span>{{ $value->getRedazione->name }}</span></a>
+              @if($value->id_editore)
+                @lang('label.article.published_by', ['name' => $value->getRedazione->name, 'url' => url($value->getRedazione->slug)])
               @else
-              <a href="{{ url($value->getAutore->slug) }}"><span><span>{{ $value->getAutore->name }} {{ $value->getAutore->surname }}</span></a>
+                @lang('label.article.published_by', ['name' => $value->getAutore->name.' '.$value->getAutore->surname, 'url' => url($value->getAutore->slug)])
               @endif
             </div>
         </div>

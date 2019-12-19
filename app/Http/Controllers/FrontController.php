@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use App\Models\BotMessage;
 use App\Models\User;
 use App\Models\SavedArticles;
+use App\Models\ScheduledArticles;
 use App\Models\Articoli;
 use App\Models\ArticleHistory;
 use App\Models\ArticleCategory;
@@ -167,7 +168,7 @@ class FrontController extends Controller
       $query2 = \App\Models\Articoli::where('id_autore',$query->id);
       $count = $query2->count();
 
-      return view('front.pages.profile.about',compact('query','query2','count'));
+      return view('front.pages.profile.about', compact('query','query2','count'));
     }
 
     public function getPrivateArchive($slug)
@@ -176,10 +177,20 @@ class FrontController extends Controller
         $query = SavedArticles::whereNull('id_gruppo')->where('id_autore', Auth::user()->id)->get();
         SEOMeta::setTitle('Articoli Salvati - Sywrit', false)
                   ->setCanonical(\Request::url());
-        return view('front.pages.profile.archive',compact('query'));
+        return view('front.pages.profile.archive', compact('query'));
       } /*else {
         return $this->getPublisherArchive($slug);
       }*/
+    }
+
+    public function getScheduledArticle($slug)
+    {
+      if($slug == Auth::user()->slug) {
+        $query = ScheduledArticles::get();
+        SEOMeta::setTitle('Articoli Programmati - Sywrit', false)
+                  ->setCanonical(\Request::url());
+        return view('front.pages.profile.scheduled', compact('query'));
+      }
     }
 
     public function getAccountDelete()

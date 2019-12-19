@@ -94,7 +94,7 @@ class AjaxController extends Controller
     }
   }
 
-  public function getStateNotifications(Request $request)
+  /*public function getStateNotifications(Request $request)
   {
     $count = $request->msg_count;
     $noty = \DB::table('notifications')->where('target_id', Auth::user()->id)->where('marked','0');
@@ -111,14 +111,14 @@ class AjaxController extends Controller
   public function getNotifications(Request $request)
   {
     $LIMIT = 3;
-    $query = Notifications::where('target_id',Auth::user()->id)->orderBy('created_at','desc')->get();
+    $query = Notifications::where('target_id', Auth::user()->id)->orderBy('created_at','desc')->get();
     if(Auth::user()->notifications_count > 0){
       $user = User::find(Auth::user()->id);
       $user->notifications_count = '0';
       $user->save();
     }
     return view('front.pages.livenotifications')->with(['query' => $query]);
-  }
+  }*/
 
   public function deleteAllNotifications()
   {
@@ -153,20 +153,6 @@ class AjaxController extends Controller
   {
 
       $domain = explode('.', preg_split('/[a-z:]*\/\/[ww*.*]*|\/(.*)/', $request->url)[1])[0];
-
-      /*if($service == 'youtube' && $type == 'watch') {
-        $privateKey = 'AIzaSyBvxoM_rcPn0Xt4n0T3YliNT5P0UoDuVwU';
-        $id = explode('v=', $request->url)[1];
-        $part = 'snippet';
-        $link = json_decode(file_get_contents('https://www.googleapis.com/youtube/v3/videos?id='.$id.'&key='.$privateKey.'&part=snippet'));
-        $meta = [
-          'title' => $link->items[0]->snippet->title,
-          'domain' => ucfirst(preg_split('/[a-z:]*\/\/[ww*.*]*|\/(.*)/', $request->url)[1]),
-          'url' => $request->url,
-          'description' => $link->items[0]->snippet->description,
-          'image' => $link->items[0]->snippet->thumbnails->high->url,
-        ];
-      } else {*/
 
         function getDOMDocument($html, $request) {
             $dom = new \DOMDocument();
@@ -271,7 +257,6 @@ class AjaxController extends Controller
       ]);
 
       $article = Articoli::find($query2->article_id);
-      User::find($article->getAutore->id)->notify(new NotifyArticleOwner());
 
       return view('front.components.ajax.uploadComment')->with(['post' => $query2]);
     }
@@ -438,12 +423,10 @@ class AjaxController extends Controller
   public function postAction(Request $request)
   {
       try {
-        return \Debugbar::info($request);
         $post_id = $request->id;
         switch($request->action) {
           case 'delete':
             $conversation = GroupConversation::find($request->id);
-            return \Debugbar::info($conversation);
             if(!empty($conversation->article_id)) {
               GroupArticle::find($conversation->article->id)->delete();
             }

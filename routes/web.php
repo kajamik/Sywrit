@@ -111,7 +111,6 @@ Route::group(['middleware' => ['auth', 'isSuspended']], function(){
     Route::get('change_password', 'SettingController@getChangePassword');
     Route::post('change_password', 'SettingController@postChangePassword');
   });
-  Route::get('notifications', 'FrontController@getNotifications');
   Route::get('account_delete', 'FrontController@getAccountDelete');
   Route::post('account_delete', 'FilterController@postAccountDelete');
 });
@@ -125,6 +124,7 @@ Route::get('topic/{slug}', 'FrontController@getTopic');
 Route::group(['prefix' => '{slug}'], function() {
   Route::get('/', 'FrontController@getProfile');
   Route::get('archive', 'FrontController@getPrivateArchive')->middleware('auth','isSuspended');
+  Route::get('archive/scheduled', 'FrontController@getScheduledArticle')->middleware('auth','isSuspended');
 });
 
 // Publishers
@@ -143,6 +143,7 @@ Route::group(['prefix' => 'groups'], function() {
   Route::post('{id}/article/{post_id}/edit', 'GroupController@postArticleEdit');
 
   Route::namespace('GroupAdmin')->group(function() {
+    Route::get('{id}/admin', 'SettingController@index');
     Route::get('{id}/admin/requests', 'RequestController@getJoinRequests');
   });
 
@@ -175,6 +176,9 @@ Route::group(['prefix' => 'ajax'], function() {
     Route::get('auth', 'AjaxController@getAuth');
 
     Route::get('info', 'AjaxController@getWebData');
+
+    //Route::get('notifications', 'FrontController@getNotifications');
+    Route::get('notifications', 'NotificationController@check');
 
     Route::group(['prefix' => 'account'], function() {
       Route::get('add_social_address', 'AjaxController@getAddSocialAddress');

@@ -1,13 +1,13 @@
 @extends('front.layout.app')
 
 @php
-   SEOMeta::setTitle('Community Standards - Sywrit', false);
+   SEOMeta::setTitle('Linee guida - Sywrit', false);
  @endphp
 
 @section('main')
   <div class="publisher-home">
     <div class="publisher-body" style="">
-      <h1>Sywrit Community Standards</h1>
+      <h1>Linee guida</h1>
 
       <p>Ultima modifica: 17 aprile 2019</strong>
       <p>Le seguenti normative sono finalizzate a garantire la miglior esperienza possibile per ogni utente all' interno di Sywrit.</p>

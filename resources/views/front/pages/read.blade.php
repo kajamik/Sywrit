@@ -80,7 +80,7 @@
                 <span class="bs-icon fa-2x fas fa-flag"></span>
               </div>
             @endif
-            <script>App.share({'apps': ['facebook', 'linkedin'],'appendTo': '#share'});</script>
+            <script>App.share({'apps': ['clipboard', 'facebook', 'linkedin'],'appendTo': '#share'});</script>
           </div>
         </div>
       </article>

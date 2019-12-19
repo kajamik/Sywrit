@@ -1,8 +1,8 @@
 @if($query->count())
 @foreach($query as $value)
   @php
-    if($value->marked == '0'){
-      $value->marked = '1';
+    if($value->read == '0'){
+      $value->read = '1';
       $value->save();
     }
     if(!empty($value->content_id)){

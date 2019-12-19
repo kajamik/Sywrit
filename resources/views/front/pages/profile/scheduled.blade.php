@@ -51,17 +51,18 @@
                   <li><a href="{{ url(Auth::user()->slug. '/archive/scheduled') }}"><i class="fa fa-calendar-alt"></i> Articoli Programmati</a></li>
                 </ul>
               </div>
-              <div class="col-lg-8 col-md-12 py-1">
+              <div class="col-lg-8 col-md-12 py-1 ml-3 border">
                 @if($query->count())
-                <div class="col-lg-12">
+                <div class="py-2 col-lg-12">
                   <div class="row" id="articles">
                     @foreach($query->take(12) as $value)
                     <div class="col-lg-4 col-sm-8 col-xs-12">
-                      <a href="{{ url('read/archive/'. $value->slug) }}">
+                      <a href="#">
                         <div class="card">
                           <img class="card-img-top" src="{{ $value->getBackground() }}" alt="Copertina">
                           <div class="card-body">
-                            <h5 class="card-title">{{ $value->titolo }}</h5>
+                            <h5 class="card-title">{{ $value->title }}</h5>
+                            <p>Programmato per {{ \Carbon\Carbon::parse($value->scheduled_at)->translatedFormat('l j F Y')  }} {{ \Carbon\Carbon::parse($value->scheduled_at)->format('H:i')  }}</p>
                           </div>
                         </div>
                       </a>
@@ -70,7 +71,7 @@
                   </div>
                 </div>
                 @else
-                  <p>@lang('label.no_saved_articles')</p>
+                  <p>@lang('label.no_scheduled_articles')</p>
                 @endif
               </div>
             </div>

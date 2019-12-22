@@ -132,6 +132,7 @@
               <a class="dropdown-item" href="{{ url(Auth::user()->slug.'/archive') }}"><i class="fa fa-file-archive"></i> @lang('label.menu.saved_articles')</a>
               <a class="dropdown-item" href="{{ url('settings') }}"><i class="fa fa-cog"></i> @lang('label.menu.settings')</a>
               <hr/>
+              {{--
               @if(Auth::user()->haveGroup())
               @php
                 $gruppi = Auth::user()->getGroupsInfo();
@@ -144,6 +145,7 @@
               <hr/>
               @endif
               <a class="dropdown-item" href="{{ url('group/create') }}"><i class="fa fa-users"></i> Crea gruppo</a>
+              --}}
               @if(Auth::user()->isOperator())
               <a class="dropdown-item" href="{{ url('toolbox')}}" target="_blank"><i class="fa fa-toolbox"></i> Managing</a>
               @endif

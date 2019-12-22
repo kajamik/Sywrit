@@ -128,7 +128,7 @@ Route::group(['prefix' => '{slug}'], function() {
 });
 
 // Publishers
-Route::group(['prefix' => 'groups'], function() {
+/*Route::group(['prefix' => 'groups'], function() {
 
   Route::get('{id}', 'GroupController@index');
   Route::get('{id}/about', 'GroupController@getAbout');
@@ -152,11 +152,11 @@ Route::group(['prefix' => 'groups'], function() {
     Route::get('{tab}', 'FrontController@getPublisherSettings');
     Route::post('{tab}', 'FilterController@postPublisherSettings');
   });*/
-});
+//});
 
 // CREATE GROUP
-Route::get('group/create', 'GroupController@getNewGroup')->middleware('auth','isSuspended');
-Route::post('group/create', 'GroupController@postNewGroup')->middleware('auth','isSuspended');
+//Route::get('group/create', 'GroupController@getNewGroup')->middleware('auth','isSuspended');
+//Route::post('group/create', 'GroupController@postNewGroup')->middleware('auth','isSuspended');
 
 // Pages
 Route::get('page/{slug}', 'FrontController@getPages');
@@ -175,7 +175,7 @@ Route::group(['prefix' => 'ajax'], function() {
 
     Route::get('auth', 'AjaxController@getAuth');
 
-    Route::get('info', 'AjaxController@getWebData');
+    //Route::get('info', 'AjaxController@getWebData');
 
     //Route::get('notifications', 'FrontController@getNotifications');
     Route::get('notifications', 'NotificationController@check');
@@ -184,7 +184,7 @@ Route::group(['prefix' => 'ajax'], function() {
       Route::get('add_social_address', 'AjaxController@getAddSocialAddress');
     });
 
-    Route::group(['prefix' => 'groups'], function() {
+    /*Route::group(['prefix' => 'groups'], function() {
       Route::get('loadMembers', 'AjaxController@loadMembers');
       Route::get('loadMessages', 'AjaxController@loadGroupMessage');
       Route::get('sendJoinRequest', 'AjaxController@joinGroupRequest');
@@ -193,10 +193,12 @@ Route::group(['prefix' => 'ajax'], function() {
       Route::get('member', 'AjaxController@userAction');
       Route::get('post', 'AjaxController@postAction');
       Route::get('writeArticle', 'AjaxController@writeGroupArticle');
-    });
+    });*/
+
+    Route::get('article/action/schedule', 'AjaxController@scheduleArticle');
 
     // User Thumbnail
-    Route::get('thumbnail', 'AjaxController@getUserThumbnail');
+    //Route::get('thumbnail', 'AjaxController@getUserThumbnail');
 });
 
 Route::fallback(function(){

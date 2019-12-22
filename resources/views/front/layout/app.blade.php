@@ -85,7 +85,7 @@
   @yield('js')
 
   <script>$(function(){App.update();$(window).on('resize', function(){App.update();});App.info();});
-  fetch_live_search = function(query_search = ''){App.query("get","{{ route('live_search') }}",{q:query_search},false,function(data){$(".data-list").html(data);});}</script>
+  fetch_live_search = function(query_search){App.query("get","{{ route('live_search') }}",{q:query_search},false,function(data){$(".data-list").html(data);});}</script>
 
   @auth
     {{-- $.each(data.query, function(index, item){

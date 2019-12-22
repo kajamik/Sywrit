@@ -10,6 +10,7 @@ use App\Http\Requests\UpdatePassword;
 
 use App\Models\User;
 use App\Models\SavedArticles;
+use App\Models\ScheduledArticles;
 use App\Models\Articoli;
 use App\Models\Notifications;
 
@@ -123,15 +124,7 @@ class FilterController extends Controller
         $testo = $this->convertImages($testo, array('name' => Str::random(16).'.'.Str::random(32),'path' => public_path('sf/ct/')));
       }
 
-      if($request->save) {
-        $this->validate($request,[
-          'document__title' => 'required|max:191',
-        ],[
-          'document__text.max' => 'Titolo troppo lungo',
-        ]);
-
-        $query = new SavedArticles();
-      } else {
+      if($request->_m_sel == 1) { // Pubblicazione immediata
         $this->validate($request,[
           'document__title' => 'required|max:191',
           'document__text' => 'required'
@@ -142,6 +135,17 @@ class FilterController extends Controller
         ]);
 
         $query = new Articoli();
+      } else { // Pubblicazione programmata (Scheduling)
+        $this->validate($request,[
+          'document__title' => 'required|max:191',
+          'document__text' => 'required'
+        ],[
+          'document__title.required' => 'Il titolo dell\'articolo è obbligatorio',
+          'document__text.required' => 'Non è consentito pubblicare un articolo senza contenuto',
+          'document__text.max' => 'Titolo troppo lungo',
+        ]);
+
+        $query = new ScheduledArticles();
       }
 
       $query->titolo = $request->document__title;
@@ -173,10 +177,6 @@ class FilterController extends Controller
           'quality' => '100'
         ));
 
-        /*$resize = '__492x340'.Str::random(64).'.jpg';
-        $normal_image = '__'.Str::random(64).'.jpg';
-        $image = Image::make($a)->resize(492, 340)->encode('jpg', 100);
-        Storage::disk('articles')->put($resize, $image);*/
         $query->copertina = asset('sf/ct/'. $fileName);
       }
 
@@ -196,12 +196,8 @@ class FilterController extends Controller
       $query->id_autore = \Auth::user()->id;
       $query->save();
 
-      // Slug
-      if($request->save) {
-        $query->slug = uniqid();
-        $query->save();
-        return redirect('read/archive/'.$query->slug);
-      } else {
+      // Modalità di pubblicazione
+      if($request->_m_sel == 1) { // immediata
         $query->slug = str_slug($query->id.'-'.$query->titolo,'-');
         $query->save();
 
@@ -361,8 +357,7 @@ class FilterController extends Controller
         }
         if(!$query->suspended && (Auth::user()->hasMemberOf($query->id_gruppo) || Auth::user()->id == $query->id_autore)) {
           // elimino le notifiche relative all'articolo
-          ArticleScore::where('article_id', $query->id)->delete();
-          Notifications::where('type', '3')->where('content_id', $query->id)->delete();
+          //Notifications::where('type', '3')->where('content_id', $query->id)->delete();
           $query->delete();
         }
         return redirect('/');

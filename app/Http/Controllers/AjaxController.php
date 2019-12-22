@@ -39,9 +39,14 @@ class AjaxController extends Controller
 
   public function __construct(Request $request)
   {
-    /*if(!$request->ajax()){
+    if(!$request->ajax()){
       abort(404);
-    }*/
+    }
+  }
+
+  public function autoSaving(Request $request)
+  {
+
   }
 
   public function rate(Request $request)
@@ -388,6 +393,13 @@ class AjaxController extends Controller
             $req->delete();
           }
       }
+  }
+
+  public function scheduleArticle(Request $request)
+  {
+      $rDate = $request->date;
+      $rTime = $request->time;
+      return view('front.components.ajax.schedule')->with(['date' => $rDate, 'time' => $rTime]);
   }
 
   public function sendGroupMessage(Request $request)

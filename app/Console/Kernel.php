@@ -17,7 +17,8 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         'App\Console\Commands\OpDB',
-        'App\Console\Commands\Markdown'
+        'App\Console\Commands\Markdown',
+        'App\Console\Commands\Schedule\Article'
     ];
 
     /**
@@ -30,7 +31,7 @@ class Kernel extends ConsoleKernel
     {
       // Account Deletion
         $schedule->call(function () {
-          $user = DB::table('utenti')->where('cron', '1')->get();
+          $user = DB::table('users')->where('cron', '1')->get();
 
           foreach($user as $value) {
             $request = DB::table('account_deletion_request')->where('user_id', $value->id);
@@ -39,7 +40,7 @@ class Kernel extends ConsoleKernel
               DB::table('notifications')->where('sender_id', $valur->id)->orWhere('target_id', $value->id)->delete();
               DB::table('publisher_request')->where('user_id', $value->id)->orWhere('target_id', $value->id)->delete();
               DB::table('reported_users')->where('reported_id', $value->id)->delete();
-              DB::table('utenti')->where('id', $value->id)->delete();
+              DB::table('users')->where('id', $value->id)->delete();
               $request->delete();
             }
           }

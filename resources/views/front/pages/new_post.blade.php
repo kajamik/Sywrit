@@ -104,41 +104,50 @@
     </div>
 
     <div class="form-group row">
-        <div class="col-md-6 offset-md-4">
-          <div class="btn-group">
-            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              @lang('button.publish')
-            </button>
-            <div class="dropdown-menu">
-              <a class="dropdown-item" href="#save">@lang('button.save')</a>
-              <a class="dropdown-item" href="#publish">@lang('button.publish')</a>
-              <a class="dropdown-item" href="#scheduling" onclick="schedule();">@lang('button.scheduling')</a>
-            </div>
-            <!--<button type="button" class="btn btn-primary">
-                @lang('button.scheduling')
-            </button>
-            <button type="submit" class="btn btn-primary" name="save" value="1">
-                @lang('button.save')
-            </button>-->
+      <label for="_l_sel_" class="col-md-4 col-form-label">{{ __('Modalità di pubblicazione') }}</label>
+        <div class="col-md-12">
+          <select id="_m_sel" class="form-control" name="_m_sel">
+            <option value="1">Ora</option>
+            <option value="2">Programma</option>
+          </select>
         </div>
+    </div>
+
+    <div id="wind"></div>
+
+    <div class="form-group row">
+      <div class="col-md-6 offset-md-4">
+        <button type="submit" class="btn btn-primary">
+          @lang('button.publish')
+        </button>
     </div>
   </div>
 
   <script>
-  function schedule() {
-    App.getUserInterface({
-      "ui": {
-        "header":{"action": "{{-- route('article/action/schedule') --}}", "method": "GET"},
-        "title": 'Schedule',
-        "content": [
-          {"type": ["h5"], "text": "Data di pubblicazione"},
-          {"type": ["input", "date"], "class": "form-control"},
-          {"type": ["input", "time"], "class": "form-control"},
-          {"type": ["button", "submit"], "text": "Schedula", "class": "btn btn-primary"}
-        ]
-      }
-    });
-  }
+  $("#_m_sel").on('change', function(){
+    if(this.value == '1') {
+      $("#wind").html('');
+    } else if(this.value == '2') {
+      var dialog = App.getUserInterface({
+        "ui": {
+          "header":{"action":"{{url('ajax/article/action/schedule')}}","method":"GET"},
+          "data":{"date":"#dateControl###val","time":"#timeControl###val"},
+          "title": 'Schedule',
+          "content": [
+            {"type": ["h5"], "text": "Data di pubblicazione"},
+            {"type": ["input", "date"], "id": "dateControl", "class": "form-control", "value": "{{ \Carbon\Carbon::today()->toDateString() }}", "required": false},
+            {"type": ["input", "time"], "id": "timeControl", "class": "form-control", "value": "{{ \Carbon\Carbon::now()->format('H:i') }}", "required": false},
+            {"type": ["button", "submit"], "text": "Conferma", "class": "btn btn-primary"}
+          ],
+          "done": function(data) {
+            $("#wind").html(data);
+            dialog.remove();
+            $("body").css('overflow','auto');
+          }
+        }
+      });
+    } // end-if
+  });
   </script>
   </form>
 </div>

@@ -7,6 +7,12 @@
 
       <div class="block-hero"></div>
 
+      @if(Session::get('alert'))
+      <div class="alert alert-{{ Session::get('alert') }}" role="alert">
+        <i class="fa fa-check"></i> L'articolo sarà pubblicato {!! Session::get('date') !!} alle ore {!! Session::get('time') !!}
+      </div>
+      @endif
+
       <hr style="background-color:#fefeff;"/>
 
       <div class="row">

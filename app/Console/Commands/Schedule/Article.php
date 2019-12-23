@@ -46,12 +46,12 @@ class Article extends Command
         foreach($query as $value) {
           $article = new Articoli();
           $article->topic_id = $value->topic_id;
-          $article->titolo = $value->title;
+          $article->titolo = $value->titolo;
           $article->tags = $value->tags;
-          $article->slug = str_slug('-', $value->title);
-          $article->testo = $value->text;
-          $article->id_gruppo = $value->group_id;
-          $article->id_autore = $value->author_id;
+          $article->slug = str_slug('-', $value->titolo);
+          $article->testo = $value->testo;
+          $article->id_gruppo = $value->id_gruppo;
+          $article->id_autore = $value->id_autore;
           $article->license = $value->license;
           $article->save();
           $value->delete();

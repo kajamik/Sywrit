@@ -136,16 +136,21 @@ class FilterController extends Controller
 
         $query = new Articoli();
       } else { // Pubblicazione programmata (Scheduling)
+
         $this->validate($request,[
           'document__title' => 'required|max:191',
-          'document__text' => 'required'
+          'document__text' => 'required',
+          'datetime' => 'required|regex:/[0-9]{4}-[0-9]{2}-[0-9]{2}/i',
         ],[
           'document__title.required' => 'Il titolo dell\'articolo è obbligatorio',
           'document__text.required' => 'Non è consentito pubblicare un articolo senza contenuto',
           'document__text.max' => 'Titolo troppo lungo',
+          'datetime.regex' => 'Formato data pubblicazione non valido',
         ]);
 
         $query = new ScheduledArticles();
+
+        $query->scheduled_at = $request->datetime;
       }
 
       $query->titolo = $request->document__title;
@@ -203,6 +208,8 @@ class FilterController extends Controller
 
         return redirect('read/'.$query->slug);
       }
+
+      return redirect('/')->with(['alert' => 'info', 'date' => Carbon::parse($query->scheduled_at)->translatedFormat('l j F Y'), 'time' => Carbon::parse($query->scheduled_at)->format('H:i')]);
 
     }
 

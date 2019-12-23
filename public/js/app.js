@@ -131,7 +131,7 @@ var App = {
           $("body").css('overflow','auto');
         });
 
-      $("form").on('submit', function(e){
+      $(".__ui__g form").on('submit', function(e){
         if(refresh == false) {
           e.preventDefault();
         }

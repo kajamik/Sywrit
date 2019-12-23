@@ -8,6 +8,8 @@ class ScheduledArticles extends Model
 {
     protected $table = 'scheduled_articles';
 
+    const UPDATED_AT = null;
+     
     public function getBackground() {
       $file = $this->storage.'/'.$this->cover;
 

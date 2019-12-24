@@ -14,6 +14,7 @@ use Auth;
 // Models
 use App\Models\Editori;
 use App\Models\Articoli;
+use App\Models\ScheduledArticles;
 use App\Models\User;
 use App\Models\Notifications;
 use App\Models\PublisherRequest;
@@ -234,6 +235,13 @@ class AjaxController extends Controller
           return;
         }
       return view('front.components.ajax.get_info')->with(['url' => $request->url, 'node' => $meta]);
+  }
+
+  // Recupero le informazioni dell'articolo programmato
+  public function getScheduledArticle(Request $request)
+  {
+      $query = ScheduledArticles::whereNull('id_gruppo')->where('id_autore', Auth::user()->id)->where('id', $request->d)->first();
+      return Response::json($query);
   }
 
   /*** Commenti ***/

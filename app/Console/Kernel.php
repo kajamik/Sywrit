@@ -45,6 +45,7 @@ class Kernel extends ConsoleKernel
             }
           }
         })->everyMinute();
+        $schedule->command('schedule:articles')->everyMinute();
     }
 
     /**

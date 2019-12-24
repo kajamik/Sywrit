@@ -124,7 +124,7 @@ class FilterController extends Controller
         $testo = $this->convertImages($testo, array('name' => Str::random(16).'.'.Str::random(32),'path' => public_path('sf/ct/')));
       }
 
-      if($request->_m_sel == 1) { // Pubblicazione immediata
+      if($request->_m_sel == 1 || ($request->_m_sel == 2 && !isset($request->datetime))) { // Pubblicazione immediata
         $this->validate($request,[
           'document__title' => 'required|max:191',
           'document__text' => 'required'
@@ -140,7 +140,7 @@ class FilterController extends Controller
         $this->validate($request,[
           'document__title' => 'required|max:191',
           'document__text' => 'required',
-          'datetime' => 'required|regex:/[0-9]{4}-[0-9]{2}-[0-9]{2}/i',
+          'datetime' => 'required|regex:/[0-9]{4}-[0-9]{2}-[0-9]{2}\s+[0-9]:[0-9]/i',
         ],[
           'document__title.required' => 'Il titolo dell\'articolo è obbligatorio',
           'document__text.required' => 'Non è consentito pubblicare un articolo senza contenuto',
@@ -151,6 +151,7 @@ class FilterController extends Controller
         $query = new ScheduledArticles();
 
         $query->scheduled_at = $request->datetime;
+
       }
 
       $query->titolo = $request->document__title;
@@ -202,7 +203,7 @@ class FilterController extends Controller
       $query->save();
 
       // Modalità di pubblicazione
-      if($request->_m_sel == 1) { // immediata
+      if($request->_m_sel == 1 || ($request->_m_sel == 2 && !isset($request->datetime))) { // immediata
         $query->slug = str_slug($query->id.'-'.$query->titolo,'-');
         $query->save();
 

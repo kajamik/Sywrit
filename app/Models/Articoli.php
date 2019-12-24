@@ -31,4 +31,30 @@ class Articoli extends Model
     public function getTopic() {
       return $this->belongsTo('App\Models\ArticleCategory','topic_id','id');
     }
+
+    public function getCommentsCount() {
+      return $this->integer_format(\App\Models\ArticleComments::where('article_id', $this->id)->count());
+    }
+
+    public function getViewCounts() {
+      return $this->integer_format($this->count_view);
+    }
+
+    public function integer_format($number) {
+      if($number > 999999999) {
+        $number /= 10000000;
+        $resto = $number % 100;
+        $number = ($number - $resto) / 100;
+        $number = $number . ',' . $resto . ' B';
+      }
+      elseif($number > 999999) { // 100000
+        $number /= 10000;
+        $resto = $number % 100;
+        $number = ($number - $resto) / 100;
+        $number = $number . ',' . $resto . ' Mln';
+      } elseif($number > 999) {
+        $number = number_format($number, 0, '', '.');
+      }
+      return $number;
+    }
 }

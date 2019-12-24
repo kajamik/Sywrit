@@ -14,7 +14,7 @@ class SavedArticles extends Model
         if($this->copertina && file_exists($file)){
             return $file;
         } else {
-          return 'upload/no-image.jpg';
+          return asset('upload/no-image.jpg');
         }
     }
 }

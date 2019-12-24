@@ -34,7 +34,7 @@
         <li @if(!isset($slug)) class="active" @endif><a href="{{ url($query->slug) }}">@lang('label.menu.profile')</a></li>
         <li><a href="{{ url($query->slug.'/about') }}">@lang('label.menu.contact')</a></li>
         @if(\Auth::user() && \Auth::user()->id == $query->id)
-        <li><a href="{{ url($query->slug.'/archive') }}">@lang('label.menu.saved_articles')</a></li>
+        <li><a href="{{ url('articles') }}">@lang('label.menu.saved_articles')</a></li>
         @endif
       </ul>
     </nav>

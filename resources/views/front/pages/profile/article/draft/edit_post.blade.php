@@ -1,14 +1,11 @@
 @extends('front.layout.app')
 
 @php
-  $autore = \App\Models\User::find($query->id_autore);
-  if($query->id_gruppo > 0)
-    $editore = \App\Models\Editori::find($query->id_gruppo);
 @endphp
 
 @section('main')
 <div class="publisher-body">
-  <a href="{{ url('read/archive/'.$query->slug) }}">@lang('label.article.cancel_changes')</a>
+  <a href="{{ url('/articles/draft/view/'.$query->id) }}">@lang('label.article.cancel_changes')</a>
   <form method="post" action="" enctype="multipart/form-data">
     @csrf
 

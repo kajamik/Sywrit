@@ -25,7 +25,7 @@ return [
     'social_placeholder' => 'Nome account',
     'username' => 'Nome utente',
   ],
-  'archive' => 'Archivio',
+  'archive' => 'Gestione articoli',
   'article_title' => 'Titolo articolo',
   'article' => [
     'bot_message' => 'Messaggio generato dal sistema',
@@ -86,7 +86,7 @@ return [
     'my_profile' => 'Il mio profilo',
     'logout' => 'Esci',
     'profile' => 'Profilo',
-    'saved_articles' => 'Articoli Salvati',
+    'saved_articles' => 'Gestione Articoli',
     'settings' => 'Impostazioni',
   ],
   // document metadata

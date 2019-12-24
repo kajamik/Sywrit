@@ -48,11 +48,12 @@ class Article extends Command
           $article->topic_id = $value->topic_id;
           $article->titolo = $value->titolo;
           $article->tags = $value->tags;
-          $article->slug = str_slug('-', $value->titolo);
           $article->testo = $value->testo;
           $article->id_gruppo = $value->id_gruppo;
           $article->id_autore = $value->id_autore;
           $article->license = $value->license;
+          $article->save();
+          $article->slug = $value->id. '-' .str_slug('-', $value->titolo);
           $article->save();
           $value->delete();
         }

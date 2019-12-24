@@ -101,10 +101,6 @@ class FrontController extends Controller
     {
       $query = User::where('slug',$slug)->first();
 
-      /*if(empty($query)){
-        return $this->getPublisherIndex($slug, $request);
-      }*/
-
       // SEO ///////////////////////////////////////////////////
 
         SEOMeta::setTitle($query->name.' '.$query->surname.' - Sywrit', false)
@@ -171,27 +167,122 @@ class FrontController extends Controller
       return view('front.pages.profile.about', compact('query','query2','count'));
     }
 
-    public function getPrivateArchive($slug)
+    public function getPrivateArchive()
     {
-      if($slug == Auth::user()->slug) {
-        $query = SavedArticles::whereNull('id_gruppo')->where('id_autore', Auth::user()->id)->get();
-        SEOMeta::setTitle('Articoli Salvati - Sywrit', false)
-                  ->setCanonical(\Request::url());
-        return view('front.pages.profile.archive', compact('query'));
-      } /*else {
-        return $this->getPublisherArchive($slug);
-      }*/
+      $query = Articoli::whereNull('id_gruppo')->where('id_autore', Auth::user()->id)->simplePaginate(6);
+      SEOMeta::setTitle('I miei articoli - Sywrit', false)
+                ->setCanonical(\Request::url());
+      return view('front.pages.profile.article.home', compact('query'));
     }
 
-    public function getScheduledArticle($slug)
+    /* Draft Articles */
+    public function getDraftArticle()
     {
-      if($slug == Auth::user()->slug) {
-        $query = ScheduledArticles::get();
-        SEOMeta::setTitle('Articoli Programmati - Sywrit', false)
+      $query = SavedArticles::whereNull('id_gruppo')->where('id_autore', Auth::user()->id)->simplePaginate(6);
+      SEOMeta::setTitle('Articoli salvati - Sywrit', false)
+                ->setCanonical(\Request::url());
+      return view('front.pages.profile.article.draft', compact('query'));
+    }
+    public function getDraftArticleView($id)
+    {
+      $query = SavedArticles::where('id', $id)->first();
+
+      // SEO ///////////////////////////////////////////////////
+
+        SEOMeta::setTitle($query->titolo.' - Sywrit', false)
+                  ->setDescription(str_limit(strip_tags($query->testo), 100))
                   ->setCanonical(\Request::url());
-        return view('front.pages.profile.scheduled', compact('query'));
+
+      //-------------------------------------------------------//
+      if(Auth::user() && ($query->id_gruppo > 0 && Auth::user()->hasMemberOf($query->id_gruppo) || Auth::user()->id == $query->id_autore) ) {
+
+        $options = false;
+
+        if( Auth::user() ){
+          $collection = collect(explode(',', Auth::user()->id_gruppo));
+
+          $options = true;
+        }
+
+        $tags = explode(',',$query->tags);
+
+        return view('front.pages.profile.article.draft.read', compact('query','tags','options'));
+      } else {
+        abort(404);
       }
     }
+
+    public function getDraftArticleEdit($id)
+    {
+      // SEO ///////////////////////////////////////////////////
+
+        SEOMeta::setTitle(trans('label.title.edit_article'), false)
+                  ->setCanonical(\Request::url());
+
+      //-------------------------------------------------------//
+
+      $query = SavedArticles::whereNull('id_gruppo')->where('id_autore', Auth::user()->id)->where('id', $id)->first();
+
+      $categories = \DB::table('article_category')->orderBy('name', 'asc')->get();
+
+      return view('front.pages.profile.article.draft.edit_post',compact('query','categories'));
+    }
+    /*****/
+
+    /* Scheduled Articles */
+    public function getScheduleArticle()
+    {
+      $query = ScheduledArticles::whereNull('id_gruppo')->where('id_autore', Auth::user()->id)->orderBy('scheduled_at','asc')->simplePaginate(6);
+      SEOMeta::setTitle('Articoli programmati - Sywrit', false)
+                ->setCanonical(\Request::url());
+      return view('front.pages.profile.article.scheduled', compact('query'));
+    }
+
+    public function getScheduleArticleView($id)
+    {
+      $query = ScheduledArticles::whereNull('id_gruppo')->where('id_autore', Auth::user()->id)->where('id', $id)->first();
+
+      // SEO ///////////////////////////////////////////////////
+
+        SEOMeta::setTitle($query->titolo.' - Sywrit', false)
+                  ->setDescription(str_limit(strip_tags($query->testo), 100))
+                  ->setCanonical(\Request::url());
+
+      //-------------------------------------------------------//
+      if(Auth::user() && ($query->id_gruppo > 0 && Auth::user()->hasMemberOf($query->id_gruppo) || Auth::user()->id == $query->id_autore) ) {
+
+        $options = false;
+
+        if( Auth::user() ){
+          $collection = collect(explode(',', Auth::user()->id_gruppo));
+
+          $options = true;
+        }
+
+        $tags = explode(',',$query->tags);
+
+        return view('front.pages.profile.article.schedule.read', compact('query','tags','options'));
+      } else {
+        abort(404);
+      }
+    }
+
+    public function getScheduleArticleEdit($id)
+    {
+      // SEO ///////////////////////////////////////////////////
+
+        SEOMeta::setTitle(trans('label.title.edit_article'), false)
+                  ->setCanonical(\Request::url());
+
+      //-------------------------------------------------------//
+
+      $query = ScheduledArticles::whereNull('id_gruppo')->where('id_autore', Auth::user()->id)->where('id', $id)->first();
+
+      $categories = \DB::table('article_category')->orderBy('name', 'asc')->get();
+
+      return view('front.pages.profile.article.schedule.edit_post', compact('query','categories'));
+    }
+    /*******/
 
     public function getAccountDelete()
     {
@@ -417,35 +508,6 @@ class FrontController extends Controller
       }
     }
 
-    public function getSavedArticle($slug)
-    {
-      $query = SavedArticles::where('slug', $slug)->first();
-
-      // SEO ///////////////////////////////////////////////////
-
-        SEOMeta::setTitle($query->titolo.' - Sywrit', false)
-                  ->setDescription(str_limit(strip_tags($query->testo), 100))
-                  ->setCanonical(\Request::url());
-
-      //-------------------------------------------------------//
-      if(Auth::user() && ($query->id_gruppo > 0 && Auth::user()->hasMemberOf($query->id_gruppo) || Auth::user()->id == $query->id_autore) ) {
-
-        $options = false;
-
-        if( Auth::user() ){
-          $collection = collect(explode(',', Auth::user()->id_gruppo));
-
-          $options = true;
-        }
-
-        $tags = explode(',',$query->tags);
-
-        return view('front.pages.archive.read',compact('query','tags','options'));
-      } else {
-        abort(404);
-      }
-    }
-
     public function getArticleEdit($id)
     {
       // SEO ///////////////////////////////////////////////////
@@ -467,7 +529,7 @@ class FrontController extends Controller
         $query = SavedArticles::where('slug', $id)->first();
         $categories = \DB::table('article_category')->orderBy('name', 'asc')->get();
         if(($query->id_gruppo > 0 && Auth::user()->hasMemberOf($query->id_gruppo)) || (Auth::user()->id == $query->id_autore)){
-          return view('front.pages.archive.edit_post',compact('query','categories'));
+          return view('front.pages.profile.draft.edit_post',compact('query','categories'));
         }
       }
     }

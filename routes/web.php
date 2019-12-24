@@ -67,8 +67,8 @@ Route::group(['middleware' => 'auth'], function(){
     ///////
     // Article Actions
     Route::post('post/publish', ['uses' => 'FilterController@ArticlePublish', 'as' => 'article/action/publish']);
-    Route::get('post/{id}/edit', 'FrontController@getArticleEdit');
-    Route::post('post/{id}/edit', 'FilterController@postArticleEdit');
+    Route::get('article/{id}/action/edit', 'FrontController@getArticleEdit');
+    Route::post('article/{id}/action/edit', 'FilterController@postArticleEdit');
     Route::post('post/delete', ['uses' => 'FilterController@ArticleDelete', 'as' => 'article/action/delete']);
     Route::get('post/report', ['uses' => 'FilterController@ArticleReport', 'as' => 'article/action/report']);
     // Other
@@ -120,11 +120,25 @@ Route::get('action/support', 'AjaxController@getSupportRequest');
 // Topic
 Route::get('topic/{slug}', 'FrontController@getTopic');
 
+// Manager article
+Route::group(['prefix' => 'articles', 'middleware' => ['auth','isSuspended']], function() {
+  Route::get('/', 'FrontController@getPrivateArchive');
+  //--
+  Route::get('schedule', 'FrontController@getScheduleArticle');
+  Route::get('schedule/view/{id}', 'FrontController@getScheduleArticleView');
+  Route::get('schedule/edit/{id}', 'FrontController@getScheduleArticleEdit');
+  Route::post('schedule/edit/{id}', 'FrontController@postScheduleArticleEdit');
+  //--
+  Route::get('drafts', 'FrontController@getDraftArticle');
+  //--
+  Route::get('draft/view/{id}', 'FrontController@getDraftArticleView');
+  Route::get('draft/edit/{id}', 'FrontController@getDraftArticleEdit');
+  Route::post('draft/edit/{id}', 'FrontController@postDraftArticleEdit');
+});
+
 // Profile
 Route::group(['prefix' => '{slug}'], function() {
   Route::get('/', 'FrontController@getProfile');
-  Route::get('archive', 'FrontController@getPrivateArchive')->middleware('auth','isSuspended');
-  Route::get('archive/scheduled', 'FrontController@getScheduledArticle')->middleware('auth','isSuspended');
 });
 
 // Publishers
@@ -196,6 +210,8 @@ Route::group(['prefix' => 'ajax'], function() {
     });*/
 
     Route::get('article/action/schedule', 'AjaxController@scheduleArticle');
+
+    Route::get('schedule/view', 'AjaxController@getScheduledArticle');
 
     // User Thumbnail
     //Route::get('thumbnail', 'AjaxController@getUserThumbnail');

@@ -129,7 +129,7 @@
             </a>
             <div class="dropdown-menu" role="menu">
               <a class="dropdown-item" href="{{ url(Auth::user()->slug) }}"><i class="fa fa-user"></i> @lang('label.menu.my_profile')</a>
-              <a class="dropdown-item" href="{{ url(Auth::user()->slug.'/archive') }}"><i class="fa fa-file-archive"></i> @lang('label.menu.saved_articles')</a>
+              <a class="dropdown-item" href="{{ url(Auth::user()->slug.'/articles') }}"><i class="fa fa-file-archive"></i> @lang('label.menu.saved_articles')</a>
               <a class="dropdown-item" href="{{ url('settings') }}"><i class="fa fa-cog"></i> @lang('label.menu.settings')</a>
               <hr/>
               {{--

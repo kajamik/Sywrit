@@ -137,8 +137,10 @@ var App = {
         }
         //Process
         for(var i in data) {
-          if(data[i].indexOf('###')) {
+          if(data[i].indexOf('###') != -1) {
             data[i] = eval("$(data[i].split('###')[0])." + data[i].split('###')[1] + "()");
+          } else {
+            data[i] = data[i];
           }
         }
         App.query(header.method, header.action, data, false, done);

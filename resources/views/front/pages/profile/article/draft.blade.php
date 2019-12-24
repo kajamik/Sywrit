@@ -36,7 +36,7 @@
       <ul id='nav' class="row">
         <li><a href="{{ url(Auth::user()->slug) }}">@lang('label.menu.profile')</a></li>
         <li><a href="{{ url(Auth::user()->slug.'/about') }}">@lang('label.menu.contact')</a></li>
-        <li class="active"><a href="{{ url(Auth::user()->slug.'/archive') }}">@lang('label.menu.saved_articles')</a></li>
+        <li class="active"><a href="{{ url('articles') }}">@lang('label.menu.saved_articles')</a></li>
       </ul>
     </nav>
     <div class="publisher-body">
@@ -47,17 +47,18 @@
             <div class="row">
               <div class="col-lg-3 col-md-12 p-3 border">
                 <ul>
-                  <li><a href="{{ url(Auth::user()->slug. '/archive') }}"><i class="fa fa-sliders-h"></i> Visualizza tutti gli articoli</li></a>
-                  <li><a href="{{ url(Auth::user()->slug. '/archive/scheduled') }}"><i class="fa fa-calendar-alt"></i> Articoli Programmati</a></li>
+                  <li><i class="fa fa-newspaper"></i> <a href="{{ url('articles') }}">I miei articoli</li></a>
+                  <li><i class="fa fa-calendar-alt"></i> <a href="{{ url('articles/schedule') }}">Articoli programmati</a></li>
+                  <li><i class="fa fa-archive"></i> <a class="text-underline" href="{{ url('articles/drafts') }}">Articoli salvati</li></a>
                 </ul>
               </div>
-              <div class="col-lg-8 col-md-12 py-1">
+              <div class="col-lg-8 col-md-12 py-1 ml-lg-3 border">
                 @if($query->count())
                 <div class="col-lg-12">
                   <div class="row" id="articles">
-                    @foreach($query->take(12) as $value)
+                    @foreach($query as $value)
                     <div class="col-lg-4 col-sm-8 col-xs-12">
-                      <a href="{{ url('read/archive/'. $value->slug) }}">
+                      <a href="{{ url('articles/draft/view/'. $value->id) }}">
                         <div class="card">
                           <img class="card-img-top" src="{{ $value->getBackground() }}" alt="Copertina">
                           <div class="card-body">

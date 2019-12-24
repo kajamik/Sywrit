@@ -100,7 +100,7 @@ class AjaxController extends Controller
     }
   }
 
-  /*public function getStateNotifications(Request $request)
+  public function getStateNotifications(Request $request)
   {
     $count = $request->msg_count;
     $noty = \DB::table('notifications')->where('target_id', Auth::user()->id)->where('marked','0');
@@ -124,7 +124,7 @@ class AjaxController extends Controller
       $user->save();
     }
     return view('front.pages.livenotifications')->with(['query' => $query]);
-  }*/
+  }
 
   public function deleteAllNotifications()
   {
@@ -235,13 +235,6 @@ class AjaxController extends Controller
           return;
         }
       return view('front.components.ajax.get_info')->with(['url' => $request->url, 'node' => $meta]);
-  }
-
-  // Recupero le informazioni dell'articolo programmato
-  public function getScheduledArticle(Request $request)
-  {
-      $query = ScheduledArticles::whereNull('id_gruppo')->where('id_autore', Auth::user()->id)->where('id', $request->d)->first();
-      return Response::json($query);
   }
 
   /*** Commenti ***/
@@ -407,7 +400,15 @@ class AjaxController extends Controller
   {
       $rDate = $request->date;
       $rTime = $request->time;
-      return view('front.components.ajax.schedule')->with(['date' => $rDate, 'time' => $rTime]);
+
+      if(!isset($request->a_id)) {
+        return view('front.components.ajax.schedule')->with(['date' => $rDate, 'time' => $rTime]);
+      } else { // Modifico la data dell'articolo già programmato
+        $query = ScheduledArticles::whereNull('id_gruppo')->where('id_autore', Auth::user()->id)->where('id', $request->a_id)->first();
+        $query->scheduled_at = $rDate. ' '. $rTime;
+        $query->save();
+        return Response::json(['date' => \Carbon\Carbon::parse($rDate)->translatedFormat('l j F Y'), 'time' => $rTime]);
+      }
   }
 
   public function sendGroupMessage(Request $request)

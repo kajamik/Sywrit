@@ -139,8 +139,8 @@
         "title": 'Schedule',
         "content": [
           {"type": ["h5"], "text": "Data di pubblicazione"},
-          {"type": ["input", "date"], "id": "dateControl", "class": "form-control", "value": "{{ \Carbon\Carbon::today()->toDateString() }}", "required": false},
-          {"type": ["input", "time"], "id": "timeControl", "class": "form-control", "value": "{{ \Carbon\Carbon::now()->format('H:i') }}", "required": true},
+          {"type": ["input", "date"], "id": "dateControl", "class": "form-control", "value": "{{ \Carbon\Carbon::today()->toDateString() }}", "required": true},
+          {"type": ["input", "time"], "id": "timeControl", "class": "form-control", "value": "{{ \Carbon\Carbon::now()->addHours(1)->format('H:i') }}", "required": true},
           {"type": ["button", "submit"], "text": "Conferma", "class": "btn btn-primary"}
         ],
         "done": function(data) {

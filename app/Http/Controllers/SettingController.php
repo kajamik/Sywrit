@@ -105,12 +105,7 @@ class SettingController extends Controller
             'quality' => '100'
           ));
 
-          /*$fileName = 'ac-'.rand().'.jpg';
-          $path = public_path('sf/accounts/'. $fileName);
-          $image = Image::make($a)->resize(1110, 350)->encode('jpg', 100)
-                                  ->save( $path );*/
-
-          $user->copertina = asset('sf/aa/'. $fileName);
+          $user->copertina = $fileName;
         }
         if($a = $request->avatar){
           $this->validate($request,[
@@ -138,14 +133,8 @@ class SettingController extends Controller
               'mimetype' => 'jpg',
               'quality' => '100'
             ));
-
-            /*$fileName = 'ac-'.rand().'.jpg';
-            $path = public_path('sf/accounts/'. $fileName);
-            //crop($request->width[0],$request->height[0],$request->x[0],$request->y[0])
-            $image = Image::make($a)->resize(160, 160)->encode('jpg', 100)
-                            ->save( $path );*/
           }
-          $user->avatar = asset('sf/aa/'. $fileName);
+          $user->avatar = $fileName;
         }
         // Socials
         if(!empty($request->bio)) {

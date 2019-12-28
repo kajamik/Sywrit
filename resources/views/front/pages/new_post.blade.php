@@ -45,7 +45,7 @@
     <div class="form-group row">
       <div class="col-md-12">
         <label for="file-upload" class="form-control{{ $errors->has('image') ? ' is-invalid' : '' }} custom-upload">
-          <i class="fa fa-cloud-upload-alt"></i> {{ __('label.upload_cover') }}
+          <i class="fa fa-cloud-upload-alt"></i> {{ __('label.article.upload_file') }}
         </label>
         <input id="file-upload" type="file" onchange="App.upload(this.nextElementSibling, false)" name="image">
         <div id="image_preview" class="preview_body"></div>
@@ -87,7 +87,7 @@
     </div>
 
     <div class="form-group row">
-      <label for="_l_sel_" class="col-md-4 col-form-label">{{ __('label.notice.license_type') }} <span class="fa fa-info-circle" data-script="info" data-text="{!! __('label.notice.license_info') !!}"></span></label>
+      <label for="_l_sel_" class="col-md-4 col-form-label">{{ __('label.article.license_type') }} <span class="fa fa-info-circle" data-script="info" data-text="{!! __('label.notice.license_info') !!}"></span></label>
         <div class="col-md-12">
           <select id="_l_sel_" class="form-control" name="_l_sel_">
             <option value="1">Sywrit Standard</option>

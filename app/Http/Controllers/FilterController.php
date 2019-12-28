@@ -9,8 +9,7 @@ use App\Http\Requests\UpdateUsername;
 use App\Http\Requests\UpdatePassword;
 
 use App\Models\User;
-use App\Models\SavedArticles;
-use App\Models\ScheduledArticles;
+use App\Models\DraftArticle;
 use App\Models\Articoli;
 use App\Models\Notifications;
 
@@ -140,7 +139,7 @@ class FilterController extends Controller
         $this->validate($request,[
           'document__title' => 'required|max:191',
           'document__text' => 'required',
-          'datetime' => 'required|regex:/[0-9]{4}-[0-9]{2}-[0-9]{2}\s+[0-9]:[0-9]/i',
+          'datetime' => 'required|regex:/[0-9]{4}-[0-9]{2}-[0-9]{2}\s*[0-9]{2}:[0-9]{2}/i',
         ],[
           'document__title.required' => 'Il titolo dell\'articolo è obbligatorio',
           'document__text.required' => 'Non è consentito pubblicare un articolo senza contenuto',
@@ -148,7 +147,7 @@ class FilterController extends Controller
           'datetime.regex' => 'Formato data pubblicazione non valido',
         ]);
 
-        $query = new ScheduledArticles();
+        $query = new DraftArticle();
 
         $query->scheduled_at = $request->datetime;
 
@@ -183,7 +182,7 @@ class FilterController extends Controller
           'quality' => '100'
         ));
 
-        $query->copertina = asset('sf/ct/'. $fileName);
+        $query->copertina = $fileName;
       }
 
       if($request->_au > 0) {
@@ -217,7 +216,7 @@ class FilterController extends Controller
     public function ArticlePublish(Request $request)
     {
       $testo = $request->document__text;
-        $query = SavedArticles::find($request->id);
+        $query = DraftArticle::whereNull('scheduled_at')->find($request->id);
         if(!$query->suspended && (Auth::user()->id == $query->id_autore || Auth::user()->hasMemberOf($query->id_gruppo))) {
           if($query->testo) {
             if(preg_match('/<img*/', $testo)) {
@@ -237,7 +236,6 @@ class FilterController extends Controller
             $query2->slug = $query2->id.'-'.str_slug($query2->titolo, '-');
             $query2->save();
             $query->delete();
-
           } else {
             return redirect('');
           }
@@ -245,11 +243,15 @@ class FilterController extends Controller
         return redirect('read/'.$query2->slug);
     }
 
+    /*
+
+    // Backup
+
     public function postArticleEdit($id, Request $request)
     {
       $testo = $request->document__text;
 
-      if(preg_match('/<img*/', $testo)) {
+      if(preg_match('/ <img* /', $testo)) {
         $testo = $this->convertImages($testo, array('name' => Str::random(16).'.'.Str::random(32),'path' => public_path('sf/ct/')));
       }
 
@@ -323,12 +325,6 @@ class FilterController extends Controller
             $query->topic_id = $request->_ct_sel_;
         }
 
-        /*if($request->_l_sel_ == '1') {
-            $query->license = '1';
-        } else {
-            $query->license = '2';
-        }*/
-
         if($a = $request->image){
           $this->validate($request,[
             'image' => 'image|mimes:jpeg,jpg,png',
@@ -356,18 +352,204 @@ class FilterController extends Controller
       }
       return redirect('read/'.$query->slug);
     }
+    */
+
+    public function postArticleEdit($id, Request $request)
+    {
+      $testo = $request->document__text;
+
+      if(preg_match('/<img*/', $testo)) {
+        $testo = $this->convertImages($testo, array('name' => Str::random(16).'.'.Str::random(32),'path' => public_path('sf/ct/')));
+      }
+
+      $query = Articoli::where('id', $id)->first();
+
+      $this->validate($request, [
+        'document__text' => 'required',
+      ],[
+        'document__text.required' => 'Non è consentito pubblicare un articolo senza contenuto'
+      ]);
+
+      if(!Auth::user()->suspended && ($query->id_gruppo && Auth::user()->hasMemberOf($query->id_gruppo) || Auth::user()->id == $query->id_autore)) {
+
+        $query->tags = str_slug($request->tags, ',');
+        $query->testo = $testo;
+
+        if($request->_ct_sel_ > 0) {
+            $query->topic_id = $request->_ct_sel_;
+        }
+
+        if($a = $request->image){
+          $this->validate($request,[
+            'image' => 'image|mimes:jpeg,jpg,png',
+          ],[
+            'image.image' => 'Devi inserire un\'immagine',
+            'image.mimes'  => 'Formato immagine non valido',
+          ]);
+
+          deleteFile( public_path('sf/ct/'. $query->copertina) );
+
+          $fileName = '__492x340'.Str::random(64).'.jpg';
+
+          uploadFile($a, array(
+            'name' => $fileName,
+            'path' => public_path('sf/ct/'),
+            'width' => '492',
+            'height' => '340',
+            'mimetype' => 'jpg',
+            'quality' => '100'
+          ));
+
+          $query->copertina = $fileName;
+        }
+        $query->save();
+      }
+      return redirect('read/'.$query->slug);
+    }
+
+    public function postScheduleArticleEdit($id, Request $request)
+    {
+      $testo = $request->document__text;
+
+      if(preg_match('/<img*/', $testo)) {
+        $testo = $this->convertImages($testo, array('name' => Str::random(16).'.'.Str::random(32),'path' => public_path('sf/ct/')));
+      }
+
+      $query = DraftArticle::whereNotNull('scheduled_at')->where('id', $id)->first();
+
+      $this->validate($request, [
+        'document__title' => 'required|max:191',
+        'document__text' => 'required',
+      ],[
+        'document__title.required' => 'Il titolo dell\'articolo è obbligatorio',
+        'document__text.required' => 'Non è consentito pubblicare un articolo senza contenuto'
+      ]);
+
+      if(!Auth::user()->suspended && ($query->id_gruppo && Auth::user()->hasMemberOf($query->id_gruppo) || Auth::user()->id == $query->id_autore)) {
+
+        $query->titolo = $request->document__title;
+        $query->tags = str_slug($request->tags, ',');
+        $query->testo = $testo;
+
+        if($request->_ct_sel_ > 0) {
+            $query->topic_id = $request->_ct_sel_;
+        }
+
+        if($a = $request->image){
+          $this->validate($request,[
+            'image' => 'image|mimes:jpeg,jpg,png',
+          ],[
+            'image.image' => 'Devi inserire un\'immagine',
+            'image.mimes'  => 'Formato immagine non valido',
+          ]);
+
+          deleteFile( public_path('sf/ct/'. $query->copertina) );
+
+          $fileName = '__492x340'.Str::random(64).'.jpg';
+
+          uploadFile($a, array(
+            'name' => $fileName,
+            'path' => public_path('sf/ct/'),
+            'width' => '492',
+            'height' => '340',
+            'mimetype' => 'jpg',
+            'quality' => '100'
+          ));
+
+          $query->copertina = $fileName;
+        }
+        $query->save();
+      }
+      return redirect('articles/schedule/view/'. $query->id);
+    }
+
+    public function postDraftArticleEdit($id, Request $request)
+    {
+      $testo = $request->document__text;
+
+      if(preg_match('/<img*/', $testo)) {
+        $testo = $this->convertImages($testo, array('name' => Str::random(16).'.'.Str::random(32),'path' => public_path('sf/ct/')));
+      }
+
+      $query = DraftArticle::whereNull('scheduled_at')->where('id', $id)->first();
+
+      $this->validate($request, [
+        'document__text' => 'required',
+      ],[
+        'document__text.required' => 'Non è consentito pubblicare un articolo senza contenuto'
+      ]);
+
+      if(!Auth::user()->suspended && ($query->id_gruppo && Auth::user()->hasMemberOf($query->id_gruppo) || Auth::user()->id == $query->id_autore)) {
+
+        $query->titolo = $request->document__title;
+        $query->tags = str_slug($request->tags, ',');
+        $query->testo = $testo;
+
+        if($request->_ct_sel_ > 0) {
+            $query->topic_id = $request->_ct_sel_;
+        }
+
+        if($a = $request->image){
+          $this->validate($request,[
+            'image' => 'image|mimes:jpeg,jpg,png',
+          ],[
+            'image.image' => 'Devi inserire un\'immagine',
+            'image.mimes'  => 'Formato immagine non valido',
+          ]);
+
+          deleteFile( public_path('sf/ct/'. $query->copertina) );
+
+          $fileName = '__492x340'.Str::random(64).'.jpg';
+
+          uploadFile($a, array(
+            'name' => $fileName,
+            'path' => public_path('sf/ct/'),
+            'width' => '492',
+            'height' => '340',
+            'mimetype' => 'jpg',
+            'quality' => '100'
+          ));
+
+          $query->copertina = $fileName;
+        }
+        $query->save();
+      }
+      return redirect('articles/draft/view/'. $query->id);
+    }
 
     public function ArticleDelete(Request $request)
     {
         $query = Articoli::find($request->id);
-        if(empty($query)) {
-          $query = SavedArticles::find($request->id);
-        }
+
         if(!$query->suspended && (Auth::user()->hasMemberOf($query->id_gruppo) || Auth::user()->id == $query->id_autore)) {
           // elimino le notifiche relative all'articolo
           //Notifications::where('type', '3')->where('content_id', $query->id)->delete();
           $query->delete();
         }
         return redirect('/');
+    }
+
+    public function deleteScheduleArticle(Request $request)
+    {
+        $query = DraftArticle::whereNotNull('scheduled_at')->find($request->id);
+
+        if(!$query->suspended && (Auth::user()->hasMemberOf($query->id_gruppo) || Auth::user()->id == $query->id_autore)) {
+          // elimino le notifiche relative all'articolo
+          //Notifications::where('type', '3')->where('content_id', $query->id)->delete();
+          $query->delete();
+        }
+        return redirect('articles/schedules');
+    }
+
+    public function deleteDraftArticle(Request $request)
+    {
+        $query = DraftArticle::whereNull('scheduled_at')->find($request->id);
+
+        if(!$query->suspended && (Auth::user()->hasMemberOf($query->id_gruppo) || Auth::user()->id == $query->id_autore)) {
+          // elimino le notifiche relative all'articolo
+          //Notifications::where('type', '3')->where('content_id', $query->id)->delete();
+          $query->delete();
+        }
+        return redirect('articles/drafts');
     }
 }

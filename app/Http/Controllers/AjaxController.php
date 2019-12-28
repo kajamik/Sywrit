@@ -14,7 +14,7 @@ use Auth;
 // Models
 use App\Models\Editori;
 use App\Models\Articoli;
-use App\Models\ScheduledArticles;
+use App\Models\DraftArticle;
 use App\Models\User;
 use App\Models\Notifications;
 use App\Models\PublisherRequest;
@@ -404,11 +404,22 @@ class AjaxController extends Controller
       if(!isset($request->a_id)) {
         return view('front.components.ajax.schedule')->with(['date' => $rDate, 'time' => $rTime]);
       } else { // Modifico la data dell'articolo già programmato
-        $query = ScheduledArticles::whereNull('id_gruppo')->where('id_autore', Auth::user()->id)->where('id', $request->a_id)->first();
+        $query = DraftArticle::whereNotNull('scheduled_at')->whereNull('id_gruppo')->where('id_autore', Auth::user()->id)->where('id', $request->a_id)->first();
         $query->scheduled_at = $rDate. ' '. $rTime;
         $query->save();
         return Response::json(['date' => \Carbon\Carbon::parse($rDate)->translatedFormat('l j F Y'), 'time' => $rTime]);
       }
+  }
+
+  public function removeSchedule(Request $request)
+  {
+      $query = DraftArticle::whereNotNull('scheduled_at')->whereNull('id_gruppo')->where('id_autore', Auth::user()->id)->where('id', $request->id)->first();
+
+      $query->scheduled_at = NULL;
+
+      $query->save();
+
+      return Response::json('location.replace("/articles/draft/view/'. $query->id. '")');
   }
 
   public function sendGroupMessage(Request $request)

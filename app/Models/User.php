@@ -69,7 +69,7 @@ class User extends Authenticatable
     public function getBackground()
     {
       if($this->copertina) {
-        return $this->copertina;
+        return asset('sf/aa/'. $this->copertina);
       }
       return asset('upload/bg.jpg');
     }
@@ -77,7 +77,7 @@ class User extends Authenticatable
     public function getAvatar()
     {
       if($this->avatar) {
-        return $this->avatar;
+        return asset('sf/aa/'. $this->avatar);
       }
       return asset('upload/default.png');
     }

@@ -22,7 +22,7 @@
           <div class="form-group row">
             <div class="col-md-12">
               <label for="file-upload" class="form-control custom-upload">
-                <i class="fa fa-cloud-upload-alt"></i> {{ __('label.article.upload_cover') }}
+                <i class="fa fa-cloud-upload-alt"></i> {{ __('label.article.upload_file') }}
               </label>
               <input id="file-upload" type="file" onchange="App.upload(this.nextElementSibling, false)" name="image">
               <div id="image_preview" class="preview_body"></div>

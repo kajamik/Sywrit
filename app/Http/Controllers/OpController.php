@@ -22,7 +22,7 @@ class OpController extends Controller
     $user_articles = DB::table('articoli')->whereNull('id_gruppo')->count();
     $cron_users = DB::table('users')->where('cron', '1')->count();
 
-    $archs = DB::table('saved_articles')->count();
+    $archs = DB::table('draft_article')->whereNull('scheduled_at')->count();
     $articles = DB::table('articoli')->where('bot_message', '!=', '1')->count();
 
     $publishers = DB::table('editori')->count();

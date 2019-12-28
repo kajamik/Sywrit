@@ -127,13 +127,15 @@ Route::group(['prefix' => 'articles', 'middleware' => ['auth','isSuspended']], f
   Route::get('schedule', 'FrontController@getScheduleArticle');
   Route::get('schedule/view/{id}', 'FrontController@getScheduleArticleView');
   Route::get('schedule/edit/{id}', 'FrontController@getScheduleArticleEdit');
-  Route::post('schedule/edit/{id}', 'FrontController@postScheduleArticleEdit');
+  Route::post('schedule/edit/{id}', 'FilterController@postScheduleArticleEdit');
+  Route::post('schedule/delete/{id}', 'FilterController@deleteScheduleArticle');
   //--
   Route::get('drafts', 'FrontController@getDraftArticle');
   //--
   Route::get('draft/view/{id}', 'FrontController@getDraftArticleView');
   Route::get('draft/edit/{id}', 'FrontController@getDraftArticleEdit');
-  Route::post('draft/edit/{id}', 'FrontController@postDraftArticleEdit');
+  Route::post('draft/edit/{id}', 'FilterController@postDraftArticleEdit');
+  Route::post('draft/delete/{id}', 'FilterController@deleteDraftArticle');
 });
 
 // Profile
@@ -210,8 +212,7 @@ Route::group(['prefix' => 'ajax'], function() {
     });*/
 
     Route::get('article/action/schedule', 'AjaxController@scheduleArticle');
-
-    Route::get('schedule/view', 'AjaxController@getScheduledArticle');
+    Route::get('article/action/delete/schedule', 'AjaxController@removeSchedule');
 
     // User Thumbnail
     //Route::get('thumbnail', 'AjaxController@getUserThumbnail');

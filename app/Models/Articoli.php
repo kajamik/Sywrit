@@ -10,8 +10,8 @@ class Articoli extends Model
 
     public function getBackground() {
       if($this->bot_message != '1') {
-        if($this->copertina){
-            return $this->copertina;
+        if($this->copertina && file_exists('sf/ct/'. $this->copertina)){
+            return asset('sf/ct/'. $this->copertina);
         } else {
           return asset('upload/no-image.jpg');
         }

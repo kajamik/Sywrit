@@ -8,8 +8,7 @@ use Illuminate\Support\Str;
 // Models
 use App\Models\BotMessage;
 use App\Models\User;
-use App\Models\SavedArticles;
-use App\Models\ScheduledArticles;
+use App\Models\DraftArticle;
 use App\Models\Articoli;
 use App\Models\ArticleHistory;
 use App\Models\ArticleCategory;
@@ -178,14 +177,14 @@ class FrontController extends Controller
     /* Draft Articles */
     public function getDraftArticle()
     {
-      $query = SavedArticles::whereNull('id_gruppo')->where('id_autore', Auth::user()->id)->simplePaginate(6);
+      $query = DraftArticle::whereNull('scheduled_at')->whereNull('id_gruppo')->where('id_autore', Auth::user()->id)->simplePaginate(6);
       SEOMeta::setTitle('Articoli salvati - Sywrit', false)
                 ->setCanonical(\Request::url());
       return view('front.pages.profile.article.draft', compact('query'));
     }
     public function getDraftArticleView($id)
     {
-      $query = SavedArticles::where('id', $id)->first();
+      $query = DraftArticle::whereNull('scheduled_at')->where('id', $id)->first();
 
       // SEO ///////////////////////////////////////////////////
 
@@ -221,7 +220,7 @@ class FrontController extends Controller
 
       //-------------------------------------------------------//
 
-      $query = SavedArticles::whereNull('id_gruppo')->where('id_autore', Auth::user()->id)->where('id', $id)->first();
+      $query = DraftArticle::whereNull('scheduled_at')->whereNull('id_gruppo')->where('id_autore', Auth::user()->id)->where('id', $id)->first();
 
       $categories = \DB::table('article_category')->orderBy('name', 'asc')->get();
 
@@ -232,7 +231,7 @@ class FrontController extends Controller
     /* Scheduled Articles */
     public function getScheduleArticle()
     {
-      $query = ScheduledArticles::whereNull('id_gruppo')->where('id_autore', Auth::user()->id)->orderBy('scheduled_at','asc')->simplePaginate(6);
+      $query = DraftArticle::whereNotNull('scheduled_at')->whereNull('id_gruppo')->where('id_autore', Auth::user()->id)->orderBy('scheduled_at','asc')->simplePaginate(6);
       SEOMeta::setTitle('Articoli programmati - Sywrit', false)
                 ->setCanonical(\Request::url());
       return view('front.pages.profile.article.scheduled', compact('query'));
@@ -240,7 +239,7 @@ class FrontController extends Controller
 
     public function getScheduleArticleView($id)
     {
-      $query = ScheduledArticles::whereNull('id_gruppo')->where('id_autore', Auth::user()->id)->where('id', $id)->first();
+      $query = DraftArticle::whereNotNull('scheduled_at')->whereNull('id_gruppo')->where('id_autore', Auth::user()->id)->where('id', $id)->first();
 
       // SEO ///////////////////////////////////////////////////
 
@@ -276,7 +275,7 @@ class FrontController extends Controller
 
       //-------------------------------------------------------//
 
-      $query = ScheduledArticles::whereNull('id_gruppo')->where('id_autore', Auth::user()->id)->where('id', $id)->first();
+      $query = DraftArticle::whereNotNull('scheduled_at')->whereNull('id_gruppo')->where('id_autore', Auth::user()->id)->where('id', $id)->first();
 
       $categories = \DB::table('article_category')->orderBy('name', 'asc')->get();
 
@@ -517,20 +516,12 @@ class FrontController extends Controller
 
       //-------------------------------------------------------//
 
-      $query = Articoli::where('slug', $id)->first();
+      $query = Articoli::where('id', $id)->first();
 
-      if(!empty($query)) {
-        if(($query->id_gruppo > 0 && Auth::user()->hasMemberOf($query->id_gruppo)) || (Auth::user()->id == $query->id_autore)){
-          return view('front.pages.edit_post',compact('query'));
-        }else{
-          return redirect('read/'.$query->slug);
-        }
+      if(($query->id_gruppo && Auth::user()->hasMemberOf($query->id_gruppo)) || (Auth::user()->id == $query->id_autore)){
+        return view('front.pages.edit_post', compact('query'));
       } else {
-        $query = SavedArticles::where('slug', $id)->first();
-        $categories = \DB::table('article_category')->orderBy('name', 'asc')->get();
-        if(($query->id_gruppo > 0 && Auth::user()->hasMemberOf($query->id_gruppo)) || (Auth::user()->id == $query->id_autore)){
-          return view('front.pages.profile.draft.edit_post',compact('query','categories'));
-        }
+        return redirect('read/'.$query->slug);
       }
     }
 

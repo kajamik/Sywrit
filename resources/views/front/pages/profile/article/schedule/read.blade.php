@@ -24,7 +24,7 @@
             @if($query->id_gruppo > 0 && Auth::user()->hasMemberOf($query->id_gruppo) || $query->id_autore == Auth::user()->id)
             <ul class="d-flex bg-sw p-2 mb-3">
               <li><a id="edt" href="{{ url('/articles/schedule/edit/'. $query->id) }}">@lang('label.article.edit')</a></li>
-              <li><a id="dlt" class="ml-2" href="#" onclick="link(this,'{{ route('article/action/delete') }}')">@lang('label.article.delete')</a></li>
+              <li><a id="dlt" class="ml-2" href="#" onclick="link(this,'{{ url('articles/schedule/delete/'. $query->id) }}')">@lang('label.article.delete')</a></li>
             </ul>
             <script>
             function link(e, route){var el = setNode(e, {html: {"id": "__form__","action": route,"method": "post"}}, "form");setNode(el.html, {html: {"name": "id","value": "{{ $query->id }}"}}, "input");
@@ -87,6 +87,9 @@ function schedule() {
         {"type": ["h5"], "text": "Data di pubblicazione"},
         {"type": ["input", "date"], "id": "dateControl", "class": "form-control", "value": "{{ \Carbon\Carbon::parse($query->scheduled_at)->toDateString() }}", "required": true},
         {"type": ["input", "time"], "id": "timeControl", "class": "form-control", "value": "{{ \Carbon\Carbon::parse($query->scheduled_at)->format('H:i') }}", "required": true},
+        {"type": ["button", "button"], "id": "rSchedule", "text": "Rimuovi programmazione", "class": "btn btn-link", "onclick": function() {
+          App.query("get", "{{url('ajax/article/action/delete/schedule')}}",{id:"{{$query->id}}"},false, function(h) { return eval(h); });
+        }},
         {"type": ["button", "submit"], "text": "Conferma", "class": "btn btn-primary"}
       ],
       "done": function(data) {

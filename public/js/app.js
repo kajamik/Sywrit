@@ -93,10 +93,13 @@ var App = {
         var placeholder = (b.placeholder) ? "placeholder='"+b.placeholder+"'" : '';
         var required = (b.required) ? 'required' : '';
         var text = (b.text) ? b.text : '';
+        if(b.onclick) {
+          $(document).on('click', '#'+b.id, b.onclick);
+        }
         str = '<'+b.type[0]+' '+id+' '+href+' '+className+' '+type+' '+value+' '+name+' '+placeholder+' '+required+' '+target+'>'+text+'</'+b.type[0]+'>';
 
       return str;
-     }
+    }
 
       var n = 0;
       if(typeof content == 'string') {

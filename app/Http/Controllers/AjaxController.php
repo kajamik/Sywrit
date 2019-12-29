@@ -47,7 +47,43 @@ class AjaxController extends Controller
 
   public function autoSaving(Request $request)
   {
-
+      $document__text = $request->text;
+      $request = explode('&', $request->form_request);
+      $form = array();
+      foreach($request as $value) {
+          $tmp = explode('=', $value);
+          $form[$tmp[0]] = $tmp[1];
+      }
+      $request = (object) $form;
+      //--
+      $current_session_key = \Session::get('current_article_key');
+      $session_id = \Session::get('draft_article_id');
+      //--
+      if(isset($current_session_key) && isset($session_id)) {
+        $query = DraftArticle::whereNull('scheduled_at')->where('id_autore', Auth::user()->id)->where('id', $session_id)->first();
+        $query->topic_id = is_numeric($request->_ct_sel_) ? $request->_ct_sel_ : NULL;
+        $query->titolo = isset($request->document__title) ? urldecode($request->document__title) : "Documento senza nome";
+        $query->tags = str_slug(urldecode($request->tags), ',');
+        $query->testo = $document__text;
+        $query->copertina = isset($request->image) ? $request->image : NULL;
+        $query->license = is_numeric($request->_m_sel) ? $request->_m_sel : 1;
+        $query->save();
+      } else {
+        $query = DraftArticle::create([
+          'topic_id' => is_numeric($request->_ct_sel_) ? $request->_ct_sel_ : NULL,
+          'titolo' => isset($request->document__title) ? urldecode($request->document__title) : "Documento senza nome",
+          'tags' => str_slug(urldecode($request->tags), ','),
+          'testo' => $document__text,
+          'copertina' => isset($request->image) ? $request->image : NULL,
+          'id_gruppo' => NULL,
+          'id_autore' => Auth::user()->id,
+          'license' => is_numeric($request->_m_sel) ? $request->_m_sel : 1,
+          'scheduled_at' => isset($request->datetime) ? $request->datetime : NULL
+        ]);
+        \Session::put('current_article_key', str_random(64));
+        \Session::put('draft_article_id', $query->id);
+        \Debugbar::info("Bozza salvata");
+      }
   }
 
   public function rate(Request $request)

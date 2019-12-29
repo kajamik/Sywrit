@@ -17,7 +17,7 @@
     <div class="form-group row">
       <label for="title" class="col-md-4 col-form-label required">{{ __('label.article_title') }}</label>
         <div class="col-md-12">
-            <input id="title" type="text" class="form-control{{ $errors->has('document__title') ? ' is-invalid' : '' }}" name="document__title" value="{{ old('document__title') }}" required autofocus>
+            <input id="title" type="text" class="form-control{{ $errors->has('document__title') ? ' is-invalid' : '' }}" name="document__title" value="{{ old('document__title')}}" required autofocus>
             @if ($errors->has('document__title'))
                 <span class="invalid-feedback" role="alert">
                     <strong>{{ $errors->first('document__title') }}</strong>
@@ -158,4 +158,9 @@
 
 @include('front.components.article.editor', ['editor' => '.document'])
 
+<script>
+setInterval(function() {
+  App.query("post", "{{url('ajax/article/action/autosaving')}}",{_token: "{{ csrf_token() }}",form_request:$("form").serialize(),text:editor.getHtml()},false);
+}, 300000);
+</script>
 @endsection

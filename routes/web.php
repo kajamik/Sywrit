@@ -211,6 +211,7 @@ Route::group(['prefix' => 'ajax'], function() {
       Route::get('writeArticle', 'AjaxController@writeGroupArticle');
     });*/
 
+    Route::post('article/action/autosaving', 'AjaxController@autoSaving');
     Route::get('article/action/schedule', 'AjaxController@scheduleArticle');
     Route::get('article/action/delete/schedule', 'AjaxController@removeSchedule');
 

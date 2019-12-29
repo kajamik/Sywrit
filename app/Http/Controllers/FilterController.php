@@ -123,6 +123,12 @@ class FilterController extends Controller
         $testo = $this->convertImages($testo, array('name' => Str::random(16).'.'.Str::random(32),'path' => public_path('sf/ct/')));
       }
 
+      //--
+      $query = DraftArticle::whereNull('scheduled_at')->where('id_autore', Auth::user()->id)->where('id', \Session::get('draft_article_id'))->first();
+      $query->delete();
+      \Session::forget('draft_article_id');
+      //--
+
       if($request->_m_sel == 1 || ($request->_m_sel == 2 && !isset($request->datetime))) { // Pubblicazione immediata
         $this->validate($request,[
           'document__title' => 'required|max:191',

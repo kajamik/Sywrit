@@ -168,7 +168,7 @@ class FrontController extends Controller
 
     public function getPrivateArchive()
     {
-      $query = Articoli::whereNull('id_gruppo')->where('id_autore', Auth::user()->id)->simplePaginate(6);
+      $query = Articoli::whereNull('id_gruppo')->where('id_autore', Auth::user()->id)->orderBy('created_at', 'desc')->simplePaginate(6);
       SEOMeta::setTitle('I miei articoli - Sywrit', false)
                 ->setCanonical(\Request::url());
       return view('front.pages.profile.article.home', compact('query'));
@@ -177,7 +177,7 @@ class FrontController extends Controller
     /* Draft Articles */
     public function getDraftArticle()
     {
-      $query = DraftArticle::whereNull('scheduled_at')->whereNull('id_gruppo')->where('id_autore', Auth::user()->id)->simplePaginate(6);
+      $query = DraftArticle::whereNull('scheduled_at')->whereNull('id_gruppo')->where('id_autore', Auth::user()->id)->orderBy('created_at', 'desc')->simplePaginate(6);
       SEOMeta::setTitle('Articoli salvati - Sywrit', false)
                 ->setCanonical(\Request::url());
       return view('front.pages.profile.article.draft', compact('query'));
@@ -231,7 +231,7 @@ class FrontController extends Controller
     /* Scheduled Articles */
     public function getScheduleArticle()
     {
-      $query = DraftArticle::whereNotNull('scheduled_at')->whereNull('id_gruppo')->where('id_autore', Auth::user()->id)->orderBy('scheduled_at','asc')->simplePaginate(6);
+      $query = DraftArticle::whereNotNull('scheduled_at')->whereNull('id_gruppo')->where('id_autore', Auth::user()->id)->orderBy('scheduled_at','desc')->simplePaginate(6);
       SEOMeta::setTitle('Articoli programmati - Sywrit', false)
                 ->setCanonical(\Request::url());
       return view('front.pages.profile.article.scheduled', compact('query'));
@@ -427,7 +427,10 @@ class FrontController extends Controller
 
     public function getWrite(Request $request)
     {
-
+      if(\Session::get('current_article_key')) {
+        \Session::put('old_article_key', \Session::get('current_article_key'));
+        \Session::forget('current_article_key');
+      }
       // SEO ///////////////////////////////////////////////////
 
         SEOMeta::setTitle(trans('label.title.new_article'), false)

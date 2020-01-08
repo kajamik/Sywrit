@@ -87,10 +87,11 @@ function schedule() {
         {"type": ["h5"], "text": "Data di pubblicazione"},
         {"type": ["input", "date"], "id": "dateControl", "class": "form-control", "value": "{{ \Carbon\Carbon::parse($query->scheduled_at)->toDateString() }}", "required": true},
         {"type": ["input", "time"], "id": "timeControl", "class": "form-control", "value": "{{ \Carbon\Carbon::parse($query->scheduled_at)->format('H:i') }}", "required": true},
-        {"type": ["button", "button"], "id": "rSchedule", "text": "Rimuovi programmazione", "class": "btn btn-link", "onclick": function() {
+        {"type": ["button", "submit"], "text": "Modifica", "class": "btn btn-primary btn-block"},
+        {"type": ["p"], "text": "oppure", "class": "text-center"},
+        {"type": ["button", "button"], "id": "rSchedule", "text": "Rimuovi programmazione", "class": "btn btn-dark btn-block", "onclick": function() {
           App.query("get", "{{url('ajax/article/action/delete/schedule')}}",{id:"{{$query->id}}"},false, function(h) { return eval(h); });
-        }},
-        {"type": ["button", "submit"], "text": "Conferma", "class": "btn btn-primary"}
+        }}
       ],
       "done": function(data) {
         dialog.remove();

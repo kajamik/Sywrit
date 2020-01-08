@@ -95,7 +95,7 @@ return [
     'profile_description' => 'Accedi alla pagina profilo di :name',
     'group_description' => 'Accedi alla pagina del gruppo :name',
     'topic_description' => 'Articoli della sezione :name',
-    'web_description' => ':name: la nuova piattaforma multi-genere di scrittura online.',
+    'web_description' => 'Crea il tuo blog e inizia subito a scrivere.',
   ],
   'notice' => [
     'account_suspended' => 'Questo account è stato sospeso da un operatore per violazione delle <a href=":standards" style="color:#007bff">norme della community</a>.',
@@ -132,6 +132,7 @@ return [
     'user' => 'Utente',
   ],
   'search' =>  [
+    'articles' => 'Articoli',
     'found_items_by' => 'Sono stati trovati :count risultati con la parola :name',
     'found_tag_by' => 'Sono stati trovati :count risultati con il tag :name',
     'groups' => 'Gruppi',

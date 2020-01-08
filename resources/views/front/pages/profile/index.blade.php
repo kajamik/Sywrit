@@ -20,7 +20,7 @@
             @foreach($articoli as $value)
             <div class="col-lg-3 col-sm-6 col-xs-12">
               <a href="{{ url('read/'.$value->article_slug) }}">
-                <div class="card-header">{{ \Carbon\Carbon::parse($value->published_at)->diffForHumans() }}</div>
+                <div class="card-header">{{ \Carbon\Carbon::parse($value->created_at)->diffForHumans() }}</div>
                 <div class="card border">
                   <img class="card-img-top" src="{{ $value->getBackground() }}" alt="Copertina Articolo">
                   <div class="card-body">

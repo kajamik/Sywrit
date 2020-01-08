@@ -437,13 +437,20 @@ class AjaxController extends Controller
       $rDate = $request->date;
       $rTime = $request->time;
 
-      if(!isset($request->a_id)) {
-        return view('front.components.ajax.schedule')->with(['date' => $rDate, 'time' => $rTime]);
-      } else { // Modifico la data dell'articolo già programmato
-        $query = DraftArticle::whereNotNull('scheduled_at')->whereNull('id_gruppo')->where('id_autore', Auth::user()->id)->where('id', $request->a_id)->first();
+      if(!isset($request->draft) || (isset($request->draft) && !$request->draft)) { // Verifico che non sia un articolo già salvato
+        if(!isset($request->a_id)) {
+          return view('front.components.ajax.schedule')->with(['date' => $rDate, 'time' => $rTime]);
+        } else { // Modifico la data dell'articolo già programmato
+          $query = DraftArticle::whereNotNull('scheduled_at')->whereNull('id_gruppo')->where('id_autore', Auth::user()->id)->where('id', $request->a_id)->first();
+          $query->scheduled_at = $rDate. ' '. $rTime;
+          $query->save();
+          return Response::json(['date' => \Carbon\Carbon::parse($rDate)->translatedFormat('l j F Y'), 'time' => $rTime]);
+        }
+      } else { // Articolo salvato
+        $query = DraftArticle::whereNull('scheduled_at')->whereNull('id_gruppo')->where('id_autore', Auth::user()->id)->where('id', $request->a_id)->first();
         $query->scheduled_at = $rDate. ' '. $rTime;
         $query->save();
-        return Response::json(['date' => \Carbon\Carbon::parse($rDate)->translatedFormat('l j F Y'), 'time' => $rTime]);
+        return Response::json('location.replace("/articles/schedule/view/'. $query->id. '")');
       }
   }
 

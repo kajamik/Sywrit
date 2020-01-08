@@ -9,7 +9,7 @@ function uploadFile($img, $details)
     $image = Image::make($img)->fit($details['width'], $details['height'])->save( $details['path'].$details['name'] );
   } else {
     File::makeDirectory($details['path'], 0777, true);
-    return $this->uploadFile($img, $details);
+    return uploadFile($img, $details);
   }
   return $details['name'];
 }
@@ -38,7 +38,7 @@ function convertImages($source, $file)
           /***************************************************************/
           $img = file_get_contents($src[1]);
           $name = $file['name'].'.'.explode('/', getimagesizefromstring($img)['mime'])[1];
-          $this->uploadFile($img, array(
+          uploadFile($img, array(
             'name' => $name,
             'path' => $file['path'],
             'width' => getimagesizefromstring($img)[0],
@@ -49,7 +49,7 @@ function convertImages($source, $file)
         } else {
           $base64[1][] = '';
         }
-      } elseif( !$this->equals('/[a-z:]*\/\/[ww*.*]*|\/(.*)/', $src[1], \URL::to('/')) ) {
+      } elseif( !equals('/[a-z:]*\/\/[ww*.*]*|\/(.*)/', $src[1], \URL::to('/')) ) {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $src[1]);
         curl_setopt($ch, CURLOPT_HEADER, false);
@@ -60,7 +60,7 @@ function convertImages($source, $file)
         $mimetype = explode('/', curl_getinfo($ch, CURLINFO_CONTENT_TYPE))[1];
         if(in_array($mimetype, ['png','jpeg','jpg'])) {
           $name = $file['name'].'.'.$mimetype;
-          $this->uploadFile($img, array(
+          uploadFile($img, array(
             'name' => $name,
             'path' => $file['path'],
             'width' => getimagesizefromstring($img)[0],

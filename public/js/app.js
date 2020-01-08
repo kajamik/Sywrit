@@ -2,7 +2,6 @@ var App = {
 
     query: function (method, url, data, cache, f) {
       f = (typeof f === 'undefined' ? null : f);
-
       $.ajax({
           method: method,
           url: url,
@@ -15,7 +14,7 @@ var App = {
     follow: function(element, data, cache) {
       $(element).click(function(){
         var attribute = $(".publisher-bar").attr("data-pub-text");
-        this.query('get', data.url, data.data, cache,
+        App.query('get', data.url, data.data, cache,
           function(data) {
             if(data.result) {
               $("#follow i").attr("class","fas fa-bell-slash");
@@ -34,7 +33,7 @@ var App = {
       document.addEventListener('scroll', function () {
         if ($(window).scrollTop() == $(document).height() - $(window).height()) {
           page++;
-          this.query('get', '?page='+(page), null, false, function(data) {
+          App.query('get', '?page='+(page), null, false, function(data) {
             $("#"+id).append(data.posts);
           });
         }
@@ -42,7 +41,7 @@ var App = {
     },
 
     loadData: function(a, f) {
-      this.query('get', f+1, null, false, function(data) {
+      App.query('get', f+1, null, false, function(data) {
         $(a).append(data.posts);
       });
     },
@@ -205,11 +204,8 @@ var App = {
       var share = {};
 
       var links = {
-        // name: [icon, url]
-        'clipboard': ['far fa-clipboard', { Cmd: '' }],
         'facebook': ['fab fa-facebook', { UrlTo: 'https://www.facebook.com/share.php?u=' }],
         'linkedin': ['fab fa-linkedin', { UrlTo: 'https://www.linkedin.com/sharing/share-offsite/?url=' }]
-        // more...
       };
 
       // UX create
@@ -224,7 +220,7 @@ var App = {
             $(this).addClass("sb-open");
             $("<div class='sb-dialog'></div>").appendTo( $(this) );
             $.each(data.apps, function(f) {
-              $("<a href='"+ links[data.apps[f]][1] + window.location.href + "'><div class='"+ links[data.apps[f]][0] +"'></div></a>").appendTo( $(".sb-dialog") );
+              $("<a href='"+ links[data.apps[f]][1].UrlTo + window.location.href + "' target='_blank'><div class='"+ links[data.apps[f]][0] +"'></div></a>").appendTo( $(".sb-dialog") );
             });
           }
       });

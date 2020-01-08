@@ -61,7 +61,7 @@
             App.getUserInterface({
             "ui": {
               "header":{"action": "{{route('article/action/report')}}", "method": "GET"},
-              "data":{"id": "{{$query->id}}", "selector": "#selOption:checked", "text": "#reasonText"},
+              "data":{"id": "{{$query->id}}", "selector": "#selOption:checked###val", "text": "#reasonText###val"},
               "title": '@lang("label.report.user")',
               "content": [
                 {"type": ["input","radio"], "id": "selOption", "name": "option", "value": "0", "class": "col-md-1", "label": "@lang('form.report_user_type_0')", "required": true},

@@ -161,6 +161,6 @@
 <script>
 setInterval(function() {
   App.query("post", "{{url('ajax/article/action/autosaving')}}",{_token: "{{ csrf_token() }}",form_request:$("form").serialize(),text:editor.getHtml()},false);
-}, 300000);
+}, 15000);
 </script>
 @endsection

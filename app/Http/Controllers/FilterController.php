@@ -120,12 +120,15 @@ class FilterController extends Controller
       $testo = $request->document__text;
 
       if(preg_match('/<img*/', $testo)) {
-        $testo = $this->convertImages($testo, array('name' => Str::random(16).'.'.Str::random(32),'path' => public_path('sf/ct/')));
+        $testo = convertImages($testo, array('name' => Str::random(16).'.'.Str::random(32),'path' => public_path('sf/ct/')));
       }
 
       //--
       $query = DraftArticle::whereNull('scheduled_at')->where('id_autore', Auth::user()->id)->where('id', \Session::get('draft_article_id'))->first();
-      $query->delete();
+
+      if($query)
+        $query->delete();
+
       \Session::forget('draft_article_id');
       //--
 
@@ -226,7 +229,7 @@ class FilterController extends Controller
         if(!$query->suspended && (Auth::user()->id == $query->id_autore || Auth::user()->hasMemberOf($query->id_gruppo))) {
           if($query->testo) {
             if(preg_match('/<img*/', $testo)) {
-              $testo = $this->convertImages($testo, array('name' => Str::random(16).'.'.Str::random(32),'path' => public_path('sf/ct/')));
+              $testo = convertImages($testo, array('name' => Str::random(16).'.'.Str::random(32),'path' => public_path('sf/ct/')));
             }
             $query2 = new Articoli();
             $query2->topic_id = $query->topic_id;
@@ -245,8 +248,8 @@ class FilterController extends Controller
           } else {
             return redirect('');
           }
+          return \Response::json('location.replace("/read/'. $query2->slug. '")');
         }
-        return redirect('read/'.$query2->slug);
     }
 
     /*
@@ -418,7 +421,7 @@ class FilterController extends Controller
       $testo = $request->document__text;
 
       if(preg_match('/<img*/', $testo)) {
-        $testo = $this->convertImages($testo, array('name' => Str::random(16).'.'.Str::random(32),'path' => public_path('sf/ct/')));
+        $testo = convertImages($testo, array('name' => Str::random(16).'.'.Str::random(32), 'path' => public_path('sf/ct')));
       }
 
       $query = DraftArticle::whereNotNull('scheduled_at')->where('id', $id)->first();
@@ -474,7 +477,7 @@ class FilterController extends Controller
       $testo = $request->document__text;
 
       if(preg_match('/<img*/', $testo)) {
-        $testo = $this->convertImages($testo, array('name' => Str::random(16).'.'.Str::random(32),'path' => public_path('sf/ct/')));
+        $testo = convertImages($testo, array('name' => Str::random(16).'.'.Str::random(32),'path' => public_path('sf/ct/')));
       }
 
       $query = DraftArticle::whereNull('scheduled_at')->where('id', $id)->first();
@@ -527,7 +530,7 @@ class FilterController extends Controller
     {
         $query = Articoli::find($request->id);
 
-        if(!$query->suspended && (Auth::user()->hasMemberOf($query->id_gruppo) || Auth::user()->id == $query->id_autore)) {
+        if(!$query->suspended && (/*Auth::user()->hasMemberOf($query->id_gruppo) ||*/ Auth::user()->id == $query->id_autore)) {
           // elimino le notifiche relative all'articolo
           //Notifications::where('type', '3')->where('content_id', $query->id)->delete();
           $query->delete();
@@ -539,7 +542,7 @@ class FilterController extends Controller
     {
         $query = DraftArticle::whereNotNull('scheduled_at')->find($request->id);
 
-        if(!$query->suspended && (Auth::user()->hasMemberOf($query->id_gruppo) || Auth::user()->id == $query->id_autore)) {
+        if(!$query->suspended && (/*Auth::user()->hasMemberOf($query->id_gruppo) ||*/ Auth::user()->id == $query->id_autore)) {
           // elimino le notifiche relative all'articolo
           //Notifications::where('type', '3')->where('content_id', $query->id)->delete();
           $query->delete();
@@ -551,7 +554,7 @@ class FilterController extends Controller
     {
         $query = DraftArticle::whereNull('scheduled_at')->find($request->id);
 
-        if(!$query->suspended && (Auth::user()->hasMemberOf($query->id_gruppo) || Auth::user()->id == $query->id_autore)) {
+        if(!$query->suspended && (/*Auth::user()->hasMemberOf($query->id_gruppo) ||*/ Auth::user()->id == $query->id_autore)) {
           // elimino le notifiche relative all'articolo
           //Notifications::where('type', '3')->where('content_id', $query->id)->delete();
           $query->delete();

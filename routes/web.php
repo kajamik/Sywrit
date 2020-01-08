@@ -43,6 +43,12 @@ Route::group(['prefix' => 'search'], function() {
 });
 Route::get('live_search', ['uses' => 'AjaxController@SearchLiveData', 'as' => 'live_search']);
 Route::get('live_notif', ['uses' => 'AjaxController@getNotifications', 'as' => 'live_notif']);
+
+// Pages
+Route::get('page/about', function() { return view('front.pages.static.about'); });
+Route::get('page/{slug}', 'FrontController@getPages');
+Route::get('page/{slug}/{slug2}', 'FrontController@getPages');
+
 // Home
 Route::group(['prefix' => '/'], function() {
   Route::get('{slug}/about', 'FrontController@getAbout');
@@ -66,7 +72,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('user/report', ['uses' => 'FilterController@UserReport', 'as' => 'user/action/report']);
     ///////
     // Article Actions
-    Route::post('post/publish', ['uses' => 'FilterController@ArticlePublish', 'as' => 'article/action/publish']);
+    Route::get('post/publish', ['uses' => 'FilterController@ArticlePublish', 'as' => 'article/action/publish']);
     Route::get('article/{id}/action/edit', 'FrontController@getArticleEdit');
     Route::post('article/{id}/action/edit', 'FilterController@postArticleEdit');
     Route::post('post/delete', ['uses' => 'FilterController@ArticleDelete', 'as' => 'article/action/delete']);
@@ -173,10 +179,6 @@ Route::group(['prefix' => '{slug}'], function() {
 // CREATE GROUP
 //Route::get('group/create', 'GroupController@getNewGroup')->middleware('auth','isSuspended');
 //Route::post('group/create', 'GroupController@postNewGroup')->middleware('auth','isSuspended');
-
-// Pages
-Route::get('page/{slug}', 'FrontController@getPages');
-Route::get('page/{slug}/{slug2}', 'FrontController@getPages');
 
 // Facebook auth
 Route::get('auth/facebook/redirect', 'Auth\SocialController@redirectToProvider');

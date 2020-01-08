@@ -26,7 +26,7 @@
               <ul class="d-flex bg-sw p-2 mb-3">
                 <li><a id="edt" href="{{ url('/articles/draft/edit/'. $query->id) }}">@lang('label.article.edit')</a></li>
                 <li><a id="dlt" class="ml-2" href="#" onclick="link(this,'{{ url('articles/draft/delete/'. $query->id) }}')">@lang('label.article.delete')</a></li>
-                <li><a id="pub" class="ml-2" href="#" onclick="link(this, '{{ route('article/action/publish') }}')">@lang('label.article.publish')</a></li>
+                <li><a class="ml-2" href="#" onclick="schedule()">@lang('label.article.publish')</a></li>
               </ul>
               <script>
               function link(e, route){var el = setNode(e, {html: {"id": "__form__","action": route,"method": "post"}}, "form");setNode(el.html, {html: {"name": "id","value": "{{ $query->id }}"}}, "input");
@@ -77,4 +77,29 @@
     </article>
   </div>
 </div>
+<script>
+function schedule() {
+  var dialog = App.getUserInterface({
+    "ui": {
+      "header":{"action":"{{url('ajax/article/action/schedule')}}","method":"GET"},
+      "data":{"a_id":"{{$query->id}}","draft":"true","date":"#dateControl###val","time":"#timeControl###val"},
+      "title": 'Pubblicazione',
+      "content": [
+        {"type": ["p"], "text": "Decidi se programmare la data di pubblicazione o se pubblicare ora."},
+        {"type": ["h5"], "text": "Programma una data"},
+        {"type": ["input", "date"], "id": "dateControl", "class": "form-control", "value": "{{ \Carbon\Carbon::now()->toDateString() }}", "required": true},
+        {"type": ["input", "time"], "id": "timeControl", "class": "form-control", "value": "{{ \Carbon\Carbon::now()->format('H:i') }}", "required": true},
+        {"type": ["button", "submit"], "text": "Conferma data", "class": "btn btn-primary btn-block"},
+        {"type": ["p"], "text": "oppure", "class": "text-center"},
+        {"type": ["button", "button"], "id": "publish_now", "text": "Pubblica ora", "class": "btn btn-secondary btn-block", "onclick": function() {
+          App.query("get", "{{route('article/action/publish')}}",{id:"{{$query->id}}"},false,function(h){return eval(h);});
+        }}
+      ],
+      "done": function(loc) {
+        return eval(loc);
+      }
+    }
+  });
+}
+</script>
 @endsection

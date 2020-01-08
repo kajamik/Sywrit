@@ -1,5 +1,11 @@
 @php
-  $categorie = \App\Models\ArticleCategory::orderBy('name','asc')->get();
+  $categorie = \DB::table('article_category')->select('article_category.slug as c_slug')
+                                            ->whereExists(function($query) {
+                                              $query->select(DB::raw(1))
+                                                    ->from('articoli')
+                                                    ->whereRaw('articoli.topic_id = article_category.id');
+                                            })
+                                            ->orderBy('name','asc')->get();
 @endphp
 <div class="navbar">
     <div class="col-3">
@@ -91,8 +97,8 @@
             </a>
             <div class="dropdown-menu ml-5">
               @foreach($categorie as $value)
-              <a class="dropdown-item" href="{{ url('topic/'.$value->slug) }}">
-                @lang('label.categories.'. $value->slug)
+              <a class="dropdown-item" href="{{ url('topic/'.$value->c_slug) }}">
+                @lang('label.categories.'. $value->c_slug)
               </a>
               @endforeach
             </div>

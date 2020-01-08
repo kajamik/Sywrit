@@ -12,13 +12,10 @@
     <meta property="fb:app_id" content="1180591382121261" />
     <meta property="fb:pages" content="2268752223388216" />
 
-    <script src="{{ asset('plugins/jquery/js/jquery-3.2.1.min.js') }}"></script>
-    <script src="{{ asset('js/bootstrap/bootstrap.min.js') }}"></script>
-    <script src="{{ asset('js/app.js') }}"></script>
+    <script src="{{ asset('js/__dfg.js') }}"></script>
 
     <link href="{{ asset('plugins/fontawesome/fontawesome.css') }}" rel="stylesheet" />
-    <link href="{{ asset('plugins/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet"/>
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet"/>
+    <link href="{{ asset('css/app.min.css') }}" rel="stylesheet"/>
     <link href="{{ asset('css/print.min.css')}}" media="print" rel="stylesheet"/>
     @yield('css')
 
@@ -35,6 +32,8 @@
     <link rel="canonical" href="{!! SEOMeta::getCanonical() !!}" />
 
     {!! OpenGraph::generate() !!}
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 
     {{-- @if(Cookie::get('cookie_consent'))
     <script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
@@ -70,16 +69,11 @@
 
   <div class="sw-ft">
     <div class="links d-inline">
-      <a href="{{ url('page/about/privacy') }}">{{ __('label.footer.privacy') }}</a>
-      <a href="{{ url('page/legal/terms') }}">{{ __('label.footer.terms') }}</a>
+      <a href="{{ url('page/about/privacy') }}">@lang('label.footer.privacy')</a>
+      <a href="{{ url('page/legal/terms') }}">@lang('label.footer.terms')</a>
+      <a href="{{ url('page/about') }}">@lang('Informazioni')</a>
     </div>
-    <p>{{ __('label.footer.copyright', ['developer' => 'Pietro Paolo Carpentras', 'start' => '2019', 'now' => \Carbon\Carbon::now()->format('Y')]) }}</p>
-    {{-- <div class="">
-      <h2>Seguici su:</h2>
-      <p><i class="fab fa-facebook"></i></p>
-      <p><i class="fab fa-instagram"></i></p>
-      <p></p>
-    </div> --}}
+    <p>&copy; {{ \Carbon\Carbon::now()->format('Y') }} Sywrit</p>
   </div>
 
   @yield('js')

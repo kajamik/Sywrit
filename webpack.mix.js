@@ -14,7 +14,7 @@ const mix = require('laravel-mix');
 /*mix.js('resources/js/app.js', 'public/js')
 .sass('resource/sass/theme.scss', 'public/css');*/
 
-mix.styles([
+mix.combine([
   'public/plugins/bootstrap/css/bootstrap.min.css',
   'public/css/app.css',
 ] ,'public/css/app.min.css')
@@ -27,10 +27,13 @@ mix.styles([
   'public/css/toolbox/_dex.css',
 ], 'public/css/toolbox/_dex.min.css');
 
-mix.minify([
+mix.combine([
+  'public/js/jquery-3.2.1.min.js',
+  'public/js/bootstrap/bootstrap.js',
   'public/js/app.js',
-],'public/js/app.min.js')
-.minify([
+],'public/js/__dfg.js');
+
+mix.minify([
   'public/js/core/bootstrap-material-design.min.js',
   'public/js/toolbox/_dex.js',
 ], 'public/js/toolbox/_dex.min.js');

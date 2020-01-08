@@ -125,7 +125,7 @@
       App.getUserInterface({
       "ui": {
         "header":{"action": "{{ route('article/action/report') }}", "method": "GET"},
-        "data":{"id": "{{ $query->id }}", "selector": "#selOption:checked", "text": "#reasonText"},
+        "data":{"id": "{{ $query->id }}", "selector": "#selOption:checked###val", "text": "#reasonText###val"},
         "title": 'Segnala articolo',
         "content": [
           {"type": ["input","radio"], "id": "selOption", "name": "option", "value": "0", "class": "col-md-1", "label": "Notizia Falsa", "required": true},

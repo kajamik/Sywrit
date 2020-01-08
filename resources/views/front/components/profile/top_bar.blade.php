@@ -18,7 +18,7 @@
       <div class="publisher-logo">
         <div class="row">
           <div class="d-inline">
-            <img src="{{ Auth::user()->getAvatar() }}" alt="Logo">
+            <img src="{{ $query->getAvatar() }}" alt="Logo">
           </div>
           <div class="ml-2 mt-2 info">
             <span>
@@ -76,7 +76,7 @@
                 App.getUserInterface({
                   "ui": {"title": "Invito collaborazione",
                   "header": {"action": "{{ url('group/action/invite') }}", "method": "GET"},
-                  "data": { user_id: "{{ $query->id }}", selector: "#publisherSelector" },
+                  "data": { user_id: "{{ $query->id }}", selector: "#publisherSelector###val" },
                   "content": [
                   {"type": ["h6"], "text": "Seleziona la redazione"},
                   {"type": [ {"select": properties} ], "class": "form-control", "name": "publisherSelector" },
@@ -100,7 +100,7 @@
             App.getUserInterface({
             "ui": {
               "header":{"action": "{{ route('user/action/report') }}", "method": "GET"},
-              "data":{"id": "{{$query->id}}", "selector": "#selOption:checked", "text": "#reasonText"},
+              "data":{"id": "{{$query->id}}", "selector": "#selOption:checked###val", "text": "#reasonText###val"},
               "title": '@lang("label.report.user")',
               "content": [
                 {"type": ["input","radio"], "id": "selOption", "name": "option", "value": "0", "class": "col-md-1", "label": "@lang('form.report_type_0')", "required": true},

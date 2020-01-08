@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 use \Symfony\Component\Console\Output\ConsoleOutput as Console;
 
 use App\Models\Articoli;
-use App\Models\ScheduledArticles;
+use App\Models\DraftArticle;
 
 class Article extends Command
 {
@@ -42,7 +42,7 @@ class Article extends Command
     public function handle()
     {
         // move article table record to savedArticle
-        $query = ScheduledArticles::where('scheduled_at', '<=', \Carbon\Carbon::now())->get();
+        $query = DraftArticle::where('scheduled_at', '<=', \Carbon\Carbon::now())->get();
         foreach($query as $value) {
           $article = new Articoli();
           $article->topic_id = $value->topic_id;
@@ -53,7 +53,7 @@ class Article extends Command
           $article->id_autore = $value->id_autore;
           $article->license = $value->license;
           $article->save();
-          $article->slug = $value->id. '-' .str_slug('-', $value->titolo);
+          $article->slug = $article->id. '-' .str_slug($article->titolo, '-');
           $article->save();
           $value->delete();
         }

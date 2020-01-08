@@ -47,7 +47,12 @@ class FrontController extends Controller
       //-------------------------------------------------------//
 
         $INDEX_LIMIT = 9;
-        $current_page = ($request->page) ? $request->page : 1;
+
+        if($request->ajax()) {
+          $current_page = ($request->page) ? $request->page : 1;
+        } else {
+          $current_page = 1;
+        }
 
         $articoli = Articoli::
                     leftJoin('users', function($join){
@@ -115,7 +120,12 @@ class FrontController extends Controller
       //-------------------------------------------------------//
 
       $INDEX_LIMIT = 9;
-      $current_page = ($request->page) ? $request->page : 1;
+
+      if($request->ajax()) {
+        $current_page = ($request->page) ? $request->page : 1;
+      } else {
+        $current_page = 1;
+      }
 
       $articoli = Articoli::leftJoin('article_category', function($join){
                       $join->on('articoli.topic_id', '=', 'article_category.id');
@@ -549,7 +559,12 @@ class FrontController extends Controller
       //-------------------------------------------------------//
 
       $INDEX_LIMIT = 9;
-      $current_page = ($request->page) ? $request->page : 1;
+
+      if($request->ajax()) {
+        $current_page = ($request->page) ? $request->page : 1;
+      } else {
+        $current_page = 1;
+      }
 
       $articoli = Articoli::join('users', 'articoli.id_autore', '=', 'users.id')
                   ->leftJoin('editori', function($join){
@@ -605,7 +620,7 @@ class FrontController extends Controller
     {
       // SEO ///////////////////////////////////////////////////
 
-        SEOMeta::setDescription(trans('label.meta.web_description', ['name' => config(app.name)]))
+        SEOMeta::setDescription(trans('label.meta.web_description', ['name' => config('app.name')]))
                   ->setCanonical(\Request::url());
 
       //-------------------------------------------------------//

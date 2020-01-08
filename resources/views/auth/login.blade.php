@@ -9,17 +9,6 @@
 
                 <div class="card-body">
 
-                  <div class="form-group row">
-                      <div class="col-md-8 offset-md-4">
-                        <a href="{{ url('auth/facebook/redirect') }}">
-                          <button type="button" class="btn btn-facebook btn-block">
-                              <i class="fab fa-facebook-f"></i>
-                              @lang('button.login_with_facebook')
-                          </button>
-                        </a>
-                      </div>
-                  </div>
-
                     <form method="POST" action="{{ route('login') }}">
                         @csrf
 
@@ -63,21 +52,38 @@
                             </div>
                         </div>
 
-                        <div class="form-group row mb-0">
-                            <div class="col-md-8 offset-md-4">
-                                <button type="submit" class="btn btn-primary">
+                        <div class="form-group row">
+                            <div class="col-md-8 offset-md-4 text-center">
+                              @if (Route::has('password.request'))
+                                  <a class="btn btn-link" href="{{ route('password.request') }}">
+                                      @lang('button.forgot_password')
+                                  </a>
+                              @endif
+                                <button type="submit" class="btn btn-primary btn-block">
                                     @lang('button.login')
                                 </button>
-
-                                @if (Route::has('password.request'))
-                                    <a class="btn btn-link" href="{{ route('password.request') }}">
-                                        @lang('button.forgot_password')
-                                    </a>
-                                @endif
                             </div>
                         </div>
 
                     </form>
+
+                    <div class="form-group row">
+                        <div class="col-md-8 offset-md-4 text-center">
+                              @lang('oppure')
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-md-8 offset-md-4">
+                          <a href="{{ url('auth/facebook/redirect') }}">
+                            <button type="button" class="btn btn-facebook btn-block">
+                                <i class="fab fa-facebook-f"></i>
+                                @lang('button.login_with_facebook')
+                            </button>
+                          </a>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>

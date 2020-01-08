@@ -22,7 +22,7 @@
           @if(Auth::user() && Auth::user()->getPublications()->count() == 0)
           <div class="d-flex bg-sw p-2 mb-3">
             <a href="{{ url('write') }}">
-              {{ __('label.notice.first_article') }}
+              @lang('label.notice.first_article')
             </a>
           </div>
           @endif
@@ -66,7 +66,7 @@
         <div class="col-lg-4 col-sm-12 col-xs-12">
           <a href="{{ url('write')}}">
             <div class="card">
-              <div class="card-header">{{ __('label.notice.new_article') }}</div>
+              <div class="card-header">@lang('label.notice.new_article')</div>
               <img class="card-img-top" src="{{ asset('upload/no-image.jpg') }}" alt="Crea nuovo articolo">
             </div>
           </a>
@@ -75,10 +75,10 @@
         </div>
 
         {{-- Menù laterale --}}
-        <div class="col-lg-3 col-md-5 col-sm-12">
-          <div class="sw-lnav">
+        <div class="col-lg-3 col-md-5 col-sm-12 d-md-block d-none">
+          <div class="sw-lnav sticky-top position-sticky" style="top:80px">
             {{--<div class="sw-component">
-              <div class="sw-component-header bg-sw">{{ __('label.popul_articles') }}</div>
+              <div class="sw-component-header bg-sw">@lang('label.popul_articles')</div>
                 @foreach($popular_articles as $value)
                 <a href="{{ url('read/'.$value->article_slug) }}">
                   <div class="sw-item" style="background-image: url('{{ $value->getBackground() }}');background-repeat: no-repeat;background-size:100%;background-size:contain;">
@@ -102,7 +102,7 @@
                 @endforeach
             </div>--}}
             <div class="sw-component">
-              <div class="sw-component-header bg-sw">{{ __('label.follow_us_on') }}</div>
+              <div class="sw-component-header bg-sw">@lang('label.follow_us_on')</div>
               <div class="sw-item text-center">
                 <div class="sw-icon-large">
                   <a href="https://facebook.com/sywrit" target="_blank">
@@ -114,8 +114,29 @@
                     <i class="fab fa-instagram"></i>
                   </a>
                 </div>
+                <div class="sw-item">
+                    <div class="links d-inline">
+                      <a href="{{ url('page/about/privacy') }}">@lang('label.footer.privacy')</a>
+                      <a href="{{ url('page/legal/terms') }}">@lang('label.footer.terms')</a>
+                      <a href="{{ url('page/about') }}">@lang('Informazioni')</a>
+                    </div>
+                    <p>&copy; {{ \Carbon\Carbon::now()->format('Y') }} Sywrit</p>
+                </div>
               </div>
             </div>
+          </div>
+          <div class="sw-component">
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-test="on"
+     data-ad-format="fluid"
+     data-ad-layout-key="-bc+bx-47-9q+xs"
+     data-ad-client="ca-pub-6905675700225112"
+     data-ad-slot="4440509908"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
           </div>
         </div>
 

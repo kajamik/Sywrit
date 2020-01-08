@@ -32,6 +32,7 @@ return [
     'cancel_changes' => 'Annulla modifiche',
     'delete' => 'Elimina articolo',
     'edit' => 'Modifica articolo',
+    'interest' => 'Articoli che ti potrebbero interessare',
     'last_modified' => 'Ultima modifica :time',
     'license_type' => 'Tipo di licenza',
     'no_published' => 'Articolo non ancora pubblicato',

@@ -36,7 +36,7 @@
 
       <section>
         <h2>Sywrit: il nostro progetto</h2>
-        <p>Sywrit è una piattaforma di scrittura, la quale permette di creare uno spazio blog in cui scrivere i propri articoli: condividere le proprie idee, passioni e molto altro.</p>
+        <p>Sywrit è una piattaforma di scrittura, permette di creare uno spazio blog in cui scrivere i propri articoli: condividere le proprie idee, passioni e molto altro.</p>
       </section>
       <section>
         <h2>Il nostro team</h2>

@@ -120,6 +120,32 @@
           </div>
         </div>
 
+        <div class="col-12 bg-light">
+          <h2>Attività</h2>
+          <hr/>
+          <div class="d-md-flex">
+            <div style="max-height:100px;" class="overflow-auto w-100">
+              {{-- foreach --}}
+              @foreach($logs as $value)
+              <div class="col-12">
+                @if($value->task == 'locked' || $value->task == 'unlocked')
+                @php
+                  $user = \DB::table('users')->where('id', $value->op_id)->first();
+                @endphp
+                <medium><i class="fa fa-user-shield"></i> {!! trans('label.task.'. $value->task, ['op' => $user->name. ' '. $user->surname, 'user' => $value->user_id]) !!}</medium>
+                <time class="float-right">{{ $value->created_at }}</time>
+                @else
+                <medium>{{ trans('label.task.'. $value->task) }}</medium>
+                <time class="float-right">{{ $value->created_at }}</time>
+                @endif
+                <hr/>
+              </div>
+              @endforeach
+              {{-- endforeach --}}
+            </div>
+          </div>
+        </div>
+
     </div>
 
 </div>

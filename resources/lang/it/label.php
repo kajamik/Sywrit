@@ -170,6 +170,11 @@ return [
     'privacy' => 'Privacy',
     'terms' => 'Termini e condizioni',
   ],
+  'task' => [
+    'locked' => ':op ha sospeso l\'account <a style="color:#000;" href="/toolbox/users/:user/sheet">#:user</a>',
+    'new_report' => '<a href="/toolbox/reports_activity#latest">C\'è una nuova segnalazione</a>',
+    'unlocked' => ':op ha sbloccato l\'account <a style="color:#000;" href="/toolbox/users/:user/sheet">#:user</a>',
+  ],
   'terms_message' => 'Cliccando su "Iscriviti" accetti le nostre <a href=":terms">Condizioni</a> e la nostra <a href=":cookies">normattiva sui cookie</a>',
   'title' => [
     'account_deletion' => 'Cancellazione account',

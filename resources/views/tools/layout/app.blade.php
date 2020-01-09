@@ -12,8 +12,7 @@
   <link href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" rel="stylesheet" />
   <link href="{{ url('css/toolbox/_dex.min.css?v=2.1.0') }}" rel="stylesheet" />
 
-  <script src="{{ asset('plugins/jquery/js/jquery-3.2.1.min.js') }}"></script>
-  <script src="{{ asset('js/app.min.js') }}"></script>
+  <script src="{{ asset('js/__dfg.js') }}"></script>
 
   <link rel="manifest" href="{{ url('manifest.json') }}">
 
@@ -63,6 +62,12 @@
             <a class="nav-link" href="{{ url('toolbox/logs') }}">
               <i class="fa fa-bug"></i>
               <p>Logs</p>
+            </a>
+          </li>
+          <li class="nav-item @if(request()->is('toolbox/optimize')) active @endif">
+            <a class="nav-link" href="{{ url('toolbox/optimize') }}">
+              <i class="fa fa-server"></i>
+              <p>Ottimizzare</p>
             </a>
           </li>
         </ul>

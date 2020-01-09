@@ -32,6 +32,9 @@ Route::group(['prefix' => 'toolbox', 'middleware' => 'operator'], function() {
   Route::group(['prefix' => 'logs', 'namespace' => 'Toolbox'], function(){
     Route::get('/', 'LogsController@index');
   });
+  Route::get('optimize', 'Toolbox\OptimizeController@index');
+  Route::post('optimize', 'Toolbox\OptimizeController@toEmpty');
+  Route::get('server/console/execute', 'Toolbox\OptimizeController@run');
 });
 /*******************/
 

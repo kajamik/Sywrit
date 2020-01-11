@@ -171,6 +171,7 @@ return [
     'terms' => 'Termini e condizioni',
   ],
   'task' => [
+    'delarticle' => ':op ha eliminato un articolo',
     'locked' => ':op ha sospeso l\'account <a style="color:#000;" href="/toolbox/users/:user/sheet">#:user</a>',
     'new_report' => '<a href="/toolbox/reports_activity#latest">C\'è una nuova segnalazione</a>',
     'unlocked' => ':op ha sbloccato l\'account <a style="color:#000;" href="/toolbox/users/:user/sheet">#:user</a>',

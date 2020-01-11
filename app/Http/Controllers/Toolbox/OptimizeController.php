@@ -16,7 +16,7 @@ class OptimizeController extends Controller
 
     public function __construct()
     {
-        $this->root = "D:\\Git\\Repository\\Sywrit";
+        $this->root = realpath('..');
     }
 
     public function index()
@@ -30,6 +30,8 @@ class OptimizeController extends Controller
         $cache = $request->cache;
         $route = $request->route;
         $view = $request->view;
+        $user = $request->users;
+        $article = $request->article;
         $output = "";
 
         if($cache) {
@@ -46,6 +48,14 @@ class OptimizeController extends Controller
           Artisan::call('view:clear');
           $output .= "Compiled views cleared!";
         }
+        /*if($user) {
+          Artisan::call('user:image');
+          $output .= "Immagini utente non utilizzate eliminate!";
+        }
+        if($article) {
+          Article::call('article:image');
+          $output .= "Immagini articoli non utilizzate eliminate!";
+        }*/
 
         if($output != "") {
           return redirect()->back()->with('output', $output);
@@ -56,7 +66,9 @@ class OptimizeController extends Controller
 
       public function run(Request $request)
       {
-          exec('cd '. $this->root . ' && '. $request->cmd, $output);
+          exec("cd $this->root && ". $request->cmd, $output);
           return Response::json(['string' => $output]);
       }
+
+
 }

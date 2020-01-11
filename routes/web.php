@@ -7,6 +7,10 @@ Auth::routes();
 // Toolbox (Gestione)
 Route::group(['prefix' => 'toolbox', 'middleware' => 'operator'], function() {
   Route::get('/', 'OpController@home');
+  Route::group(['prefix' => 'articles', 'namespace' => 'Toolbox'], function() {
+    Route::get('{id}/sheet', 'ArticleController@getArticleSheet');
+    Route::post('delete', 'ArticleController@postDelete');
+  });
   Route::group(['prefix' => 'users', 'namespace' => 'Toolbox'], function(){
     Route::get('/', 'UserController@index');
     Route::get('{id}/sheet', 'UserController@getUserSheet');

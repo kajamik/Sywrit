@@ -124,11 +124,11 @@
           <h2>Attività</h2>
           <hr/>
           <div class="d-md-flex">
-            <div style="max-height:100px;" class="overflow-auto w-100">
+            <div style="max-height:300px;" class="overflow-auto w-100">
               {{-- foreach --}}
               @foreach($logs as $value)
               <div class="col-12">
-                @if($value->task == 'locked' || $value->task == 'unlocked')
+                @if($value->task == 'locked' || $value->task == 'unlocked' || $value->task == 'delarticle')
                 @php
                   $user = \DB::table('users')->where('id', $value->op_id)->first();
                 @endphp

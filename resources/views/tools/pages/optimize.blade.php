@@ -47,7 +47,7 @@
     <div class="form-group">
       <div class="col-12">
         <div class="console p-2 overflow-auto">
-          <medium>PATH: In attesa di un commando...</medium>
+          <medium>{!! $root !!}: In attesa di un commando...</medium>
         </div>
       </div>
   </div>
@@ -81,7 +81,7 @@
       <div class="form-group p-2">
         <h3>Immagini</h3>
         <div class="col-12">
-          <label for="users">Elimina le immagini utente</label>
+          <label for="users">Elimina le immagini utente (avatar e cover)</label>
           <input id="users" type="checkbox" name="users" />
         </div>
         <div class="col-12">
@@ -103,7 +103,7 @@
   </form>
 
   <script>
-  var dir = "PATH:"; //{!! $root !!}
+  var dir = "{!! $root !!}:";
   var _console = $(".console");
   function run() {
     var cmd = $("#command").val();

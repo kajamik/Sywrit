@@ -6,11 +6,13 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
 use Response;
+use Auth;
 
 // Models
 use App\Models\User;
 use App\Models\ReportedUsers;
 use App\Models\ReportedArticles;
+use App\Models\Log;
 
 class UserController extends Controller
 {
@@ -35,13 +37,23 @@ class UserController extends Controller
       $query = User::find($request->id);
       if(!$query->suspended){
         $query->suspended = '1';
+        Log::create([
+          'op_id' => Auth::user()->id,
+          'user_id' => $query->id,
+          'task' => 'locked'
+        ]);
       } else {
         $query->suspended = '0';
+        Log::create([
+          'op_id' => Auth::user()->id,
+          'user_id' => $query->id,
+          'task' => 'unlocked'
+        ]);
       }
       $query->save();
 
       return Response::json(['suspended' => $query->suspended]);
     }
   }
-  
+
 }

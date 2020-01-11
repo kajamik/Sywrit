@@ -41,6 +41,12 @@
             <span class="time"><i class="far fa-clock"></i> {{ $time }}</span><br/>
           </div>
           <hr/>
+          @if(Auth::user()->isOperator())
+          <a href="{{ url('toolbox/articles/'. $query->id .'/sheet') }}">
+            <i class="fa fa-edit"></i> @lang('Gestisci articolo')
+          </a>
+          <hr/>
+          @endif
           <div class="block-body">
             {!! $query->testo !!}
           </div>

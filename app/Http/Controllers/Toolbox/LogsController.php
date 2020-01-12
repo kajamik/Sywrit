@@ -33,6 +33,10 @@ class LogsController extends Controller
      */
     public function index()
     {
+        if(\Auth::user()->permission < 3) {
+          return redirect('toolbox');
+        }
+
         $folderFiles = [];
         if ($this->request->input('f')) {
             $this->log_viewer->setFolder(Crypt::decrypt($this->request->input('f')));

@@ -57,13 +57,9 @@ class User extends Authenticatable
       if($this->permission == 1)
         return "Utente";
       elseif($this->permission == 2)
-        return "Operatore";
-      elseif($this->permission == 3)
         return "Moderatore";
-      elseif($this->permission == 4)
+      elseif($this->permission == 3)
         return "Amministratore";
-      else
-        return "";
     }
 
     public function getBackground()

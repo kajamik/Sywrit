@@ -4,7 +4,7 @@
 
 @section('main')
 <div class="container">
-  <h3>Bentornato nel tuo pannello</h3>
+  <h3>Bentornato, il tuo grado è {{ Auth::user()->getRole() }}</h3>
 
   <div class="row">
 
@@ -132,7 +132,12 @@
                 @php
                   $user = \DB::table('users')->where('id', $value->op_id)->first();
                 @endphp
-                <medium><i class="fa fa-user-shield"></i> {!! trans('label.task.'. $value->task, ['op' => $user->name. ' '. $user->surname, 'user' => $value->user_id]) !!}</medium>
+                <medium>
+                  <i class="fa fa-user-shield"></i> {!! trans('label.task.'. $value->task, ['op' => $user->name. ' '. $user->surname, 'user' => $value->user_id]) !!}
+                  @if(isset($value->text))
+                    {!! $value->text !!}
+                  @endif
+                </medium>
                 <time class="float-right">{{ $value->created_at }}</time>
                 @else
                 <medium>{{ trans('label.task.'. $value->task) }}</medium>

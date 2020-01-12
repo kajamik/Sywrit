@@ -58,6 +58,7 @@
               <p>Bot Message</p>
             </a>
           </li>
+          @if(Auth::user()->permission == 3)
           <li class="nav-item @if(request()->is('toolbox/logs')) active @endif">
             <a class="nav-link" href="{{ url('toolbox/logs') }}">
               <i class="fa fa-bug"></i>
@@ -70,6 +71,7 @@
               <p>Ottimizzare</p>
             </a>
           </li>
+          @endif
         </ul>
       </div>
     </div>

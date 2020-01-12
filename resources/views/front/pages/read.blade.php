@@ -43,7 +43,7 @@
           <hr/>
           @if(Auth::user()->isOperator())
           <a href="{{ url('toolbox/articles/'. $query->id .'/sheet') }}">
-            <i class="fa fa-edit"></i> @lang('Gestisci articolo')
+            <i class="fa fa-edit"></i> @lang('Modera articolo')
           </a>
           <hr/>
           @endif

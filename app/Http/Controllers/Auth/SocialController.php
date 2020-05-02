@@ -82,7 +82,7 @@ class SocialController extends Controller
             'name' => $social_user->user['first_name'],
             'surname' => $social_user->user['last_name'],
             'email' => $social_user->user['email'],
-            'password' => $social_user->token,
+            'password' => bcrypt($social_user->token),
             'avatar' => asset('sf/aa/'. $fileName),
             'social_auth_id' => $social_user->getId(),
             'verified' => '0',

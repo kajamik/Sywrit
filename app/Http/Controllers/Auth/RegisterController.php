@@ -64,7 +64,7 @@ class RegisterController extends Controller
     {
         return Validator::make($data, [
             'name' => ['required', 'string', 'max:191'],
-            'email' => ['required', 'string', 'email', 'max:191', 'unique:utenti'],
+            'email' => ['required', 'string', 'email', 'max:191', 'unique:users'],
             'password' => ['required', 'string', 'min:6', 'confirmed'],
         ]);
     }
@@ -99,8 +99,6 @@ class RegisterController extends Controller
             'avatar' => asset('sf/aa/'. $img_name),
             'verified' => '0',
             // informazioni aggiuntive
-            'rank' => '1',
-            'points' => '0',
             'followers_count' => '0',
             'notifications_count' => '0',
             'notifications_to_read' => 'false',

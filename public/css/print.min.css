@@ -1,1 +1,29 @@
-body{font-family:'Times New Roman',Times,serif}header{border:none;margin-top:15px}header::before{content:'Versione Stampa'}header img{display:block;position:relative;top:35px;height:65px}.publisher-body{margin-top:65px!important;border:none!important}.block-article>div:not(.block-body),.publisher-body>li,.publisher-header,footer,header li,header ul,hr{display:none}
+body {
+  font-family:'Times New Roman',Times,serif;
+}
+
+header {
+  border: none;
+  margin-top: 15px;
+}
+
+header::before {
+  content: 'Versione Stampa';
+}
+
+header img {
+  display: block;
+  position: relative;
+  top: 35px;
+  height: 65px;
+}
+
+.publisher-body {
+  margin-top: 65px !important;
+  border: none !important;
+}
+
+header ul, header li, hr, .publisher-header, .publisher-body > li, .block-article > div:not(.block-body),
+footer {
+  display: none;
+}

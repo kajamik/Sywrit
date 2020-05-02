@@ -5,11 +5,21 @@
   <div class="publisher-home">
     <div class="publisher-body">
 
-      <div class="block-hero"></div>
+      <div class="block-hero">
+        <div class="caption">
+          <div class="block-body">
+            <p>Entra nella community e inizia a pubblicare i tuoi articoli.</p>
+          </div>
+        </div>
+      </div>
 
-      @if(Session::get('alert'))
+      @if(Session::has('alert'))
       <div class="alert alert-{{ Session::get('alert') }}" role="alert">
+        @if(Session::has('date'))
         <i class="fa fa-check"></i> L'articolo sarà pubblicato {!! Session::get('date') !!} alle ore {!! Session::get('time') !!}
+        @else
+        <i class="fa fa-check"></i> {!! Session::get('msg') !!}
+        @endisset
       </div>
       @endif
 

@@ -7,7 +7,7 @@
   <h1>Informazioni utente</h1>
   <p>Nome: {{ $query->name }}</p>
   <p>Cognome: {{ $query->surname }}</p>
-  <p>Segnalazioni inviate: 0</p>
+  <p>Segnalazioni inviate: n/d</p>
   <p>Segnalazioni ricevute: {{ $user_reports->count() }}</p>
   <p>
     @if(!$query->suspended)

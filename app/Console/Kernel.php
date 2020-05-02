@@ -18,7 +18,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         'App\Console\Commands\OpDB',
         'App\Console\Commands\Markdown',
-        'App\Console\Commands\Schedule\Article'
+        'App\Console\Commands\Schedule\Article',
     ];
 
     /**

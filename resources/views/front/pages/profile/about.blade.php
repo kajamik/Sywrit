@@ -131,26 +131,30 @@
               </div>
             </div>
             --}}
-            @if(!empty($query->facebook) || !empty($query->instagram) || !empty($query->linkedin))
+            @php
+              $contacts = \DB::table('user_links')->where('user_id', $query->id)->get();
+              $db_services = \DB::table('social_service')->get();
+              $services = array();
+              foreach($db_services as $links) {
+                $services[$links->id] = [
+                  'name' => $links->name,
+                  'prefix' => $links->prefix
+                ];
+              }
+            @endphp
+            @if($contacts->count())
             <div class="col-12">
-            <h2>Socials Link</h2>
-            <div class"col-lg-12">
-              @if(!empty($query->facebook))
-              <address>
-                Facebook: <a href="https://facebook.com/{{ $query->facebook }}" target="_blank">{{ $query->facebook }}</a>
-              </address>
-              @endif
-              @if(!empty($query->instagram))
-              <address>
-                Instagram: <a href="https://instagram.com/{{ $query->instagram }}" target="_blank">{{ $query->instagram }}</a>
-              </address>
-              @endif
-              @if(!empty($query->linkedin))
-              <address>
-                Linkedin: <a href="https://linkedin.com/in/{{ $query->linkedin }}" target="_blank">{{ $query->linkedin }}</a>
-              </address>
-              @endif
-            </div>
+              <div class="col-12">
+                <h2>Socials Link</h2>
+              </div>
+              @foreach($contacts as $value)
+              <div class"col-lg-12">
+                <address>
+                  {{ $services[$value->service_id]['name'] }}:
+                  <a href="{{ $services[$value->service_id]['prefix'] }}{{ $value->url }}" target="_blank">{{ $value->url }}</a>
+                </address>
+              </div>
+              @endforeach
             </div>
             @else
               <p>@lang('label.notice.user_no_contact')</p>

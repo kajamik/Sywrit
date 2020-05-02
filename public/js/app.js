@@ -31,7 +31,7 @@ var App = {
     insl: function(id) {
       var page = 1;
       document.addEventListener('scroll', function () {
-        if ($(window).scrollTop() == $(document).height() - $(window).height()) {
+        if ($(window).scrollTop() + 72 >= $(document).height() - $(window).height()) {
           page++;
           App.query('get', '?page='+(page), null, false, function(data) {
             $("#"+id).append(data.posts);

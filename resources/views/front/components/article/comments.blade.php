@@ -3,7 +3,7 @@
   $count = \DB::table('article_comments')->where('article_id', $query->id)->count();
 @endphp
   <div class="feedback my-5">
-    @if(Auth::guest() || (Auth::user() && !Auth::user()->suspended))
+    @if(Auth::guest() || (Auth::user() && !Auth::user()->suspended && !Auth::user()->comment_block))
     <div class="d-flex">
       <img style="height:6em" class="p-2" src="{{ Auth::user() ? Auth::user()->getAvatar() : '' }}" />
         <div class="d-flex flex-grow-1">
@@ -15,11 +15,18 @@
         @lang('button.send')
       </button>
     </div>
-    @elseif(Auth::user() && !Auth::user()->suspended)
+    @elseif(Auth::user() && Auth::user()->suspended)
     <div class="d-flex">
       <img style="height:6em" class="p-2" src="{{ Auth::user()->getAvatar() }}" />
         <div class="d-flex flex-grow-1 bg-sw">
-          <p class="mt-3 offset-1">@lang('label.notice.account_suspended_short')</p>
+          <p class="mt-3 offset-1">@lang('label.notice.account_suspended')</p>
+        </div>
+    </div>
+    @elseif(Auth::user() && Auth::user()->comment_block)
+    <div class="d-flex">
+      <img style="height:6em" class="p-2" src="{{ Auth::user()->getAvatar() }}" />
+        <div class="d-flex flex-grow-1 bg-sw">
+          <p class="mt-3 offset-1">@lang('label.notice.account_comment_block_short')</p>
         </div>
     </div>
     @endif
@@ -40,7 +47,7 @@
       });
     });
 
-      @if(Auth::user())
+      @if(Auth::user() && !Auth::user()->suspended && !Auth::user()->comment_block)
       $("#sendMsg").click(function(){
         updateComments();
         App.query("get","{{ url('send-comment') }}",{id: {{ $query->id }}, post: $("textarea").val() },false,function(data){

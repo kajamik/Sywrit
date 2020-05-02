@@ -44,6 +44,8 @@ class FrontController extends Controller
                   ->setDescription(trans('label.meta.web_description', ['name' => config('app.name')]))
                   ->setCanonical(\Request::url());
 
+        OpenGraph::addImage(asset(''));
+
       //-------------------------------------------------------//
 
         $INDEX_LIMIT = 9;
@@ -58,13 +60,13 @@ class FrontController extends Controller
                     leftJoin('users', function($join){
                       $join->on('articoli.id_autore', '=', 'users.id');
                     })
-                    ->leftJoin('editori', function($join){
+                    /*->leftJoin('editori', function($join){
                         $join->on('articoli.id_gruppo', '=', 'editori.id');
-                      })
+                      })*/
                     ->leftJoin('article_category', function($join){
                         $join->on('articoli.topic_id', '=', 'article_category.id');
                       })
-                    ->addSelect('users.slug as user_slug', 'users.name as user_name', 'users.surname as user_surname', 'editori.name as publisher_name', 'editori.slug as publisher_slug',
+                    ->addSelect('users.slug as user_slug', 'users.name as user_name', 'users.surname as user_surname', /*'editori.name as publisher_name', 'editori.slug as publisher_slug',*/
                                 'articoli.titolo as article_title', 'articoli.id_gruppo as id_editore', 'articoli.slug as article_slug', DB::raw('articoli.testo as article_text'), 'articoli.copertina as copertina',
                                 'articoli.bot_message as bot_message', 'articoli.created_at as created_at', 'article_category.id as topic_id', 'article_category.name as topic_name', 'article_category.slug as topic_slug')
                     ->orderBy('created_at', 'desc')
@@ -72,7 +74,7 @@ class FrontController extends Controller
                     ->take($INDEX_LIMIT)
                     ->get();
 
-          $popular_articles = Articoli::
+          /*$popular_articles = Articoli::
                               leftJoin('users', function($join){
                                 $join->on('articoli.id_autore', '=', 'users.id');
                               })
@@ -89,7 +91,7 @@ class FrontController extends Controller
                               ->skip($INDEX_LIMIT * ($current_page-1))
                               ->take($INDEX_LIMIT)
                               ->limit(5)
-                              ->get();
+                              ->get();*/
 
           if($request->ajax()){
             if(count($articoli)){
@@ -97,13 +99,13 @@ class FrontController extends Controller
             }
           }
 
-      return view('front.pages.welcome',compact('articoli', 'popular_articles'));
+      return view('front.pages.welcome',compact('articoli'));
     }
 
     // PROFILE
     public function getProfile($slug, Request $request)
     {
-      $query = User::where('slug',$slug)->first();
+      $query = User::where('slug', $slug)->first();
 
       // SEO ///////////////////////////////////////////////////
 
@@ -145,7 +147,7 @@ class FrontController extends Controller
           }
         }
 
-      return view('front.pages.profile.index',compact('query','articoli','count'));
+      return view('front.pages.profile.index', compact('query','articoli','count'));
     }
 
     public function getAbout($slug)
@@ -449,10 +451,13 @@ class FrontController extends Controller
 
       //-------------------------------------------------------//
 
-      if(!$request->_topic){
+      if(!$request->_topic) {
         $categories = \DB::table('article_category')->orderBy('name', 'asc')->get();
       } else {
         $categories = \DB::table('article_category')->where('slug', $request->_topic)->first();
+        if(!$categories) {
+          $categories = \DB::table('article_category')->orderBy('name', 'asc')->get();
+        }
       }
       return view('front.pages.new_post', compact('categories'));
     }

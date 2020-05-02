@@ -116,110 +116,116 @@ class FilterController extends Controller
     // Articoli
     public function postWrite(Request $request)
     {
-      $input = $request->all();
-      $testo = $request->document__text;
+      // Blocco scrittura utente
+      if(!Auth::user()->write_block) {
 
-      if(preg_match('/<img*/', $testo)) {
-        $testo = convertImages($testo, array('name' => Str::random(16).'.'.Str::random(32),'path' => public_path('sf/ct/')));
-      }
+        $input = $request->all();
+        $testo = $request->document__text;
 
-      //--
-      $query = DraftArticle::whereNull('scheduled_at')->where('id_autore', Auth::user()->id)->where('id', \Session::get('draft_article_id'))->first();
-
-      if($query)
-        $query->delete();
-
-      \Session::forget('draft_article_id');
-      //--
-
-      if($request->_m_sel == 1 || ($request->_m_sel == 2 && !isset($request->datetime))) { // Pubblicazione immediata
-        $this->validate($request,[
-          'document__title' => 'required|max:191',
-          'document__text' => 'required'
-        ],[
-          'document__title.required' => 'Il titolo dell\'articolo è obbligatorio',
-          'document__text.required' => 'Non è consentito pubblicare un articolo senza contenuto',
-          'document__text.max' => 'Titolo troppo lungo',
-        ]);
-
-        $query = new Articoli();
-      } else { // Pubblicazione programmata (Scheduling)
-
-        $this->validate($request,[
-          'document__title' => 'required|max:191',
-          'document__text' => 'required',
-          'datetime' => 'required|regex:/[0-9]{4}-[0-9]{2}-[0-9]{2}\s*[0-9]{2}:[0-9]{2}/i',
-        ],[
-          'document__title.required' => 'Il titolo dell\'articolo è obbligatorio',
-          'document__text.required' => 'Non è consentito pubblicare un articolo senza contenuto',
-          'document__text.max' => 'Titolo troppo lungo',
-          'datetime.regex' => 'Formato data pubblicazione non valido',
-        ]);
-
-        $query = new DraftArticle();
-
-        $query->scheduled_at = $request->datetime;
-
-      }
-
-      $query->titolo = $request->document__title;
-      $query->tags = str_slug($request->tags, ',');
-
-      if($request->_ct_sel_ > 0) {
-          $query->topic_id = $request->_ct_sel_;
-      }
-
-        $query->testo = $testo;
-
-      // Copertina
-      if($a = $request->image) {
-        $this->validate($request,[
-          'image' => 'image|mimes:jpeg,jpg,png',
-        ],[
-          'image.image' => 'Devi inserire un\'immagine',
-          'image.mimes'  => 'Formato immagine non valido',
-        ]);
-
-        $fileName = '__492x340'.Str::random(64).'.jpg';
-
-        uploadFile($a, array(
-          'name' => $fileName,
-          'path' => public_path('sf/ct/'),
-          'width' => '492',
-          'height' => '340',
-          'mimetype' => 'jpg',
-          'quality' => '100'
-        ));
-
-        $query->copertina = $fileName;
-      }
-
-      if($request->_au > 0) {
-        $publisher = Editori::find($request->_au);
-        if(Auth::user()->hasMemberOf($publisher->id) && !$publisher->suspended) {
-          $query->id_gruppo = $request->_au;
+        if(preg_match('/<img*/', $testo)) {
+          $testo = convertImages($testo, array('name' => Str::random(16).'.'.Str::random(32),'path' => public_path('sf/ct/')));
         }
-      }
 
-      if($request->_l_sel_ == '1') {
-          $query->license = '1';
-      } else {
-          $query->license = '2';
-      }
+        //--
+        $query = DraftArticle::whereNull('scheduled_at')->where('id_autore', Auth::user()->id)->where('id', \Session::get('draft_article_id'))->first();
 
-      $query->id_autore = \Auth::user()->id;
-      $query->save();
+        if($query)
+          $query->delete();
 
-      // Modalità di pubblicazione
-      if($request->_m_sel == 1 || ($request->_m_sel == 2 && !isset($request->datetime))) { // immediata
-        $query->slug = str_slug($query->id.'-'.$query->titolo,'-');
+        \Session::forget('draft_article_id');
+        //--
+
+        if($request->_m_sel == 1 || ($request->_m_sel == 2 && !isset($request->datetime))) { // Pubblicazione immediata
+          $this->validate($request,[
+            'document__title' => 'required|max:191',
+            'document__text' => 'required'
+          ],[
+            'document__title.required' => 'Il titolo dell\'articolo è obbligatorio',
+            'document__text.required' => 'Non è consentito pubblicare un articolo senza contenuto',
+            'document__text.max' => 'Titolo troppo lungo',
+          ]);
+
+          $query = new Articoli();
+        } else { // Pubblicazione programmata (Scheduling)
+
+          $this->validate($request,[
+            'document__title' => 'required|max:191',
+            'document__text' => 'required',
+            'datetime' => 'required|regex:/[0-9]{4}-[0-9]{2}-[0-9]{2}\s*[0-9]{2}:[0-9]{2}/i',
+          ],[
+            'document__title.required' => 'Il titolo dell\'articolo è obbligatorio',
+            'document__text.required' => 'Non è consentito pubblicare un articolo senza contenuto',
+            'document__text.max' => 'Titolo troppo lungo',
+            'datetime.regex' => 'Formato data pubblicazione non valido',
+          ]);
+
+          $query = new DraftArticle();
+
+          $query->scheduled_at = $request->datetime;
+
+        }
+
+        $query->titolo = $request->document__title;
+        $query->tags = str_slug($request->tags, ',');
+
+        if($request->_ct_sel_ > 0) {
+            $query->topic_id = $request->_ct_sel_;
+        }
+
+          $query->testo = $testo;
+
+        // Copertina
+        if($a = $request->image) {
+          $this->validate($request,[
+            'image' => 'image|mimes:jpeg,jpg,png',
+          ],[
+            'image.image' => 'Devi inserire un\'immagine',
+            'image.mimes'  => 'Formato immagine non valido',
+          ]);
+
+          $fileName = '__492x340'.Str::random(64).'.jpg';
+
+          uploadFile($a, array(
+            'name' => $fileName,
+            'path' => public_path('sf/ct/'),
+            'width' => '492',
+            'height' => '340',
+            'mimetype' => 'jpg',
+            'quality' => '100'
+          ));
+
+          $query->copertina = $fileName;
+        }
+
+        if($request->_au > 0) {
+          $publisher = Editori::find($request->_au);
+          if(Auth::user()->hasMemberOf($publisher->id) && !$publisher->suspended) {
+            $query->id_gruppo = $request->_au;
+          }
+        }
+
+        if($request->_l_sel_ == '1') {
+            $query->license = '1';
+        } else {
+            $query->license = '2';
+        }
+
+        $query->id_autore = \Auth::user()->id;
         $query->save();
 
-        return redirect('read/'.$query->slug);
+        // Modalità di pubblicazione
+        if($request->_m_sel == 1 || ($request->_m_sel == 2 && !isset($request->datetime))) { // immediata
+          $query->slug = str_slug($query->id.'-'.$query->titolo,'-');
+          $query->save();
+
+          return redirect('read/'.$query->slug);
+        }
+
+        return redirect('/')->with(['alert' => 'info', 'date' => Carbon::parse($query->scheduled_at)->translatedFormat('l j F Y'), 'time' => Carbon::parse($query->scheduled_at)->format('H:i')]);
+
+      } else { // Blocco scrittura attivo
+        return redirect('/')->with(['alert' => 'danger', 'msg' => 'Il tuo account non ha i permessi per pubblicare un articolo.']);
       }
-
-      return redirect('/')->with(['alert' => 'info', 'date' => Carbon::parse($query->scheduled_at)->translatedFormat('l j F Y'), 'time' => Carbon::parse($query->scheduled_at)->format('H:i')]);
-
     }
 
     public function ArticlePublish(Request $request)
@@ -541,13 +547,14 @@ class FilterController extends Controller
     public function deleteScheduleArticle(Request $request)
     {
         $query = DraftArticle::whereNotNull('scheduled_at')->find($request->id);
+        return \Debugbar::info($query);
 
         if(!$query->suspended && (/*Auth::user()->hasMemberOf($query->id_gruppo) ||*/ Auth::user()->id == $query->id_autore)) {
           // elimino le notifiche relative all'articolo
           //Notifications::where('type', '3')->where('content_id', $query->id)->delete();
           $query->delete();
         }
-        return redirect('articles/schedules');
+        return redirect('articles/schedule');
     }
 
     public function deleteDraftArticle(Request $request)

@@ -11,6 +11,9 @@ use App\Mail\SupportEmail;
 use Response;
 use Auth;
 
+// debug
+use Log;
+
 // Models
 use App\Models\Editori;
 use App\Models\Articoli;
@@ -213,9 +216,10 @@ class AjaxController extends Controller
             }
 
             function searchFirstImage($root) {
-                foreach($root->getElementsByTagName('img') as $value) {
+                /*foreach($root->getElementsByTagName('img') as $value) {
                     return $value->getAttribute('src');
-                }
+                }*/
+                return $root->getElementsByTagName('img')[0];
             }
 
             return [
@@ -287,20 +291,22 @@ class AjaxController extends Controller
 
   public function postComments(Request $request)
   {
-    $post = $request->post;
-    $query = Articoli::where('id', $request->id)->first();
+    if(!Auth::user()->comment_block) {
+      $post = $request->post;
+      $query = Articoli::where('id', $request->id)->first();
 
-    if(!empty($post)){
+      if(!empty($post)){
 
-      $query2 = ArticleComments::create([
-        'user_id' => Auth::user()->id,
-        'text' => $post,
-        'article_id' => $query->id
-      ]);
+        $query2 = ArticleComments::create([
+          'user_id' => Auth::user()->id,
+          'text' => $post,
+          'article_id' => $query->id
+        ]);
 
-      $article = Articoli::find($query2->article_id);
+        $article = Articoli::find($query2->article_id);
 
-      return view('front.components.ajax.uploadComment')->with(['post' => $query2]);
+        return view('front.components.ajax.uploadComment')->with(['post' => $query2]);
+      }
     }
   }
 
@@ -318,14 +324,16 @@ class AjaxController extends Controller
 
   public function postAnswers(Request $request)
   {
-    $post = $request->post;
-    if(!empty($post)){
-      $query = new AnswerComments();
-      $query->user_id = Auth::user()->id;
-      $query->text = $post;
-      $query->comment_id = $request->id;
-      $query->save();
-      return view('front.components.ajax.uploadAnswers')->with(['post' => $query]);
+    if(!Auth::user()->comment_block) {
+      $post = $request->post;
+      if(!empty($post)){
+        $query = new AnswerComments();
+        $query->user_id = Auth::user()->id;
+        $query->text = $post;
+        $query->comment_id = $request->id;
+        $query->save();
+        return view('front.components.ajax.uploadAnswers')->with(['post' => $query]);
+      }
     }
   }
 
@@ -609,7 +617,7 @@ class AjaxController extends Controller
       if($request->selector == '1') {
         $obj->subject = 'Richiesta supporto';
       } elseif($request->selector == '2') {
-        $obj->subject = 'Feeback';
+        $obj->subject = 'Feedback';
       }
 
       $obj->message = $request->text;

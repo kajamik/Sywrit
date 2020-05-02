@@ -26,7 +26,9 @@
               <ul class="d-flex bg-sw p-2 mb-3">
                 <li><a id="edt" href="{{ url('/articles/draft/edit/'. $query->id) }}">@lang('label.article.edit')</a></li>
                 <li><a id="dlt" class="ml-2" href="#" onclick="link(this,'{{ url('articles/draft/delete/'. $query->id) }}')">@lang('label.article.delete')</a></li>
+                @if(!Auth::user()->write_block)
                 <li><a class="ml-2" href="#" onclick="schedule()">@lang('label.article.publish')</a></li>
+                @endif
               </ul>
               <script>
               function link(e, route){var el = setNode(e, {html: {"id": "__form__","action": route,"method": "post"}}, "form");setNode(el.html, {html: {"name": "id","value": "{{ $query->id }}"}}, "input");
@@ -78,6 +80,7 @@
   </div>
 </div>
 <script>
+@if(!Auth::user()->write_block)
 function schedule() {
   var dialog = App.getUserInterface({
     "ui": {
@@ -101,5 +104,6 @@ function schedule() {
     }
   });
 }
+@endif
 </script>
 @endsection

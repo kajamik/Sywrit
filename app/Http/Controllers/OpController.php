@@ -34,7 +34,7 @@ class OpController extends Controller
 
     $reported_articles = DB::table('reported_articles')->count();
 
-    $logs = DB::table('log')->orderBy('created_at','desc')->get();
+    $logs = DB::table('log')->orderBy('created_at','desc')->take(5)->get();
 
     return view('tools/home', compact('users','cron_users','user_articles','articles','archs','publishers','publisher_articles','comments','answers','reactions','reported_articles','logs'));
   }

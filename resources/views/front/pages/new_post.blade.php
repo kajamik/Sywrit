@@ -74,10 +74,10 @@
       <label for="_ct_sel_" class="col-md-4 col-form-label">{{ __('label.select_category') }}</label>
         <div class="col-md-12">
           <select id="_ct_sel_" class="form-control" name="_ct_sel_">
-            @if(!Request::get('_topic'))
+            @if(!Request::get('_topic') || (Request::get('_topic') && $categories->count() > 1))
             <option selected>{{ __('form.select_a_category') }}</option>
             @foreach($categories as $value)
-            <option value="{{ $value->id }}">{{ __('label.'. $value->slug) }}</option>
+            <option value="{{ $value->id }}">{{ __('label.categories.'. $value->slug) }}</option>
             @endforeach
             @else
             <option value="{{ $categories->id }}">{{ $categories->name }}</option>

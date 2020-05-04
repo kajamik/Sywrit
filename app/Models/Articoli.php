@@ -40,7 +40,7 @@ class Articoli extends Model
       return $this->integer_format($this->count_view);
     }
 
-    public function integer_format($number) {
+    private function integer_format($number) {
       if($number > 999999999) {
         $number /= 10000000;
         $resto = $number % 100;

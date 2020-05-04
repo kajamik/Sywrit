@@ -373,19 +373,14 @@ ul {
 
 .block-hero {
   width: 100%;
-  min-height: 385px;
   margin-bottom: 20px;
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: 50% 19%;
   border-radius: 4px;
-  border-bottom: 1px solid #fff;
-  color: #fff;
+  border: 1px solid #000;
 }
 
 .block-hero .caption {
-  padding: 12px;
-  color: #fff;
+  padding: 26px;
+  color: #000;
 }
 
 .block-hero .caption h4 {

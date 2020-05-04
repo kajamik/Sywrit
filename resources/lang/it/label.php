@@ -96,7 +96,7 @@ return [
     'profile_description' => 'Accedi alla pagina profilo di :name',
     'group_description' => 'Accedi alla pagina del gruppo :name',
     'topic_description' => 'Articoli della sezione :name',
-    'web_description' => 'Entra nella community e inizia subito a pubblicare i tuoi articoli.',
+    'web_description' => 'Entra nella community e inizia a pubblicare i tuoi articoli.',
   ],
   'notice' => [
     'account_comment_block_short' => 'Questo account non ha i permessi per commentare.',

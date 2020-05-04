@@ -44,7 +44,7 @@ class FrontController extends Controller
                   ->setDescription(trans('label.meta.web_description', ['name' => config('app.name')]))
                   ->setCanonical(\Request::url());
 
-        OpenGraph::addImage(asset(''));
+        OpenGraph::addImage(asset('upload/sywrit_banner.jpg'));
 
       //-------------------------------------------------------//
 
@@ -552,11 +552,11 @@ class FrontController extends Controller
       // SEO ///////////////////////////////////////////////////
 
         SEOMeta::setTitle(trans('label.categories.'.$topic->slug).' - Sywrit', false)
-                  ->setDescription(trans('label.meta.topic_name', ['name' => $topic->name]))
+                  ->setDescription(trans('label.meta.topic_description', ['name' => $topic->name]))
                   ->setCanonical(\Request::url());
 
         OpenGraph::setTitle(trans('label.categories.'.$topic->slug).' - Sywrit', false)
-                  ->setDescription(trans('label.meta.topic_name', ['name' => $topic->name]))
+                  ->setDescription(trans('label.meta.topic_description', ['name' => $topic->name]))
                   ->setType('section')
                   ->setUrl(\Request::url())
                   ->addImage(asset('upload/topics/'.$topic->slug.'.jpg'));

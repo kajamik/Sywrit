@@ -58,7 +58,7 @@
               @auth
               "data":{"text": "#text###val", "selector": "#selector###val"},
               @else
-              "data":{ "text": "#text", "email": "#email###val", "selector": "#selector"},
+              "data":{ "text": "#text", "email": "#email###val", "selector": "#selector###val"},
               @endif
               "title": '@lang("label.support_contact")',
               "content": [
@@ -72,7 +72,7 @@
               "done": function(){
                 App.getUserInterface({
                   "ui": {
-                    "title": "@lang('label.report_header')",
+                    "title": "@lang('label.report.title')",
                     "content": [
                       {"type": ["h5"], "text": "@lang('label.report.thanks_for_report')"}
                     ]
@@ -153,7 +153,7 @@
               <hr/>
               @endif
               <a class="dropdown-item" href="{{ url('group/create') }}"><i class="fa fa-users"></i> Crea gruppo</a>
-              
+
               <a class="dropdown-item" href="{{ url('toolbox')}}" target="_blank"><i class="fa fa-toolbox"></i> Managing</a>
               @endif
               <a class="dropdown-item" href="#adiósu" onclick="document.getElementById('logout-form').submit();"><i class="fas fa-sign-out-alt"></i> @lang('label.menu.logout')</a>
